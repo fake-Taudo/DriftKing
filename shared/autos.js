@@ -1,0 +1,252 @@
+// Die 6 frei erfundenen Autos: Metadaten, Preise und Fahrphysik-Parameter.
+// Alle Werte in SI-Einheiten (kg, m, s, N). „Arcade-PS“ sind Spielwerte, keine echten Messwerte.
+// Feinjustierung des Fahrgefühls: hier (je Auto) und in physikParameter.js (global).
+// Gemessene Ist-Werte stehen in docs/AUTOS.md (erzeugt per scripts/autoMessung.js).
+
+/**
+ * Drehmomentkurven als Stützstellen [Drehzahl-Anteil am Begrenzer, relatives Drehmoment].
+ * Die absolute Höhe wird beim Laden so skaliert, dass die Spitzenleistung den Arcade-PS entspricht.
+ */
+const KURVE_SAUGER_DREHFREUDIG = [[0.1, 0.55], [0.3, 0.72], [0.55, 0.92], [0.75, 1.0], [0.9, 0.95], [1.0, 0.86]];
+const KURVE_LIMOUSINE = [[0.1, 0.62], [0.3, 0.85], [0.5, 1.0], [0.7, 0.98], [0.9, 0.86], [1.0, 0.78]];
+const KURVE_TURBO = [[0.1, 0.45], [0.3, 0.62], [0.45, 0.98], [0.65, 1.0], [0.85, 0.92], [1.0, 0.8]];
+const KURVE_DIESELARTIG = [[0.1, 0.66], [0.3, 0.9], [0.5, 1.0], [0.7, 0.93], [0.9, 0.82], [1.0, 0.74]];
+const KURVE_V8 = [[0.1, 0.75], [0.25, 0.94], [0.45, 1.0], [0.65, 0.96], [0.85, 0.86], [1.0, 0.78]];
+const KURVE_SPORT = [[0.1, 0.5], [0.3, 0.7], [0.5, 0.88], [0.7, 1.0], [0.88, 0.98], [1.0, 0.9]];
+
+export const AUTOS = [
+  {
+    id: 'kestrel_s',
+    name: 'Kestrel S',
+    klasse: 'Heck-Coupé',
+    beschreibung: 'Kleines, leichtes Heck-Coupé. Wendig und verzeiht Fehler – ideal für den Einstieg.',
+    preis: 0,
+    // Richtwerte aus der Spezifikation (für Tests und Anzeige)
+    soll: { ps: 160, nullHundert: 7.5, hoechstKmh: 170 },
+    masse: 1000,
+    radstand: 2.45,
+    spurweite: 1.46,
+    schwerpunktHoehe: 0.46,
+    gewichtVorne: 0.52,
+    traegheitFaktor: 1.0,
+    abmessungen: { laenge: 4.05, breite: 1.70, hoehe: 1.28 },
+    antrieb: 'heck',
+    allradVorneAnteil: 0,
+    leistungPS: 160,
+    drehmomentKurve: KURVE_SAUGER_DREHFREUDIG,
+    leerlauf: 900,
+    drehzahlMax: 7800,
+    gaenge: [3.25, 2.05, 1.48, 1.14, 0.93],
+    achsUebersetzung: 4.3,
+    radRadius: 0.29,
+    schaltzeit: 0.18,
+    turbo: null,
+    grip: 1.0,
+    bremskraft: 10500,
+    bremsBalance: 0.62,
+    handbremse: 1.0,
+    sperre: 0.62,
+    wankVorne: 0.54,
+    lenkwinkelMax: 46,
+    stabilitaet: 1.0,
+    gierDaempfung: 1.0,
+    klang: { zylinder: 4, grundton: 1.0, rauheit: 0.25, obertoene: [1, 0.5, 0.25, 0.12], filterBasis: 1600 }
+  },
+  {
+    id: 'marlin_4d',
+    name: 'Marlin 4D',
+    klasse: 'Limousine',
+    beschreibung: 'Ausgewogene Heck-Limousine. Stabil, gutmütig und berechenbar.',
+    preis: 8000,
+    soll: { ps: 220, nullHundert: 7.0, hoechstKmh: 190 },
+    masse: 1350,
+    radstand: 2.80,
+    spurweite: 1.52,
+    schwerpunktHoehe: 0.50,
+    gewichtVorne: 0.52,
+    traegheitFaktor: 1.05,
+    abmessungen: { laenge: 4.65, breite: 1.80, hoehe: 1.42 },
+    antrieb: 'heck',
+    allradVorneAnteil: 0,
+    leistungPS: 220,
+    drehmomentKurve: KURVE_LIMOUSINE,
+    leerlauf: 800,
+    drehzahlMax: 7000,
+    gaenge: [3.6, 2.15, 1.47, 1.1, 0.88, 0.74],
+    achsUebersetzung: 3.9,
+    radRadius: 0.31,
+    schaltzeit: 0.22,
+    turbo: null,
+    grip: 1.02,
+    bremskraft: 14500,
+    bremsBalance: 0.63,
+    handbremse: 0.95,
+    sperre: 0.6,
+    wankVorne: 0.56,
+    lenkwinkelMax: 44,
+    stabilitaet: 1.2,
+    gierDaempfung: 1.2,
+    klang: { zylinder: 6, grundton: 0.85, rauheit: 0.15, obertoene: [1, 0.6, 0.3, 0.15], filterBasis: 1300 }
+  },
+  {
+    id: 'vireo_turbo',
+    name: 'Vireo Turbo',
+    klasse: 'Turbo-Coupé',
+    beschreibung: 'Kompaktes Turbo-Coupé. Spritzig und nervös, deutliches Turboloch – belohnt gutes Timing.',
+    preis: 15000,
+    soll: { ps: 260, nullHundert: 5.5, hoechstKmh: 200 },
+    masse: 1150,
+    radstand: 2.50,
+    spurweite: 1.48,
+    schwerpunktHoehe: 0.46,
+    gewichtVorne: 0.53,
+    traegheitFaktor: 0.92,
+    abmessungen: { laenge: 4.20, breite: 1.74, hoehe: 1.30 },
+    antrieb: 'heck',
+    allradVorneAnteil: 0,
+    leistungPS: 260,
+    drehmomentKurve: KURVE_TURBO,
+    leerlauf: 950,
+    drehzahlMax: 7600,
+    gaenge: [3.3, 2.1, 1.5, 1.16, 0.95, 0.8],
+    achsUebersetzung: 4.1,
+    radRadius: 0.30,
+    schaltzeit: 0.17,
+    // Turbo: Anteil der Leistung, der vom Ladedruck abhängt, Aufbauzeit (s), Ansprechdrehzahl (Anteil)
+    turbo: { anteil: 0.42, aufbauZeit: 0.85, ansprechDrehzahl: 0.42, abfallZeit: 0.25 },
+    grip: 1.0,
+    bremskraft: 13000,
+    bremsBalance: 0.62,
+    handbremse: 1.05,
+    sperre: 0.66,
+    wankVorne: 0.53,
+    lenkwinkelMax: 47,
+    stabilitaet: 0.85,
+    gierDaempfung: 0.85,
+    klang: { zylinder: 4, grundton: 1.15, rauheit: 0.35, obertoene: [1, 0.45, 0.35, 0.2], filterBasis: 1800 }
+  },
+  {
+    id: 'hornet_wagon',
+    name: 'Hornet Wagon',
+    klasse: 'Kombi',
+    beschreibung: 'Langer Kombi mit langem Radstand. Sehr stabile, lange Drifts, aber träges Einlenken.',
+    preis: 25000,
+    soll: { ps: 240, nullHundert: 7.0, hoechstKmh: 195 },
+    masse: 1500,
+    radstand: 2.95,
+    spurweite: 1.54,
+    schwerpunktHoehe: 0.53,
+    gewichtVorne: 0.51,
+    traegheitFaktor: 1.18,
+    abmessungen: { laenge: 4.90, breite: 1.82, hoehe: 1.48 },
+    antrieb: 'heck',
+    allradVorneAnteil: 0,
+    leistungPS: 240,
+    drehmomentKurve: KURVE_DIESELARTIG,
+    leerlauf: 800,
+    drehzahlMax: 6800,
+    gaenge: [3.7, 2.2, 1.5, 1.12, 0.9, 0.76],
+    achsUebersetzung: 3.85,
+    radRadius: 0.32,
+    schaltzeit: 0.25,
+    turbo: { anteil: 0.18, aufbauZeit: 0.6, ansprechDrehzahl: 0.3, abfallZeit: 0.3 },
+    grip: 1.02,
+    bremskraft: 15500,
+    bremsBalance: 0.62,
+    handbremse: 0.95,
+    sperre: 0.64,
+    wankVorne: 0.57,
+    lenkwinkelMax: 43,
+    stabilitaet: 1.45,
+    gierDaempfung: 1.35,
+    klang: { zylinder: 5, grundton: 0.9, rauheit: 0.3, obertoene: [1, 0.55, 0.4, 0.2], filterBasis: 1200 }
+  },
+  {
+    id: 'bastion_gt',
+    name: 'Bastion GT',
+    klasse: 'Muscle-Coupé',
+    beschreibung: 'Schweres Muscle-Coupé mit gewaltigem Drehmoment. Raucht ohne Ende, schwer zu zähmen.',
+    preis: 40000,
+    soll: { ps: 420, nullHundert: 4.8, hoechstKmh: 230 },
+    masse: 1650,
+    radstand: 2.75,
+    spurweite: 1.58,
+    schwerpunktHoehe: 0.50,
+    gewichtVorne: 0.54,
+    traegheitFaktor: 1.08,
+    abmessungen: { laenge: 4.80, breite: 1.90, hoehe: 1.36 },
+    antrieb: 'heck',
+    allradVorneAnteil: 0,
+    leistungPS: 420,
+    drehmomentKurve: KURVE_V8,
+    leerlauf: 750,
+    drehzahlMax: 6600,
+    gaenge: [2.95, 1.95, 1.4, 1.08, 0.86, 0.7],
+    achsUebersetzung: 3.55,
+    radRadius: 0.33,
+    schaltzeit: 0.24,
+    turbo: null,
+    grip: 1.0,
+    bremskraft: 17500,
+    bremsBalance: 0.61,
+    handbremse: 0.9,
+    sperre: 0.72,
+    wankVorne: 0.55,
+    lenkwinkelMax: 44,
+    stabilitaet: 0.95,
+    gierDaempfung: 1.0,
+    klang: { zylinder: 8, grundton: 0.62, rauheit: 0.55, obertoene: [1, 0.75, 0.5, 0.3], filterBasis: 900 }
+  },
+  {
+    id: 'onyx_rs',
+    name: 'Onyx RS',
+    klasse: 'Sportwagen',
+    beschreibung: 'Flacher Sportwagen mit höchstem Grip und Topspeed. Allrad mit Heckbetonung – schwerer zu driften.',
+    preis: 60000,
+    soll: { ps: 380, nullHundert: 4.3, hoechstKmh: 250 },
+    masse: 1250,
+    radstand: 2.60,
+    spurweite: 1.60,
+    schwerpunktHoehe: 0.42,
+    gewichtVorne: 0.45,
+    traegheitFaktor: 0.95,
+    abmessungen: { laenge: 4.45, breite: 1.92, hoehe: 1.18 },
+    antrieb: 'allrad',
+    allradVorneAnteil: 0.3,
+    leistungPS: 380,
+    drehmomentKurve: KURVE_SPORT,
+    leerlauf: 1000,
+    drehzahlMax: 8400,
+    gaenge: [3.1, 2.1, 1.56, 1.22, 1.0, 0.84],
+    achsUebersetzung: 3.95,
+    radRadius: 0.32,
+    schaltzeit: 0.12,
+    turbo: { anteil: 0.15, aufbauZeit: 0.35, ansprechDrehzahl: 0.35, abfallZeit: 0.2 },
+    grip: 1.14,
+    bremskraft: 17000,
+    bremsBalance: 0.58,
+    handbremse: 1.0,
+    sperre: 0.7,
+    wankVorne: 0.52,
+    lenkwinkelMax: 42,
+    stabilitaet: 1.1,
+    gierDaempfung: 1.1,
+    klang: { zylinder: 6, grundton: 1.05, rauheit: 0.2, obertoene: [1, 0.5, 0.45, 0.3], filterBasis: 2100 }
+  }
+];
+
+export const AUTO_IDS = AUTOS.map((a) => a.id);
+export const START_AUTO = 'kestrel_s';
+
+const nachId = new Map(AUTOS.map((a) => [a.id, a]));
+
+/** Liefert die Basisdaten eines Autos oder wirft bei unbekannter ID. */
+export function autoDaten(id) {
+  const a = nachId.get(id);
+  if (!a) throw new Error('Unbekanntes Auto: ' + id);
+  return a;
+}
+
+export function istAutoId(id) {
+  return nachId.has(id);
+}

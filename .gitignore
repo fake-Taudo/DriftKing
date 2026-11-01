@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.log
+.vite/
+coverage/
+test-results/
+playwright-report/
+tests/ui/screenshots/
