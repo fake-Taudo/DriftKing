@@ -23,6 +23,22 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | T15 | **Debug-Overlay**: `?debug=1` funktioniert immer, Taste F3 nur im Entwicklungsmodus; **Cheats nur im Entwicklungs-Build**. | So steht es in Abschnitt 1; die Freischalt-Cheats aus Abschnitt 6 sind damit nur lokal (`npm run dev`) nutzbar. |
 | T16 | **Touch-Layouts getrennt für Quer- und Hochformat.** | Im Hochformat ist zu wenig Breite für das Querformat-Layout; die Tasten würden sich überlappen. |
 
+## Fahrphysik
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| P1 | **Einspurmodell** (eine Vorder-, eine Hinterachse) mit Längs- und Querlastverlagerung statt Vierradmodell. | Reicht für ein Arcade-Driftgefühl, ist schnell (≈ 3 µs pro Schritt) und stabil. Querlastverlagerung wirkt als Grip-Verlust der Achse; die Verteilung (Wanksteifigkeit vorne/hinten) steuert Unter-/Übersteuern. |
+| P2 | **Hinterrad-Drehzahl ω als eigener Zustand, implizit gelöst** (Newton mit Bisektions-Absicherung). | Mit einem reinen Kraftkreis ohne Raddrehzahl verhungert ein Drift, weil durchdrehende Räder keinen Vortrieb liefern. Mit ω zeigt die Reibkraft in Richtung der Rutschgeschwindigkeit – der Wagen schiebt im Drift nach vorne, genau wie in echt. Die implizite Lösung ist auch bei großer Motorträgheit stabil. Handbremse = großes Bremsmoment → blockierende Räder ergeben sich von selbst. |
+| P3 | **Vorderachse ohne eigene Raddrehzahl** (Kraftkreis aus Seitenkraft + Bremse/Allrad-Anteil). | Vorderräder blockieren oder drehen im Spiel praktisch nie durch; spart Rechenzeit. |
+| P4 | **Gleitreibung hinten 76 % statt 90 % der Spitzenkraft** (Arcade-Hilfe). | Das Heck bricht klar aus und der Drift lässt sich mit dem Gas halten („leicht einzuleiten, schwer zu perfektionieren“). |
+| P5 | **Offenes vs. gesperrtes Differenzial** wird über einen Faktor auf den wirksamen Längsschlupf nachgebildet. | Ein starrer Hinterachs-Zustand kennt kein Innenrad. Mit offener Sperre „verpufft“ ein Teil des Schlupfs (Innenrad dreht durch), das Außenrad behält Seitenführung → schwerer zu driften. |
+| P6 | **Automatik schaltet nach Fahrgeschwindigkeit**, nicht nach Raddrehzahl. | Im Drift drehen die Räder am Begrenzer; nach Raddrehzahl würde die Automatik ständig hochschalten. |
+| P7 | **Gierdämpfung** (klein, je Auto einstellbar) und Zusatzdämpfung über 70° Driftwinkel. | Verhindert endloses Weiterdrehen und macht Dreher abfangbar, ohne das Driften zu verhindern. |
+| P8 | **0–100-Messung mit optimalem Start** (Gas wird nahe am Haftmaximum dosiert). | Entspricht einer Messfahrt; mit stumpfem Vollgas würden starke Heckantriebler nur Rauch erzeugen. |
+| P9 | **Luftwiderstand aus der Auslegungs-Höchstgeschwindigkeit** des Serienautos berechnet. | Höchstgeschwindigkeiten stimmen ohne Handarbeit; mehr Leistung durch Tuning erhöht sie automatisch. |
+| P10 | **Leistungsindex = Basis-PI × (1 + Tuningzuschlag)**; Zuschlag maximal +45 %. | Eine rein physikalische Formel (Leistungsgewicht) würde getunte Einsteigerautos über die teuren Autos heben. Die Formel bewertet Leistung, Gewicht, Grip und Stabilität des Serienautos und addiert die Tuningstufen prozentual – genau wie in der Spezifikation gefordert. |
+| P11 | **Weiche Auto-Auto-Kollision** über drei Kreise je Auto: nur Positions- und Geschwindigkeitsangleich, keine Drehung. | Spezifikation: kein harter Rückstoß, kein Festkleben, keine Rotation durch Berührung. |
+
 ## Wortfilter
 
 | # | Entscheidung | Begründung |

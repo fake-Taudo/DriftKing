@@ -21,10 +21,13 @@ export const PHYSIK = {
     spitzeVorneGrad: 9.5, // Schräglaufwinkel der maximalen Seitenkraft vorne
     spitzeHintenGrad: 12, // … hinten (größer → gutmütigerer Drift)
     formC: 1.32, // Formfaktor: bestimmt, wie stark die Kraft nach der Spitze abfällt
-    gleitAnteil: 0.9, // Reibwert-Anteil beim vollen Durchrutschen (Längsrichtung)
+    gleitAnteil: 0.9, // Reibwert-Anteil beim vollen Durchrutschen vorne (Kraft bei sehr großem Schlupf)
+    gleitAnteilHinten: 0.76, // … hinten (Arcade: Heck bricht klar aus und lässt sich im Drift halten)
     lastEmpfindlichkeit: 0.08, // mehr Last → etwas weniger Reibwert (pro 100 % Mehrlast)
     niedrigTempo: 2.5, // unterhalb (m/s) werden Schräglaufwinkel gedämpft (kein Zittern im Stand)
-    seitlicheLastVerlust: 0.22 // Grip-Verlust einer Achse durch Querlastverlagerung (bei 100 % Verlagerung)
+    seitlicheLastVerlust: 0.22, // Grip-Verlust einer Achse durch Querlastverlagerung (bei 100 % Verlagerung)
+    laengsSpitze: 0.12, // Längsschlupf (Anteil) der maximalen Antriebs-/Bremskraft hinten
+    bezugsTempoMin: 2.0 // m/s: Mindest-Bezugsgeschwindigkeit für die Schlupfberechnung hinten
   },
 
   // --- Antrieb ---
@@ -32,11 +35,13 @@ export const PHYSIK = {
     wirkungsgrad: 0.86,
     motorBremse: 0.16, // Anteil des Spitzendrehmoments als Motorbremse beim Gaswegnehmen
     schaltHoch: 0.94, // Hochschalten bei diesem Anteil der Maximaldrehzahl (Automatik)
-    schaltRunter: 0.45, // Runterschalten unterhalb dieses Anteils
+    schaltRunter: 0.38, // Runterschalten unterhalb dieses Anteils
     begrenzerSchnitt: 0.05, // Zündunterbrechung am Begrenzer (s)
-    drehzahlTraegheit: 0.08, // Zeitkonstante der Drehzahl (s), sorgt für weiche Anzeige/Klang
-    durchdrehAufbau: 7.0, // wie schnell die Hinterräder bei Überschuss durchdrehen (1/s)
-    durchdrehAbbau: 5.0, // wie schnell sie wieder greifen (1/s)
+    drehzahlTraegheit: 0.06, // Zeitkonstante der Drehzahlanzeige im ausgekuppelten Zustand (s)
+    radTraegheit: 2.6, // kg·m², beide Hinterräder inkl. Bremsscheiben und Antriebswelle
+    motorTraegheit: 0.16, // kg·m², Schwungmasse des Motors (wirkt mit Übersetzung² auf die Räder)
+    handbremsFaktor: 1.5, // Handbremsmoment in Vielfachen des Haftmoments der Hinterachse
+    schleifDrehzahl: 0.5, // Anteil der Maximaldrehzahl, bis zu dem die Kupplung beim Anfahren schleift
     kupplungsKickDauer: 0.35, // s
     kupplungsKickFaktor: 1.85, // kurzzeitiger Drehmoment-Multiplikator
     kupplungsKickSperre: 0.6, // s bis zum nächsten Kick

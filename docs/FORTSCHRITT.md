@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 2 – Fahrphysik und erstes Auto
+**Aktuelle Phase:** 3 – Autos, Strecken, Rendering
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -12,13 +12,22 @@
 - [x] Speichern, Laden, Migration und defekter Save sind getestet (`tests/spielstand.test.js`, `tests/speicher.test.js`)
 - [x] `/healthz` antwortet, WebSocket-Verbindung (Test-Echo) funktioniert (`tests/server.test.js` + im Browser geprüft)
 
-Gebaut: Projektstruktur, Vite-Build mit Service-Worker-Plugin, Express + ws auf einem Port, Sicherheits-Header (CSP ohne Inline-Skripte), Game-Loop mit festem Zeitschritt (1/60 s, max. 5 Schritte/Frame), Eingabe-Abstraktion (Tastatur frei belegbar, Touch mit Layouts für Quer/Hoch, Gamepad, Neigung mit iOS-Berechtigung), Qualitätsstufen mit Automatik und Hysterese, Spielstand (Schema, Prüfsumme, Migration, Backup, Arbeitsspeicher-Rückfall, Export/Import als Datei und Text-Code), globale Fehlerbehandlung, WebGL-Kontextverlust, Debug-Overlay mit Cheats (nur Dev), i18n-Datei, PWA (Manifest, Icons, versionierter Cache, Update-Hinweis, iOS-Home-Bildschirm-Tipp), `render.yaml`.
+## Phase 2: Fahrphysik und erstes Auto – ✅ abgeschlossen
+
+- [x] Drift lässt sich per Handbremse, Lastwechsel (Scandinavian Flick), Gasüberschuss und Kupplungstritt zuverlässig einleiten, halten und beenden (`tests/physik.test.js`, im Browser per Tastatur geprüft)
+- [x] Zufalls-Eingabetest (10 Minuten simulierte Zeit je Auto, fester Seed) ohne NaN und Ausreißer
+- [x] Alle Extremfälle aus Abschnitt 2 bestanden (Dauer-Handbremse, Vollgas gegen Wand, Ecke, Volleinschlag bei Höchstgeschwindigkeit, Wechsellenken in Höchstfrequenz, dt 0,0001 … 1 s, ungültige Eingaben)
+- [x] Fahrgefühl mit Touch-Steuerung und Assistenz: Gegenlenk-Assistenz (Standard 60 %) und Drift-Haltehilfe (Touch, 30 %) eingebaut und per Simulation geprüft; Feinabstimmung am echten Gerät steht im manuellen Testplan
+- [x] Physik-Tests grün (18 Tests)
+
+Gebaut: `shared/physik/fahrzeug.js` (Einspurmodell, Lastverlagerung, Pacejka vorne, Hinterachse mit Raddrehzahl-Zustand, Kamm'scher Kreis, Sperre, Turbo, Kupplungstritt, Rückwärtsgang, Automatik/manuell, Wandkollision mit Impuls, weiche Auto-Auto-Kollision), `kollision.js` (Uniform Grid, Kreise, OBB, Strahl für Kamera), `haenger.js`, `messung.js` (0–100, Vmax, Wendekreis, Bremsweg, Driftwinkel, Driftstabilität), `tuning.js`, `leistungsindex.js`; Client: Verfolgerkamera mit Drift-Verhalten und 4 Modi, Umgebung (Himmel-Shader, Env-Map, mitwandernde Shadow-Map), prozedurale Texturen, Testfahrt-Modus mit Autowahl.
 
 ## Offen / bekannte Probleme
 
-- Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test in `docs/TESTPLAN_MANUELL.md`).
+- Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test).
 - `client/assets/aufkleber.js` ist bis Phase 5 leer.
+- Messgröße „max. stationärer Driftwinkel“ nutzt noch einen einfachen Regler; in Phase 4 wird der Bot-Regler dafür verwendet.
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, W1).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, W1).

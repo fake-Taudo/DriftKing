@@ -1,6 +1,6 @@
 // Legt fest, mit welchem Modus das Spiel startet.
-import { TestFlaeche } from './testFlaeche.js';
+import { TestFahrt } from './testFahrt.js';
 
 export function startModusErzeugen() {
-  return new TestFlaeche();
+  return new TestFahrt();
 }
