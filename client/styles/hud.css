@@ -1,0 +1,218 @@
+/* HUD im Rennen. Querformat: Tacho unten Mitte (zwischen den Touch-Tasten).
+   Hochformat: Tacho oben rechts unter dem Pause-Knopf, damit unten Platz für die Tasten bleibt. */
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important;
+  z-index: 15;
+  font-family: var(--schrift-text);
+}
+.hud > * { pointer-events: none; }
+.hud button { pointer-events: auto; }
+
+.hud-minimap {
+  position: absolute;
+  left: calc(10px + var(--sicher-links));
+  top: calc(10px + var(--sicher-oben));
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(11, 14, 28, 0.45);
+  backdrop-filter: blur(3px);
+}
+.minimap { display: block; }
+
+.hud-oben {
+  position: absolute;
+  left: 50%;
+  top: calc(10px + var(--sicher-oben));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 360px);
+}
+.hud-zeile { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.hud-rolle, .hud-status, .hud-zeit {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(11, 14, 28, 0.6);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+.hud-rolle { background: var(--farbe-haupt); font-family: var(--schrift-titel); letter-spacing: 0.05em; text-transform: uppercase; }
+.hud-zeit.warnung { color: var(--farbe-gefahr); }
+.hud-punkte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(11, 14, 28, 0.6);
+  border: 2px solid transparent;
+}
+.hud-punkte.ich { border-color: var(--farbe-akzent); }
+.hud-punkte.gegner { border-color: var(--farbe-haupt); }
+.hud-punkte .name { font-size: 0.72rem; color: var(--farbe-text-2); text-transform: uppercase; letter-spacing: 0.06em; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud-punkte .wert { font-size: 1.45rem; }
+
+.hud-combo { display: flex; align-items: center; gap: 8px; }
+.hud-combo-balken {
+  width: 120px;
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+.hud-combo-balken > div { height: 100%; width: 0; background: var(--farbe-akzent); transition: width 120ms linear; box-shadow: var(--glow-akzent); }
+.hud-combo[data-stufe='1'] .hud-combo-balken > div { background: var(--farbe-erfolg); }
+.hud-combo[data-stufe='2'] .hud-combo-balken > div { background: var(--farbe-warnung); box-shadow: 0 0 14px rgba(255, 197, 61, 0.7); }
+.hud-combo[data-stufe='3'] .hud-combo-balken > div { background: var(--farbe-haupt); box-shadow: var(--glow-haupt); }
+.hud-combo span { font-size: 1.05rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6); }
+.hud-combo[data-stufe='3'] span { color: var(--farbe-haupt); }
+
+.hud-abstand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(11, 14, 28, 0.6);
+}
+.hud-abstand[data-bewertung='gut'] { color: var(--farbe-erfolg); }
+.hud-abstand[data-bewertung='mittel'] { color: var(--farbe-warnung); }
+.hud-abstand[data-bewertung='schlecht'] { color: var(--farbe-gefahr); }
+
+.hud-rechts {
+  position: absolute;
+  right: calc(10px + var(--sicher-rechts));
+  top: calc(10px + var(--sicher-oben));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.hud-pause { font-size: 0.9rem; letter-spacing: -0.1em; }
+.hud-ping, .hud-fps { font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; background: rgba(11, 14, 28, 0.6); }
+.hud-ping.schlecht { color: var(--farbe-gefahr); }
+
+.hud-tacho {
+  position: absolute;
+  left: 50%;
+  bottom: calc(6px + var(--sicher-unten));
+  transform: translateX(-50%);
+  width: 210px;
+  height: 140px;
+}
+.hud-tacho-svg { width: 100%; height: 100%; overflow: visible; }
+.tacho-spur { fill: none; stroke: rgba(11, 14, 28, 0.55); stroke-width: 12; stroke-linecap: round; }
+.tacho-spur.winkel { stroke-width: 8; }
+.tacho-drehzahl { fill: none; stroke: var(--farbe-akzent); stroke-width: 10; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(46, 230, 255, 0.7)); }
+.tacho-drehzahl.rot { stroke: var(--farbe-haupt); }
+.tacho-winkel { fill: none; stroke: var(--farbe-warnung); stroke-width: 7; stroke-linecap: round; }
+.tacho-winkel.gut { stroke: var(--farbe-erfolg); }
+.hud-tacho-mitte {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38px;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+}
+.hud-tempo { font-size: 2.3rem; line-height: 1; }
+.hud-einheit { font-size: 0.7rem; color: var(--farbe-text-2); letter-spacing: 0.1em; }
+.hud-tacho-unten { display: flex; justify-content: center; gap: 14px; margin-top: 2px; }
+.hud-gang { font-size: 1.2rem; color: var(--farbe-akzent); }
+.hud-winkel { font-size: 1.2rem; color: var(--farbe-warnung); }
+
+.hud-countdown {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(4rem, 16vw, 9rem);
+  color: #fff;
+  text-shadow: 0 6px 0 rgba(0, 0, 0, 0.35), 0 0 30px rgba(255, 61, 110, 0.8);
+}
+.hud-countdown.puls { animation: countdownPuls 900ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes countdownPuls {
+  from { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+  30% { opacity: 1; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.hud-meldung {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 8px 18px;
+  border-radius: 12px;
+  background: rgba(11, 14, 28, 0.75);
+  font-family: var(--schrift-titel);
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transition: opacity 160ms, transform 220ms var(--feder);
+  white-space: nowrap;
+}
+.hud-meldung.sichtbar { opacity: 1; transform: translateX(-50%) scale(1); }
+.hud-meldung[data-art='gefahr'] { color: var(--farbe-gefahr); }
+.hud-meldung[data-art='erfolg'] { color: var(--farbe-erfolg); }
+
+.hud-popups {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hud-popup {
+  font-family: var(--schrift-zahl);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--farbe-erfolg);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  animation: popupHoch 1.2s ease-out forwards;
+}
+.hud-popup.minus { color: var(--farbe-gefahr); }
+.hud-popup.combo { color: var(--farbe-warnung); }
+@keyframes popupHoch {
+  from { transform: translateY(14px) scale(0.8); opacity: 0; }
+  15% { opacity: 1; transform: translateY(0) scale(1.08); }
+  to { transform: translateY(-34px) scale(1); opacity: 0; }
+}
+
+.hud-reset {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translateX(-50%);
+}
+
+/* Hochformat: Tacho nach oben rechts, Status kompakter */
+@media (orientation: portrait) {
+  .hud-tacho {
+    left: auto;
+    right: calc(4px + var(--sicher-rechts));
+    bottom: auto;
+    top: calc(64px + var(--sicher-oben));
+    transform: scale(0.72);
+    transform-origin: top right;
+  }
+  .hud-oben { top: calc(180px + var(--sicher-oben)); max-width: calc(100% - 20px); }
+  .hud-minimap canvas { width: 120px !important; height: 120px !important; }
+}
+@media (max-height: 460px) and (orientation: landscape) {
+  .hud-tacho { transform: translateX(-50%) scale(0.78); transform-origin: bottom center; }
+  .hud-oben { gap: 3px; }
+  .hud-minimap canvas { width: 120px !important; height: 120px !important; }
+}
+
+/* Farbenblind-Modus: Formen und stärkere Kontraste */
+html.farbenblind .tacho-winkel.gut { stroke: #2ee6ff; stroke-dasharray: 2 4; }
+html.farbenblind .hud-abstand[data-bewertung='gut'] { color: #2ee6ff; }
+html.farbenblind .hud-abstand[data-bewertung='schlecht'] { color: #ffd166; }

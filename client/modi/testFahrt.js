@@ -10,7 +10,8 @@ import { TESTFLAECHE, testflaecheGitter } from '../../shared/strecken/testflaech
 import { GRAD } from '../../shared/mathe.js';
 import { RennKamera } from '../render/kamera.js';
 import { Umgebung, STIMMUNG_TAG } from '../render/umgebung.js';
-import { TestAuto } from '../render/auto/testAuto.js';
+import { AutoModell } from '../render/auto/autoModell.js';
+import { standardLook } from '../../shared/look.js';
 import { betonTextur, warnstreifenTextur } from '../render/texturen.js';
 import { winkelLerp } from '../render/koordinaten.js';
 
@@ -84,7 +85,7 @@ export class TestFahrt {
     this.fahrzeug = new Fahrzeug(p, { gegenlenken: e.assistenz.gegenlenken / 100, driftHalten: halten, getriebe: touch ? 'auto' : e.getriebe });
     const s = TESTFLAECHE.start;
     this.fahrzeug.setzen(s.x, s.y, s.theta);
-    this.auto = new TestAuto(p);
+    this.auto = new AutoModell(autoId, standardLook(autoId), { qualitaet: this.spiel.qualitaet.aktuell });
     this.szene.add(this.auto.objekt);
     this.haenger.zuruecksetzen();
     this.rennKamera.erstesBild = true;
@@ -162,7 +163,7 @@ export class TestFahrt {
     const y = v.y + (z.y - v.y) * alpha;
     const theta = winkelLerp(v.theta, z.theta, alpha);
     this.auto.setzePose(x, y, theta);
-    this.auto.aktualisieren(frameDt, z);
+    this.auto.aktualisieren(frameDt, z, performance.now() / 1000);
     this.rennKamera.aktualisieren({ x, y, theta, vx: z.vx, vy: z.vy, tempo: f.tempo, hoechst: f.p.hoechstKmhAuslegung / 3.6 }, frameDt, this.gitter);
     this.umgebung.folgen(x, y);
     this.anzeige.textContent = `${Math.round(f.tempo * 3.6)} km/h · ${f.gangAnzeige} · ${Math.round(f.driftWinkel / GRAD)}°`;

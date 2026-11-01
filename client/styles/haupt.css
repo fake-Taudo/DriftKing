@@ -342,6 +342,7 @@ input, textarea, select {
 
 /* ---------- Ladeanzeige ---------- */
 
+#lade { z-index: 100; }
 .lade-bildschirm {
   align-items: center;
   justify-content: center;

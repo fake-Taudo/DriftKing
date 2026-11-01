@@ -125,6 +125,227 @@ export const TEXTE = {
     echo: 'Server-Echo',
     echoOk: 'WebSocket-Echo erfolgreich ({ms} ms)',
     echoFehler: 'WebSocket-Echo fehlgeschlagen'
+  },
+
+  laden: {
+    tipps: [
+      'Tipp: Kurz die Handbremse ziehen und sofort Gas geben – so leitest du einen Drift am leichtesten ein.',
+      'Tipp: Mit dem Gas steuerst du den Driftwinkel, mit der Lenkung die Richtung.',
+      'Tipp: Als Verfolger zählen 6–10 m Abstand am meisten. Zu dicht auffahren bringt weniger Punkte.',
+      'Tipp: Saubere Übergänge zwischen zwei Drifts geben einen Flüssigkeits-Bonus.',
+      'Tipp: Die Gegenlenk-Assistenz lässt sich in den Einstellungen von 0 bis 100 % anpassen.',
+      'Tipp: Wandkontakt kostet Punkte und setzt deine Combo zurück.',
+      'Tipp: In der Garage kannst du jedes Teil vor dem Kauf anprobieren.',
+      'Tipp: Mit einem Look-Code kannst du deine Lackierung mit Freunden teilen.'
+    ]
+  },
+
+  kamera: {
+    verfolger: 'Kamera: Verfolger',
+    weit: 'Kamera: Weit',
+    oben: 'Kamera: Vogelperspektive',
+    haube: 'Kamera: Motorhaube'
+  },
+
+  hud: {
+    du: 'Du',
+    pause: 'Pause',
+    zuruecksetzen: 'Zurücksetzen',
+    fuehrer: 'Führer',
+    verfolger: 'Verfolger'
+  },
+
+  rennen: {
+    los: 'LOS!',
+    runde: 'Runde {n}',
+    rundeVon: 'Runde {n}/{von}',
+    rundeNr: 'Runde {n}',
+    rundenzeit: 'Rundenzeit {zeit} s',
+    bestzeit: 'Bestzeit!',
+    falschrum: 'Falsche Richtung!',
+    training: 'Training',
+    zeitangriff: 'Zeitangriff',
+    zeitAbgelaufen: 'Zeit abgelaufen',
+    abgebrochen: 'abgebrochen',
+    abkuerzung: 'Abkürzung zählt nicht'
+  },
+
+  medaille: {
+    bronze: 'Bronze',
+    silber: 'Silber',
+    gold: 'Gold',
+    champion: 'Champion'
+  },
+
+  ergebnis: {
+    zeitangriffTitel: 'Zeitangriff beendet',
+    belohnung: 'Belohnung',
+    nochmal: 'Nochmal',
+    menue: 'Menü',
+    garage: 'Garage',
+    revanche: 'Revanche'
+  },
+
+  pause: {
+    titel: 'Pause',
+    onlineTitel: 'Menü',
+    onlineHinweis: 'Das Duell läuft weiter, solange dieses Menü offen ist.',
+    fortsetzen: 'Fortsetzen',
+    zurueck: 'Zurück zum Duell',
+    neustart: 'Neustart',
+    einstellungen: 'Einstellungen',
+    beenden: 'Beenden',
+    aufgeben: 'Aufgeben',
+    aufgebenTitel: 'Duell aufgeben?',
+    aufgebenText: 'Dein Gegner gewinnt das Duell. Wirklich aufgeben?'
+  },
+
+  menue: {
+    hauptTitel: 'Hauptmenü',
+    spielenTitel: 'Spielen',
+    spielen: 'Spielen',
+    spielenUnter: 'Battle, Zeitangriff, Freies Fahren',
+    botBattle: 'Tandem-Battle',
+    botBattleUnter: 'Gegen Bots um Driftmünzen',
+    zeitangriff: 'Zeitangriff',
+    zeitangriffUnter: '3 Runden, Medaillen',
+    freiesFahren: 'Freies Fahren',
+    freiesFahrenUnter: 'Training ohne Druck',
+    online: 'Online-Duell',
+    onlineUnter: 'Per Code gegen Freunde',
+    garage: 'Garage',
+    garageUnter: 'Lack, Aufkleber, Teile, Tuning',
+    shop: 'Shop',
+    shopUnter: 'Autos und Teile kaufen',
+    einstellungen: 'Einstellungen',
+    vollbild: 'Vollbild'
+  },
+
+  wahl: {
+    zeitangriffTitel: 'Zeitangriff – Strecke wählen',
+    freiTitel: 'Freies Fahren – Strecke wählen',
+    schwierigkeit: 'Schwierigkeit {n} von 3',
+    laenge: '{m} m',
+    zonen: '{n} Drift-Zonen',
+    bestRunde: 'Beste Runde: {zeit} s',
+    bestPunkte: 'Bestwert: {n} Punkte',
+    sperreKuestenpass: 'Gewinne 3 Bot-Battles auf dem Industriehof',
+    sperreNeonhafen: 'Gewinne 3 Bot-Battles auf dem Küstenpass',
+    starten: 'Starten'
+  },
+
+  layout: {
+    titel: 'Tasten-Layout ({format})',
+    hoch: 'Hochformat',
+    quer: 'Querformat',
+    hinweis: 'Taste antippen und ziehen zum Verschieben. Mit − und + änderst du die Größe der ausgewählten Taste.',
+    standard: 'Standard'
+  },
+
+  fehlertexte: {
+    name_ungueltig: 'Ungültiger Name.',
+    name_zu_kurz: 'Der Name muss mindestens 2 Zeichen haben.',
+    name_zu_lang: 'Der Name darf höchstens 16 Zeichen haben.',
+    name_zeichen: 'Erlaubt sind Buchstaben, Zahlen, Leerzeichen und - _ .',
+    name_anstoessig: 'Dieser Name ist nicht erlaubt.',
+    kennzeichen_ungueltig: 'Ungültiges Kennzeichen.',
+    kennzeichen_leer: 'Das Kennzeichen darf nicht leer sein.',
+    kennzeichen_zu_lang: 'Das Kennzeichen darf höchstens 8 Zeichen haben.',
+    kennzeichen_zeichen: 'Erlaubt sind Großbuchstaben, Zahlen, Leerzeichen und Bindestrich.',
+    kennzeichen_anstoessig: 'Dieses Kennzeichen ist nicht erlaubt.',
+    text_ungueltig: 'Ungültiger Text.',
+    text_leer: 'Der Text darf nicht leer sein.',
+    text_zu_lang: 'Höchstens 16 Zeichen.',
+    text_zeichen: 'Dieses Zeichen ist nicht erlaubt.',
+    text_anstoessig: 'Dieser Text ist nicht erlaubt.'
+  },
+
+  einst: {
+    titel: 'Einstellungen',
+    reiter: {
+      grafik: 'Grafik',
+      audio: 'Audio',
+      steuerung: 'Steuerung',
+      assistenz: 'Assistenz',
+      zugang: 'Barrierefreiheit',
+      spieler: 'Spieler',
+      spielstand: 'Spielstand'
+    },
+    qualitaet: 'Grafikqualität',
+    qualitaetHinweis: '„Automatisch“ startet auf Mittel und passt die Stufe an die Leistung deines Geräts an.',
+    auto: 'Automatisch',
+    niedrig: 'Niedrig',
+    mittel: 'Mittel',
+    hoch: 'Hoch',
+    kamera: 'Kamera im Rennen',
+    fps: 'FPS anzeigen',
+    namensTag: 'Namensschild über dem Gegner',
+    master: 'Gesamtlautstärke',
+    effekte: 'Effekte',
+    musik: 'Musik',
+    musikAn: 'Hintergrundmusik',
+    touch: 'Touch-Steuerung',
+    touchModus: 'Lenken',
+    touchHinweis: 'Gilt auf Geräten mit Touchscreen.',
+    tasten: 'Pfeiltasten',
+    lenkrad: 'Lenkrad-Schieber',
+    neigung: 'Neigung',
+    neigungEmpfindlichkeit: 'Neigungs-Empfindlichkeit',
+    kalibrieren: 'Neigung kalibrieren',
+    kalibriert: 'Mittelstellung übernommen',
+    transparenz: 'Deckkraft der Tasten',
+    linkshaender: 'Linkshänder-Modus',
+    kupplungsKnopf: 'Kupplungs-Taste anzeigen',
+    vibration: 'Vibration',
+    vibrationHinweis: 'Nur auf Geräten, die Vibration unterstützen (nicht auf dem iPhone).',
+    layout: 'Tasten-Layout',
+    layoutBearbeiten: 'Bearbeiten',
+    pc: 'Tastatur',
+    getriebe: 'Getriebe',
+    getriebeHinweis: 'Manuell: E hoch, Q runter (nur Tastatur/Gamepad).',
+    automatik: 'Automatik',
+    manuell: 'Manuell',
+    tastenStandard: 'Tastenbelegung',
+    gamepadStandard: 'Gamepad-Belegung',
+    zuruecksetzen: 'Standard wiederherstellen',
+    tasteDruecken: 'Taste drücken …',
+    leertaste: 'Leertaste',
+    gamepad: 'Gamepad',
+    totzone: 'Totzone',
+    gamepadTaste: 'Taste {n}',
+    gamepadDruecken: 'Gamepad-Taste drücken …',
+    gegenlenken: 'Gegenlenk-Assistenz',
+    gegenlenkenHinweis: 'Hilft, den Wagen im Drift abzufangen. Driftet nie von allein.',
+    driftHalten: 'Drift-Haltehilfe',
+    driftHaltenHinweis: 'Kleine Gaskorrektur, die einen Drift hält. Standard: nur bei Touch.',
+    driftHaltenStaerke: 'Stärke der Haltehilfe',
+    nurTouch: 'Nur Touch',
+    schrift: 'Schriftgröße',
+    klein: 'Klein',
+    normal: 'Normal',
+    gross: 'Groß',
+    farbenblind: 'Farbenblind-Modus',
+    farbenblindHinweis: 'Zusätzliche Symbole und Muster statt nur Farben.',
+    reduziert: 'Reduzierte Effekte',
+    reduziertHinweis: 'Weniger Wackeln, Blitze und Zeitlupe. Folgt auch der Systemeinstellung „Bewegung reduzieren“.',
+    spielerName: 'Spielername',
+    spielerNameHinweis: 'Sichtbar für Online-Gegner. 2–16 Zeichen.',
+    nameGespeichert: 'Name gespeichert',
+    tutorial: 'Tutorial',
+    tutorialStarten: 'Tutorial wiederholen',
+    exportieren: 'Exportieren',
+    importieren: 'Importieren',
+    reset: 'Fortschritt zurücksetzen',
+    resetHinweis: 'Löscht Autos, Teile, Münzen und Fortschritt. Kann nicht rückgängig gemacht werden.',
+    resetKnopf: 'Zurücksetzen …',
+    resetTitel: 'Fortschritt zurücksetzen?',
+    resetText1: 'Alle Autos, Teile, Looks, Münzen und Freischaltungen gehen verloren.',
+    resetWeiter: 'Weiter',
+    resetTitel2: 'Wirklich alles löschen?',
+    resetText2: 'Letzte Sicherheitsabfrage: Dieser Schritt kann nicht rückgängig gemacht werden.',
+    resetEndgueltig: 'Endgültig löschen',
+    resetFertig: 'Fortschritt wurde zurückgesetzt.',
+    resetNichtImRennen: 'Das geht nur im Hauptmenü.'
   }
 };
 
