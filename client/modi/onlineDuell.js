@@ -9,7 +9,7 @@ import { Rundenzaehler } from '../../shared/rundenLogik.js';
 import { abstandsBewertung } from '../../shared/wertung.js';
 import { BotFahrer } from '../../shared/bots/botFahrer.js';
 import { botStufe } from '../../shared/bots/botStufen.js';
-import { FLAG, zustandPacken, zustandEntpacken } from '../../shared/netzwerkSchema.js';
+import { FLAG, mitResetZaehler, zustandPacken, zustandEntpacken } from '../../shared/netzwerkSchema.js';
 import { onlineErgebnisBuchen, statistikVerbuchen } from '../../shared/oekonomie.js';
 import { lokalesDatum } from '../../shared/tagesaufgaben.js';
 import { duellSitzung } from '../netz/duellSitzung.js';
@@ -112,6 +112,7 @@ export class OnlineDuell extends Rennen {
     this.interp.zuruecksetzen();
     const g = m.rolle === 'fuehrer' ? S.start.verfolger : S.start.fuehrer;
     this.gegnerAuto.fahrzeug.setzen(g.x, g.y, g.theta, 0);
+    this.vfx?.leeren();
     this.laeuftWertung = false;
     this.stand = { du: 0, gegner: 0, combo: 1, anteil: 0, rest: null };
     this.auslaufOhneEingabe = false;
@@ -133,7 +134,7 @@ export class OnlineDuell extends Rennen {
     super.schritt(dt);
     this._gegnerFuerKontakt();
     if (this.zustand === 'laeuft' || this.zustand === 'ziel') {
-      if (autoKontakt(this.spieler.fahrzeug, this.gegnerAuto.fahrzeug, { nurA: true })) this._kontakt = true;
+      autoKontakt(this.spieler.fahrzeug, this.gegnerAuto.fahrzeug, { nurA: true });
     }
     this.sendeAkku += dt;
     if (this.sendeAkku >= SENDEN_ALLE && this.zustand !== 'warten') {
@@ -155,10 +156,10 @@ export class OnlineDuell extends Rennen {
     const flags = (e.gas > 0.02 ? FLAG.GAS : 0)
       | (e.bremse > 0.02 ? FLAG.BREMSE : 0)
       | (e.handbremse ? FLAG.HANDBREMSE : 0)
-      | (Math.abs(e.lenken || 0) > 0.02 ? FLAG.LENKEN : 0)
-      | (sp.zurueckgesetzt ? FLAG.ZURUECKGESETZT : 0);
+      | (Math.abs(e.lenken || 0) > 0.02 ? FLAG.LENKEN : 0);
+    if (sp.zurueckgesetzt) this.resets = (this.resets || 0) + 1;
     sp.zurueckgesetzt = false;
-    this.netz.senden({ t: 'zustand', d: zustandPacken(++this.seq, sp.fahrzeug.momentaufnahme(), flags) });
+    this.netz.senden({ t: 'zustand', d: zustandPacken(++this.seq, sp.fahrzeug.momentaufnahme(), mitResetZaehler(flags, this.resets || 0)) });
   }
 
   /** Stand des Gegners zur Darstellungszeit (für Kontakt und Bot-Regler). */
@@ -189,6 +190,10 @@ export class OnlineDuell extends Rennen {
       z.radGeschwH = z.radGeschwV;
       z.bremsEff = a.flags & FLAG.BREMSE ? 1 : 0;
       z.handbremse = !!(a.flags & FLAG.HANDBREMSE);
+      // Für den Klang: Die Drehzahl des Gegners folgt grob dem Tempo
+      f._gasVorher = a.flags & FLAG.GAS ? 1 : 0;
+      z.drehzahl = f.p.leerlauf + Math.min(1, a.tempo / (f.p.hoechstKmhAuslegung / 3.6)) * 0.8 * (f.p.drehzahlMax - f.p.leerlauf);
+      z.schlupfNormH = Math.abs(Math.atan2(a.vy, Math.max(Math.abs(a.vx), 1))) / 0.14;
       return { x: a.x, y: a.y, theta: a.theta, vx: a.vx, vy: a.vy, tempo: a.tempo };
     }
     return { x: z.x, y: z.y, theta: z.theta, vx: 0, vy: 0, tempo: 0 };
@@ -258,6 +263,10 @@ export class OnlineDuell extends Rennen {
     if (m.dgNr <= (this.letztesDurchgangEnde || 0)) return; // nach einer Wiederverbindung erneut gesendet
     this.letztesDurchgangEnde = m.dgNr;
     this.laeuftWertung = false;
+    if (m.laufEnde && m.lauf && !m.lauf.gleichstand) {
+      const sieger = m.lauf.sieger === this.konfig.seite ? this.spieler : this.gegnerAuto;
+      this.rennKamera.kamerafahrt(() => sieger.darstellung, 2.2);
+    }
     this.zustand = 'ziel';
     const d = this.spiel.daten;
     statistikVerbuchen(d, m.wertung);

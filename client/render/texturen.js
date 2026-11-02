@@ -123,27 +123,6 @@ export function glowTextur() {
   return t;
 }
 
-/** Weiche Rauchwolke (Reifenqualm). */
-export function rauchTextur() {
-  if (cache.has('rauch')) return cache.get('rauch');
-  const g = 128;
-  const c = leinwand(g, g);
-  const ctx = c.getContext('2d');
-  const z = new Zufall('rauch');
-  for (let i = 0; i < 14; i++) {
-    const x = g / 2 + (z.naechste() - 0.5) * g * 0.35, y = g / 2 + (z.naechste() - 0.5) * g * 0.35;
-    const r = g * (0.2 + z.naechste() * 0.22);
-    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-    grad.addColorStop(0, 'rgba(255,255,255,0.35)');
-    grad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, g, g);
-  }
-  const t = alsTextur(c, { wiederholen: false, srgb: false });
-  cache.set('rauch', t);
-  return t;
-}
-
 /** Rot-weiße Randsteine (Curbs). */
 export function curbTextur(a = '#e8e8e8', b = '#d62a2a') {
   const schl = 'curb' + a + b;

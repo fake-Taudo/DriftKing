@@ -3,6 +3,7 @@
 // Die Eingaben kommen vom Autopiloten, der Rest ist der echte Client.
 // Geprüft: Lobby, Look-Sync, ganzes Duell, Belohnung, Revanche, Wiederverbindung, Aufgabe und Verbindungsverlust.
 // Aufruf: node scripts/onlineAblauf.js [ausgabeordner] [latenzMs=200] [verlustAnteil=0.05]   (Latenz je Richtung)
+// Mit GPU=1 läuft der Test auf der echten Grafikkarte (nötig, um den Anteil extrapolierter Bilder zu werten).
 // Mit KURZ=1 wird das erste Duell nach wenigen Sekunden aufgegeben (schneller Lauf für Abbruch und Revanche).
 // Vorher: npm run build
 import { chromium } from 'playwright-core';
@@ -94,7 +95,9 @@ const edge = 'C:/Program Files (x86)/Microsoft/EdgeCore';
 const browser = await chromium.launch({
   executablePath: `${edge}/${readdirSync(edge).sort().pop()}/msedge.exe`,
   headless: true,
-  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader']
+  args: process.env.GPU
+    ? ['--enable-gpu', '--ignore-gpu-blocklist', '--use-angle=d3d11', '--disable-background-timer-throttling', '--disable-renderer-backgrounding']
+    : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader']
 });
 async function spieler(name, kennung) {
   const k = await browser.newContext({ viewport: { width: 480, height: 270 }, serviceWorkers: 'block', userAgent: kennung });

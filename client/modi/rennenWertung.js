@@ -30,7 +30,10 @@ export function ereignisseAnzeigen(rennen, ereignisse) {
   for (const e of ereignisse) {
     if (e.art === 'zoneEnde' && e.punkte >= 0.5) hud.popup('+' + zahl(e.punkte, 1));
     else if (e.art === 'wand') hud.popup(t('wertung.wand', { n: e.abzug }), 'minus');
-    else if (e.art === 'kontakt') hud.popup(t('wertung.kontakt', { n: e.abzug }), 'minus');
+    else if (e.art === 'kontakt') {
+      hud.popup(t('wertung.kontakt', { n: e.abzug }), 'minus');
+      rennen.rennKamera?.stoss(0.45);
+    }
     else if (e.art === 'zuruecksetzen' && e.abzug) hud.popup(t('wertung.zurueckgesetzt', { n: e.abzug }), 'minus');
     else if (e.art === 'fluessig') hud.popup(t('wertung.fluessig', { n: zahl(e.bonus, 1) }), 'combo');
     else if (e.art === 'spin') hud.meldungZeigen(t('wertung.dreher'), 1.5, 'gefahr');

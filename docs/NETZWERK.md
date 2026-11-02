@@ -28,8 +28,8 @@ Verworfen wird ein Zustand, wenn:
 | Prüfung | Grenze |
 |---|---|
 | Höchsttempo | 1,7 × Höchstgeschwindigkeit des Autos (je Auto, unabhängig vom Tuning großzügig) |
-| Beschleunigung | über 45 m/s² + 3 m/s Spielraum |
-| Teleport | Weg größer als `max(v, vAlt) · dt · 1,6 + 4 m`, außer `ZURUECKGESETZT` ist gesetzt |
+| Beschleunigung | über 45 m/s² + 3 m/s Spielraum, außer nach dem Zurücksetzen |
+| Teleport | Weg größer als `max(v, vAlt) · dt · 1,6 + 4 m`, außer nach dem Zurücksetzen |
 | Streckenbegrenzung | über 40 m neben der Fahrbahn |
 | Reihenfolge | Sequenznummer nicht neuer als die letzte |
 
@@ -65,7 +65,9 @@ Kompaktes Zahlenfeld (JSON), je Nachricht rund 70 Bytes:
 | 3 | `theta` | rad | endlich |
 | 4, 5 | `vx`, `vy` | m/s im Fahrzeugsystem | endlich |
 | 6 | `r` | rad/s | endlich |
-| 7 | `flags` | Bits | 0–255: `GAS` 1, `BREMSE` 2, `HANDBREMSE` 4, `LENKEN` 8, `ZURUECKGESETZT` 16 |
+| 7 | `flags` | Bits | 0–255: `GAS` 1, `BREMSE` 2, `HANDBREMSE` 4, `LENKEN` 8; Bits 5–7: Zähler der Zurücksetzungen |
+
+Das Zurücksetzen steckt als Zähler in jedem Zustand. Ändert er sich, darf das Auto springen, und es fällt einmal der Abzug an. So geht die Information auch dann nicht verloren, wenn genau dieses Paket fehlt.
 
 Beispiel: `{"t":"zustand","d":[812,-41.207,18.553,1.204,21.31,-6.02,0.41,9]}`
 

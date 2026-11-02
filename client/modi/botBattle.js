@@ -24,6 +24,7 @@ const AUSLAUF = { lenken: 0, gas: 0, bremse: 0.35, handbremse: 0, kupplung: 0 };
 const AUSLAUF_BOT = { schritt: () => AUSLAUF };
 /** Sekunden nach dem Ende eines Durchgangs, bis der Zwischenstand erscheint (freier Auslauf). */
 const AUSLAUF_ZEIT = 2.2;
+const KNAPP_PUNKTE = 3; // Unterschied, ab dem ein Lauf als knapp gilt
 /** Notfall: Überfährt der Führer die Startlinie nicht, beginnt die Wertung nach dieser Zeit trotzdem. */
 const START_SPAETESTENS = 12;
 
@@ -69,6 +70,7 @@ export class BotBattle extends Rennen {
 
   /** Stellt beide Autos für den nächsten Durchgang auf und startet den Countdown. */
   _durchgangAufstellen() {
+    this.vfx?.leeren();
     const S = this.S;
     const d = this.ablauf.naechsterDurchgang();
     this.durchgang = d;
@@ -177,6 +179,13 @@ export class BotBattle extends Rennen {
     if (this.spielerFuehrt && fuehrerPunkte > PERFEKT_SCHWELLE && aF.wand === 0) {
       this.perfekt++;
       this.hud.popup(t('battle.perfekt'), 'combo');
+    }
+    // Großer Moment: Zeitlupe und Kamerafahrt um den Sieger des Laufs, bei knappem Ausgang langsamer
+    if (ergebnis.laufEnde && !ergebnis.lauf.ergebnis.gleichstand) {
+      const e = ergebnis.lauf.ergebnis;
+      const sieger = e.sieger === 'A' ? this.spieler : this.botAuto;
+      this.rennKamera.kamerafahrt(() => sieger.darstellung, AUSLAUF_ZEIT + 0.8);
+      this.zeitlupe(1.1, Math.abs(e.a.summe - e.b.summe) < KNAPP_PUNKTE ? 0.22 : 0.4);
     }
     this.letzter = { durchgang: this.durchgang, spielerFuehrt: this.spielerFuehrt, fuehrerPunkte, verfolgerPunkte, grund, ergebnis };
     this.hud.meldungZeigen(grund === 'zeit' ? t('rennen.zeitAbgelaufen') : t('battle.durchgangEnde'), AUSLAUF_ZEIT, grund === 'zeit' ? 'gefahr' : 'erfolg');

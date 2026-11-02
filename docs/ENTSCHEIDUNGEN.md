@@ -126,7 +126,33 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | N7 | **Tagesgrenzen im Arbeitsspeicher des Servers und zusätzlich im Spielstand.** | Der Server speichert laut Spezifikation nichts dauerhaft. Ein Neustart setzt seinen Zähler zurück, die Prüfung im Spielstand greift dann weiter. |
 | N8 | **Der Client bucht die Belohnung selbst**, der Server meldet nur den Betrag. | Spielstände liegen beim Spieler, ohne Konten. Doppelte Meldungen fängt `duellId` ab, und der Betrag ist beim Buchen gedeckelt. |
 | N9 | **Warnhinweis ab 180 ms Ping oder 25 % Bildern ohne aktuellen Zustand**, einmal je Duell. Im HUD zeigt ein farbiger Punkt die Güte. | Spieler sollen wissen, warum das Gegnerauto ruckelt, ohne im Duell dauernd gestört zu werden. |
+| N11 | **Zurücksetzen als Zähler in jedem Zustand** statt als einmaliges Flag, und danach keine Prüfung von Beschleunigung und Teleport. | Ein Zurücksetzen aus dem Stand (0 auf 6 m/s) galt sonst als unmöglich, nach wenigen Zurücksetzungen verlor der Spieler das Duell. Der Zähler übersteht auch den Verlust des Pakets. Das Zurücksetzen kostet Punkte, ein Missbrauch lohnt sich also nicht. |
 | N10 | **Der Gastgeber wählt nur Strecken, die beide freigeschaltet haben**, der Industriehof zählt immer dazu. | Sonst könnte es Duelle ohne gemeinsame Strecke geben. Die Freischaltungen meldet der Client, das Duell selbst bleibt fair, weil beide dieselbe Strecke fahren. |
+
+## Effekte
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| V1 | **Eigener Partikelschwarm mit Instancing**: ein Draw Call je Schwarm, Bewegung auf der CPU, Ausrichtung zur Kamera im Shader. Leere Schwärme kosten nichts. | Wenige hundert Partikel rechnet jedes Handy problemlos, die Daten bleiben einfach, und Größe und Farbe lassen sich pro Partikel führen. |
+| V2 | **Qualm, Funken und Backfire deckend statt additiv**, nur Regen und Faden sind additiv. Qualm bleibt unter der Bloom-Schwelle. | Additiv wurden Funken und Flammen auf hellem Beton rein weiß und verschwanden, weißer Qualm überstrahlte das Auto. |
+| V3 | **Qualm wird bei Schrittgeschwindigkeit ausgedünnt** (unter 9 m/s bis auf 30 %). | Beim Durchdrehen im Stand stand der Qualm sonst um das Auto und verdeckte es für die Verfolgerkamera. |
+| V4 | **Reifenspuren als Ringpuffer, Verblassen im Shader**, hochgeladen wird nur der geänderte Bereich. | Keine Arbeit pro Bild für alte Spuren und feste Speichergrenze: 400, 900 oder 1.800 Abschnitte je Stufe. |
+| V5 | **Tempolinien im Bildschirmraum, Vignette per CSS**, keine Nachbearbeitung. Vignette nicht auf „Niedrig“. | Die Spezifikation schließt teure Nachbearbeitung auf Handys aus. |
+| V6 | **Zeitlupe nur offline, online nur die Kamerafahrt.** Zeitlupe bei unter 3 Punkten Unterschied stärker. | Online läuft der andere Client weiter, eine Zeitlupe würde beide auseinanderlaufen lassen. |
+| V7 | **Funken am Unterboden als Näherung**: bei Tiefe ab 0,7 und starkem Nicken ab 8 m/s² Längsbeschleunigung. | Die Physik ist zweidimensional und kennt keinen Bodenkontakt. So wirkt ein tief gelegtes Auto trotzdem glaubhaft. |
+| V8 | **Wetter folgt der Kamera**: Staub, Gischt und Regen entstehen nur in deren Umgebung. Gischt kommt nicht von der Meerseite, sondern treibt mit dem Wind. | Ganze Strecken zu füllen kostet viel. Die Richtung fällt in der Fahrt kaum auf. |
+| V9 | **Online-Gegner: Schlupf und Drehzahl geschätzt** aus den übertragenen Geschwindigkeiten. | Das Protokoll bleibt klein. Qualm und Spuren brauchen nur die Richtung, und der Klang des Gegners ist leise. |
+| V10 | **Lichtkegel und Scheinwerfer blenden zum Rand aus** (eigener Shader). | Mit einfachem Material zeigten die Kegel von hinten harte Kanten wie durchsichtige Scheiben. |
+
+## Klang
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| A1 | **Klangrechnung getrennt von WebAudio** (`shared/klang.js`). | So lässt sich in `tests/audio.test.js` ohne Browser prüfen, dass der Motor auf Drehzahl und Last und die Reifen auf Schlupf reagieren. Die Messung im Browser macht `scripts/klangCheck.js`. |
+| A2 | **Gegnermotor vereinfacht** (2 statt 4 Oszillatoren, nach Abstand leiser), höchstens 10 Einzeltöne gleichzeitig. | Handy-Leistung, und im Tandem soll das eigene Auto klar zu hören sein. |
+| A3 | **Musik nur in den Menüs.** | Sie ist laut Spezifikation optional. Im Rennen sind Motor und Reifen die wichtigste Rückmeldung fürs Driften. |
+| A4 | **Klick-Ton global** per Ereignis auf Dokumentebene. | Kein Bildschirm kann ihn vergessen. |
+| A5 | **Der Serienauspuff blubbert leise, nur der Backfire-Auspuff knallt** und zeigt Flammen. | Der Kauf muss sich lohnen, Fehlzündungen gehören aber zum Fahrgefühl jedes Autos. |
 
 ## Betrieb
 

@@ -6,7 +6,7 @@ import { Wertung, verfolgerEndpunkte } from '../shared/wertung.js';
 import { Rundenzaehler } from '../shared/rundenLogik.js';
 import { autoDaten } from '../shared/autos.js';
 import { WERTUNG } from '../shared/wertungsParameter.js';
-import { FLAG, LUECKE_MS, AFK_MS, VORLAUF_MS, ZUSTAND_MS, ONLINE_SIEG, ONLINE_NIEDERLAGE, MIN_FAHRZEIT_S, MIN_FAHRZEIT_AUFGABE_S, zustandEntpacken } from '../shared/netzwerkSchema.js';
+import { EINGABE_FLAGS, resetZaehler, LUECKE_MS, AFK_MS, VORLAUF_MS, ZUSTAND_MS, ONLINE_SIEG, ONLINE_NIEDERLAGE, MIN_FAHRZEIT_S, MIN_FAHRZEIT_AUFGABE_S, zustandEntpacken } from '../shared/netzwerkSchema.js';
 
 const TICK_MS = 1000 / WERTUNG.tickRate;
 const anderer = (s) => (s === 'A' ? 'B' : 'A');
@@ -121,30 +121,33 @@ export class Match {
     const z = zustandEntpacken(d);
     const alt = this.zustaende[s];
     if (alt && z.seq <= alt.seq) return false; // verspätet oder doppelt
-    if (!this._plausibel(s, z, alt)) {
+    const reset = !!alt && resetZaehler(z.flags) !== resetZaehler(alt.flags);
+    if (!this._plausibel(s, z, alt, reset)) {
       if (++this.verstoesse[s] > MAX_VERSTOESSE) this.aufgabe(s, 'regelverstoss', jetzt);
       return false;
     }
-    if (z.flags & FLAG.ZURUECKGESETZT && this.laeuft) this.resetMerker[s] = true;
-    if ((z.flags & ~FLAG.ZURUECKGESETZT) !== 0) this.eingabeZeit[s] = jetzt;
+    if (reset && this.laeuft) this.resetMerker[s] = true;
+    if (z.flags & EINGABE_FLAGS) this.eingabeZeit[s] = jetzt;
     this.zustaende[s] = z;
     this.empfangZeit[s] = jetzt;
     this.senden(anderer(s), { t: 'gegner', d, s: jetzt });
     return true;
   }
 
-  /** Plausibilität: Höchsttempo je Auto, Beschleunigung, Teleport, Streckenbegrenzung. */
-  _plausibel(s, z, alt) {
+  /**
+   * Plausibilität: Höchsttempo je Auto, Beschleunigung, Teleport, Streckenbegrenzung.
+   * Nach dem Zurücksetzen entfallen Beschleunigung und Teleport: Das Auto steht an neuer Stelle und hat wieder Tempo.
+   */
+  _plausibel(s, z, alt, reset) {
     const v = Math.hypot(z.vx, z.vy);
     if (v > this.vMax[s]) return false;
     const p = this.S.projektion(z.x, z.y);
     if (Math.abs(p.quer) > this.S.proben[p.index].breite / 2 + RAND_TOLERANZ) return false;
-    if (!alt) return true;
+    if (!alt || reset) return true;
     const dt = Math.max(1, z.seq - alt.seq) * (ZUSTAND_MS / 1000);
     const vAlt = Math.hypot(alt.vx, alt.vy);
     if (v - vAlt > MAX_BESCHLEUNIGUNG * dt + 3) return false;
-    const reset = (z.flags & FLAG.ZURUECKGESETZT) !== 0;
-    if (!reset && Math.hypot(z.x - alt.x, z.y - alt.y) > Math.max(v, vAlt) * dt * 1.6 + 4) return false;
+    if (Math.hypot(z.x - alt.x, z.y - alt.y) > Math.max(v, vAlt) * dt * 1.6 + 4) return false;
     return true;
   }
 

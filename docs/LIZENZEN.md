@@ -30,4 +30,6 @@ Die SIL Open Font License erlaubt die Nutzung, Einbettung und Weitergabe der Sch
 - App-Icons (`client/public/icons/`): selbst gestaltet, erzeugt mit `scripts/icons.js`.
 - Aufkleber (`client/assets/aufkleber.js`): selbst gezeichnete SVG-Pfade.
 - Autos, Anbauteile, Felgen, Strecken: prozedural im Code erzeugt.
+- Klang und Musik (`client/audio/`): zur Laufzeit per WebAudio erzeugt, es gibt keine Audiodateien.
+- Effekte (`client/render/vfx/`): eigene Shader, keine Texturen von Dritten.
 - Erfundene „Sponsoren“: Fantasienamen und -logos ohne Ähnlichkeit zu echten Marken.

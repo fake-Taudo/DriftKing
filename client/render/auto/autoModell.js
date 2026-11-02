@@ -173,7 +173,34 @@ export class AutoModell {
     kegelGeo.translate(0, -4.5, 0);
     kegelGeo.rotateX(-Math.PI / 2);
     this.ressourcen.push(kegelGeo);
-    const kegelMat = new THREE.MeshBasicMaterial({ color: '#fff3d0', transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    // Blendet zum Rand und nach vorn aus: Von hinten gesehen zeigt der Kegel so keine harten Kanten
+    const kegelMat = new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vN;
+        varying vec3 vV;
+        varying float vY;
+        void main() {
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          vN = normalize(normalMatrix * normal);
+          vV = normalize(-mv.xyz);
+          vY = uv.y;
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        uniform vec3 uFarbe;
+        varying vec3 vN;
+        varying vec3 vV;
+        varying float vY;
+        void main() {
+          float kante = pow(abs(dot(normalize(vN), normalize(vV))), 2.6);
+          gl_FragColor = vec4(uFarbe, kante * vY * vY * 0.2);
+        }`,
+      uniforms: { uFarbe: { value: new THREE.Color('#fff3d0') } },
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
     this.kegelMat = kegelMat;
     this.kegel = [];
     for (const s of [1, -1]) {
@@ -271,7 +298,7 @@ export class AutoModell {
     this.glasMat.opacity = [0.62, 0.72, 0.8, 0.88, 0.95][look.scheiben] ?? 0.62;
     this.scheinwerferMat.color.set(look.scheinwerfer);
     this.scheinwerferMat.emissive.set(look.scheinwerfer);
-    this.kegelMat.color.set(look.scheinwerfer);
+    this.kegelMat.uniforms.uFarbe.value.set(look.scheinwerfer);
     this.ruecklichtMat.emissive.set(look.rueck);
     if (!alt || alt.rueckDesign !== look.rueckDesign) this._ruecklichterBauen(look.rueckDesign);
     if (!alt || alt.kennzeichen !== look.kennzeichen) {

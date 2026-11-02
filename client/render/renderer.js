@@ -91,7 +91,7 @@ export class Renderer {
       this.composer.setPixelRatio(this.pixelRatio);
       this.composer.setSize(this.breite, this.hoehe);
       this.composer.addPass(new RenderPass(szene, kamera));
-      this.bloomPass = new UnrealBloomPass(new THREE.Vector2(this.breite, this.hoehe), 0.55, 0.5, 0.82);
+      this.bloomPass = new UnrealBloomPass(new THREE.Vector2(this.breite, this.hoehe), 0.38, 0.5, 0.92);
       this.composer.addPass(this.bloomPass);
       this.composer.addPass(new OutputPass());
       this._bloomSzene = szene;

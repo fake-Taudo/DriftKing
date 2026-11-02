@@ -20,7 +20,7 @@ export async function botBattleWahl(menue, spiel, vorgabe = null) {
   }
   if (!w) return;
   const { BotBattle } = await import('./botBattle.js');
-  spiel.wechsleModus(new BotBattle({ ...w, spieler: aktivesAutoKonfig(spiel.daten) }));
+  spiel.wechsleModus(new BotBattle({ ...w, spieler: aktivesAutoKonfig(spiel.daten), autopilot: spiel.testAutopilot ?? undefined }));
 }
 
 export const MENUE_EINTRAEGE = {

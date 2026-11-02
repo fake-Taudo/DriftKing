@@ -39,7 +39,14 @@ export const MAX_BELOHNT_PRO_GEGNER = 3;
 
 // Fahrzustand (Feld d von `zustand` und `gegner`)
 export const ZUSTAND_FELDER = ['seq', 'x', 'y', 'theta', 'vx', 'vy', 'r', 'flags'];
-export const FLAG = { GAS: 1, BREMSE: 2, HANDBREMSE: 4, LENKEN: 8, ZURUECKGESETZT: 16 };
+export const FLAG = { GAS: 1, BREMSE: 2, HANDBREMSE: 4, LENKEN: 8 };
+export const EINGABE_FLAGS = 15; // alle Bits, die eine Eingabe des Spielers bedeuten (für die AFK-Erkennung)
+// Bits 5–7 zählen die Zurücksetzungen. Ein Zähler statt eines einmaligen Merkers: Jeder folgende Zustand trägt ihn
+// weiter, der Server erfährt also auch dann vom Zurücksetzen, wenn genau dieses Paket verloren geht.
+const RESET_BIT = 5;
+const RESET_MASKE = 7;
+export const resetZaehler = (flags) => (flags >> RESET_BIT) & RESET_MASKE;
+export const mitResetZaehler = (flags, zaehler) => flags | ((zaehler & RESET_MASKE) << RESET_BIT);
 
 const istObj = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const istZahl = (x) => typeof x === 'number' && Number.isFinite(x);

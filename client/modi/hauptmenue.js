@@ -56,6 +56,7 @@ export class Hauptmenue {
     licht.shadow.camera.left = licht.shadow.camera.bottom = -5;
     licht.shadow.camera.right = licht.shadow.camera.top = 5;
     this.szene.add(licht);
+    this.licht = licht;
     const pinkLicht = new THREE.PointLight('#ff3d6e', 30, 18);
     pinkLicht.position.set(-5, 3, -2);
     const tuerkisLicht = new THREE.PointLight('#2ee6ff', 30, 18);
@@ -201,6 +202,7 @@ export class Hauptmenue {
     this.ui.remove();
     if (this.auto) this.auto.freigeben();
     this._envZiel.dispose();
+    this.licht.shadow.map?.dispose(); // Die Schattenkarte bleibt sonst bei jedem Moduswechsel auf der Grafikkarte
     this.szene.traverse((o) => { if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); } });
     this.spiel.audio?.menueMusik?.(false);
   }

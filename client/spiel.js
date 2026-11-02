@@ -15,6 +15,7 @@ import { NetzClient } from './netz/netzClient.js';
 import { toast } from './ui/dom.js';
 import { t } from './i18n/de.js';
 import { AufgabenDienst } from './core/aufgaben.js';
+import { AudioSystem } from './audio/audio.js';
 import { KMH } from '../shared/mathe.js';
 
 export class Spiel {
@@ -45,6 +46,7 @@ export class Spiel {
     this.renderer = new Renderer({ container: document.getElementById('leinwand-container'), qualitaet: this.qualitaet, ereignisse: this.ereignisse });
     this.eingabe = new Eingabe({ uiWurzel: this.uiWurzel, ereignisse: this.ereignisse });
     this.netz = new NetzClient(this.ereignisse);
+    this.audio = new AudioSystem(this);
     this.debug = new DebugOverlay(this);
     this.einstellungenAnwenden();
 

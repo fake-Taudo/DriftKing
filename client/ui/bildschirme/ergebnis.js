@@ -40,6 +40,8 @@ export function ergebnisZeigen(spiel, o) {
     }, k.text));
   }
   spiel.overlay.appendChild(wurzel);
+  if (o.sieg === true) spiel.audio?.ton?.('sieg');
+  else if (o.sieg === false) spiel.audio?.ton?.('niederlage');
   // Zähl-Animation der Belohnung
   if (o.belohnung) {
     const start = performance.now();
@@ -52,6 +54,6 @@ export function ergebnisZeigen(spiel, o) {
     };
     requestAnimationFrame(schritt);
   }
-  setTimeout(() => knopfReihe.querySelector('.knopf')?.focus(), 50);
+  setTimeout(() => knopfReihe.querySelector('.knopf')?.focus({ preventScroll: true }), 50);
   return wurzel;
 }

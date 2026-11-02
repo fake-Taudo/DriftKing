@@ -14,6 +14,7 @@ const MODUS_WERTE = {
 };
 
 const ANTEIL_AUSRICHTUNG = 0.35;
+const FAHRT_RADIUS = 5.6; // m
 const TAU_RICHTUNG = 0.25;
 
 export class RennKamera {
@@ -44,6 +45,17 @@ export class RennKamera {
   seitenverhaeltnis(a) {
     this.kamera.aspect = a;
     this.kamera.updateProjectionMatrix();
+  }
+
+  /**
+   * Kamerafahrt um ein Auto, etwa den Sieger am Ende eines Laufs.
+   * @param {() => {x:number,y:number,theta:number}} ziel liefert die Lage des Autos
+   * @param {number} dauer Sekunden
+   */
+  kamerafahrt(ziel, dauer) {
+    if (this.reduziert || this.modus === 'haube') return;
+    const d = ziel();
+    this.fahrt = { ziel, rest: dauer, winkel: d.theta + Math.PI * 0.72 };
   }
 
   /** Stoß für Kamerawackeln (0..1). */
@@ -118,6 +130,23 @@ export class RennKamera {
       this._ziel.y += Math.sin(this._zeit * 41 + 1.3) * a * 0.7;
       this._ziel.z += Math.cos(this._zeit * 47) * a;
       this.wackeln *= Math.exp(-dt / 0.18);
+    }
+
+    if (this.fahrt) {
+      const fa = this.fahrt;
+      fa.rest -= dt;
+      fa.winkel += dt * 0.55;
+      const d = fa.ziel();
+      const cx = Math.cos(fa.winkel), cy = Math.sin(fa.winkel);
+      // Nicht durch Wände: Der Radius schrumpft notfalls
+      const t = gitter ? gitter.strahl(d.x, d.y, d.x + cx * FAHRT_RADIUS, d.y + cy * FAHRT_RADIUS) : 1;
+      const r = t < 1 ? Math.max(2.4, t * FAHRT_RADIUS - 0.5) : FAHRT_RADIUS;
+      this._ziel.set(d.x + cx * r, 1.45, -(d.y + cy * r));
+      this._blick.set(d.x, 0.7, -d.y);
+      if (fa.rest <= 0) {
+        this.fahrt = null;
+        this.erstesBild = true;
+      }
     }
 
     this.kamera.position.copy(this._ziel);

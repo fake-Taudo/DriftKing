@@ -11,7 +11,7 @@ import { BotFahrer } from '../shared/bots/botFahrer.js';
 import { botStufe } from '../shared/bots/botStufen.js';
 import { HaengerErkennung } from '../shared/physik/haenger.js';
 import { zuruecksetzPosition } from '../shared/rundenLogik.js';
-import { zustandPacken, FLAG, ONLINE_SIEG, ONLINE_NIEDERLAGE } from '../shared/netzwerkSchema.js';
+import { zustandPacken, FLAG, mitResetZaehler, ONLINE_SIEG, ONLINE_NIEDERLAGE } from '../shared/netzwerkSchema.js';
 import { Zufall } from '../shared/zufall.js';
 import { Interpolator } from '../shared/interpolator.js';
 
@@ -76,9 +76,10 @@ function duell({ format = 'schnell', seed = 1, latenz = 0, schwankung = 0, verlu
       if (t >= c.sendenBis) {
         c.sendenBis = t + 40;
         const e = c.letzte || {};
-        const flags = (e.gas > 0.02 ? FLAG.GAS : 0) | (e.bremse > 0.02 ? FLAG.BREMSE : 0) | (e.handbremse ? FLAG.HANDBREMSE : 0) | (Math.abs(e.lenken || 0) > 0.02 ? FLAG.LENKEN : 0) | (c.reset ? FLAG.ZURUECKGESETZT : 0);
+        const flags = (e.gas > 0.02 ? FLAG.GAS : 0) | (e.bremse > 0.02 ? FLAG.BREMSE : 0) | (e.handbremse ? FLAG.HANDBREMSE : 0) | (Math.abs(e.lenken || 0) > 0.02 ? FLAG.LENKEN : 0);
+        if (c.reset) c.resets = (c.resets || 0) + 1;
         c.reset = false;
-        const d = zustandPacken(++c.seq, c.f.momentaufnahme(), flags);
+        const d = zustandPacken(++c.seq, c.f.momentaufnahme(), mitResetZaehler(flags, c.resets || 0));
         if (!z.chance(verlust)) unterwegs.push({ an: t + latenz + z.bereich(0, schwankung), s, d });
       }
     }
@@ -167,10 +168,57 @@ test('Plausibilität: Teleport, Überschall und Sprung ins Gelände werden verwo
   assert.equal(m.zustandEmpfangen('A', packen(2, { x: st.x + 200 }), 140), false, 'Teleport');
   assert.equal(m.zustandEmpfangen('A', packen(3, { vx: 500 }), 180), false, 'zu schnell');
   assert.equal(m.zustandEmpfangen('A', packen(4, { vx: 60 }), 220), false, 'unmögliche Beschleunigung');
-  assert.equal(m.zustandEmpfangen('A', packen(5, { x: 99999, y: 99999, flags: FLAG.ZURUECKGESETZT }), 260), false, 'weit neben der Strecke');
+  assert.equal(m.zustandEmpfangen('A', packen(5, { x: 99999, y: 99999, flags: mitResetZaehler(FLAG.GAS, 1) }), 260), false, 'weit neben der Strecke, auch beim Zurücksetzen');
   assert.equal(weitergeleitet(), 1);
-  assert.equal(m.zustandEmpfangen('A', packen(6, { x: st.x + 30, flags: FLAG.ZURUECKGESETZT }), 300), true, 'Zurücksetzen darf springen');
+  assert.equal(m.zustandEmpfangen('A', packen(6, { x: st.x + 30, flags: mitResetZaehler(FLAG.GAS, 1) }), 300), true, 'Zurücksetzen darf springen');
   assert.equal(m.zustandEmpfangen('A', packen(6, { x: st.x + 30 }), 340), false, 'verspätete Sequenz');
+});
+
+test('Zurücksetzen aus dem Stand ist kein Regelverstoß, auch nicht mehrfach und nicht bei Paketverlust', () => {
+  const { m, ende } = leeresMatch();
+  const start = m.startZeit;
+  m.tick(start);
+  let seq = 0, t = start;
+  const senden = (o) => {
+    t += 40;
+    return m.zustandEmpfangen('A', packen(++seq, o), t);
+  };
+  senden({ vx: 0 });
+  for (let i = 1; i <= 8; i++) {
+    // Das Auto steckt fest, wird versetzt und hat sofort wieder 6 m/s (wie spielerZuruecksetzen)
+    // Zwischen zwei Punkten auf der Strecke: Der Sprung von 25 m wäre ohne Zurücksetzen ein Teleport
+    const x0 = st.x + (i % 2) * 25;
+    const flags = mitResetZaehler(FLAG.GAS, i);
+    assert.equal(senden({ x: x0, vx: 6, flags }), true, `Zurücksetzen ${i} wird angenommen`);
+    for (let k = 0; k < 5; k++) senden({ x: x0 + (k + 1) * 0.24, vx: 6, flags });
+    senden({ x: x0 + 1.3, vx: 0, flags });
+  }
+  assert.equal(m.verstoesse.A, 0, 'keine Verstöße');
+  assert.equal(ende(), null, 'Das Duell läuft weiter');
+
+  // Das Paket mit dem Sprung geht verloren: Das nächste trägt den Zähler weiter
+  const b = leeresMatch();
+  assert.equal(b.m.zustandEmpfangen('A', packen(1, { vx: 0 }), 100), true);
+  assert.equal(b.m.zustandEmpfangen('A', packen(3, { x: st.x + 40, vx: 6, flags: mitResetZaehler(FLAG.GAS, 1) }), 180), true, 'Folgepaket genügt');
+  assert.equal(b.m.verstoesse.A, 0);
+  // Ohne geänderten Zähler bleibt derselbe Sprung verboten
+  assert.equal(b.m.zustandEmpfangen('A', packen(4, { x: st.x + 90, vx: 6, flags: mitResetZaehler(FLAG.GAS, 1) }), 220), false);
+});
+
+test('Der Abzug fürs Zurücksetzen fällt genau einmal an, und der Zähler allein ist keine Eingabe', () => {
+  const { m } = leeresMatch();
+  m.tick(m.startZeit);
+  m.zustandEmpfangen('A', packen(1), m.startZeit + 40);
+  m.laeuft = true;
+  assert.equal(m.resetMerker.A, false);
+  m.zustandEmpfangen('A', packen(2, { x: st.x + 30, flags: mitResetZaehler(FLAG.GAS, 1) }), m.startZeit + 80);
+  assert.equal(m.resetMerker.A, true);
+  m.resetMerker.A = false;
+  m.zustandEmpfangen('A', packen(3, { x: st.x + 30.3, flags: mitResetZaehler(FLAG.GAS, 1) }), m.startZeit + 120);
+  assert.equal(m.resetMerker.A, false, 'Gleicher Zähler: kein zweiter Abzug');
+  const vorher = m.eingabeZeit.A;
+  m.zustandEmpfangen('A', packen(4, { x: st.x + 30.6, flags: mitResetZaehler(0, 1) }), m.startZeit + 160);
+  assert.equal(m.eingabeZeit.A, vorher, 'Nur der Zähler zählt nicht als Eingabe');
 });
 
 test('Dauerhafter Regelverstoß verliert das Duell', () => {

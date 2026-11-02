@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 8 – VFX, Audio, UI-Politur
+**Aktuelle Phase:** 9 – Abschluss und Deploy
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -74,19 +74,28 @@ Gebaut: Shop (`client/modi/shop.js`, `client/ui/shop/shopUi.js`) mit 9 Kategorie
 - [x] Fuzz- und Rate-Limit-Tests bringen den Server nicht zum Absturz (`tests/netzwerk.test.js`)
 - [x] Belohnung nur nach regulärem Ende, Tageslimits greifen (`tests/match.test.js`, `tests/oekonomie.test.js`, im Browser Münze für Münze nachgerechnet)
 
-Gebaut: Protokoll mit strenger Prüfung (`shared/netzwerkSchema.js`, dokumentiert in `docs/NETZWERK.md`), Lobby und Codes (`server/lobbys.js`), Duell-Ablauf mit serverseitiger Wertung, Plausibilität, AFK und Rollentausch (`server/match.js`), Interpolation (`shared/interpolator.js`), Sitzung mit Wiederverbindung (`client/netz/duellSitzung.js`), Lobby-Bildschirm (`client/ui/bildschirme/onlineLobby.js`), Duell-Modus (`client/modi/onlineDuell.js`), Ping und Verbindungsqualität im HUD. Tests: 164 (162 bestanden, 2 als bekannte Punkte markiert).
+Gebaut: Protokoll mit strenger Prüfung (`shared/netzwerkSchema.js`, dokumentiert in `docs/NETZWERK.md`), Lobby und Codes (`server/lobbys.js`), Duell-Ablauf mit serverseitiger Wertung, Plausibilität, AFK und Rollentausch (`server/match.js`), Interpolation (`shared/interpolator.js`), Sitzung mit Wiederverbindung (`client/netz/duellSitzung.js`), Lobby-Bildschirm (`client/ui/bildschirme/onlineLobby.js`), Duell-Modus (`client/modi/onlineDuell.js`), Ping und Verbindungsqualität im HUD. Tests zum Abschluss der Phase: 164 (162 bestanden, 2 als bekannte Punkte markiert).
 
 Beim Testen gefunden und behoben: dauernde Extrapolation bei hoher Latenz (N5), verlorene Nachrichten nach einem Abriss (N6), 90 s statt 15 s Wartezeit beim Wiederverbinden, „null“ als Text in der Lobby, Versprechen der halben Belohnung trotz zu kurzer Fahrzeit.
 
-**Ehrlich zur Messung:** Im Software-Rendering liefen die beiden Fenster nur mit etwa 7 FPS. Sprünge lassen sich so prüfen, den Anteil extrapolierter Bilder aber nicht verlässlich (Nachrichten kommen gebündelt an), deshalb ist er per Simulation belegt. Ein Duell mit echten Geräten und einem echten Mitspieler steht im manuellen Testplan.
+Nachtrag aus Phase 8: Der Lauf mit echter GPU (165 FPS statt 7 FPS im Software-Rendering) deckte einen weiteren Fehler auf. Ein Zurücksetzen aus dem Stand galt als unmögliche Beschleunigung, nach wenigen Zurücksetzungen verlor der Spieler das Duell wegen „unplausibler Fahrdaten“ (N11). Im selben Lauf gemessen: 0,8 % extrapolierte Bilder bei 200 ms je Richtung und 5 % Paketverlust. Ein Duell mit echten Geräten und einem echten Mitspieler steht im manuellen Testplan.
+
+## Phase 8: VFX, Audio, UI-Politur – ✅ abgeschlossen
+
+- [x] Effekte skalieren mit der Qualitätsstufe, Performance-Ziele bleiben erreicht (`tests/vfx.test.js`; `docs/PERFORMANCE.md`: mindestens 125 FPS bei 4× Drosselung, höchstens 94 Draw Calls)
+- [x] Audio reagiert auf Drehzahl, Last und Schlupf, jedes Auto klingt anders (`tests/audio.test.js`; `scripts/klangCheck.js` misst im Browser: Leerlauf bis Vollgas fünffacher Pegel, Klangschwerpunkt der Autos 1.606–2.531 Hz, kein Übersteuern). Ob es **glaubhaft** klingt, kann nur ein Ohr entscheiden: Das steht im manuellen Testplan
+- [x] Alle Bildschirme sind in allen Seitenverhältnissen sauber (`scripts/uiAblauf.js`: 7 Größen von 360×640 bis 1920×1080, prüft Überstand, abgeschnittene Knöpfe und HUD-Überlappungen, plus Sichtprüfung der Fotos)
+- [x] Farbenblind-Modus und reduzierte Effekte funktionieren (`scripts/uiAblauf.js`, `tests/vfx.test.js`: keine Tempolinien, Vignette, Zeitlupe, Kamerafahrt oder Wackeln; Abstand auch als Symbol)
+
+Gebaut: Partikel mit Instancing (`client/render/vfx/partikel.js`), Reifenspuren als Ringpuffer (`reifenspuren.js`), Tempolinien und Leuchtfaden (`bildEffekte.js`), Qualm in Garagenfarbe samt Regenbogen, Funken, Backfire, Staub, Gischt, Regen mit Lichtkegeln (`rennVfx.js`), Zeitlupe und Kamerafahrt am Laufende, prozeduraler Klang (`client/audio/`, `shared/klang.js`), Menümusik, HUD für große Bildschirme, kompaktes HUD im Hochformat.
+
+Beim Prüfen gefunden und behoben: Speicherleck der Menü-Schattenkarte (2 Texturen je Moduswechsel), Shader-Fehler am Leuchtfaden, Punktefeld im Hochformat genau über dem Vordermann (`left: 50%` halbierte die Breite), unerreichbare Menüpunkte und ein aus dem Bild ragender Knopf auf 360×640, Ergebnisbildschirm scrollte ans Ende, zu starker Bloom, harte Kanten an den Scheinwerferkegeln, Leuchtfaden als breiter Streifen vor der Kamera.
 
 ## Offen / bekannte Probleme
 
 - Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test).
-- Qualmfarbe und Backfire sind schon wählbar, die Effekte selbst kommen in Phase 8.
-- HUD-Größen sind in px; auf sehr großen Fenstern wirkt das HUD klein (Politur in Phase 8).
 - Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister unter Ziel (siehe `docs/WERTUNG.md`, Entscheidung B5).
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8, N1–N10).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8, N1–N11, V1–V10, A1–A5).

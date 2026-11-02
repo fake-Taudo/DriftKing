@@ -50,8 +50,23 @@
 @media (orientation: portrait) {
   .menue-bildschirm { background: linear-gradient(180deg, rgba(11, 14, 28, 0.3) 0%, rgba(11, 14, 28, 0) 30%, rgba(11, 14, 28, 0.9) 58%); }
   .menue-inhalt { flex-direction: column-reverse; justify-content: flex-end; align-items: stretch; }
-  .menue-spalte { width: 100%; margin-top: auto; }
+  .menue-spalte { width: 100%; margin-top: auto; min-height: 0; }
+  .menue-liste { overflow-y: auto; min-height: 0; }
   .menue-auto-info { align-self: center; margin: 37vh 0 0; }
+  /* Schmale Handys: Logo, Münzen und Vollbild-Knopf passen in eine Zeile */
+  .menue-kopf { gap: 6px; align-items: center; }
+  .menue-logo { font-size: clamp(1.45rem, 7vw, 3rem); min-width: 0; }
+  .menue-kopf-rechts { gap: 6px; flex: none; }
+  .menue-muenzen { padding: 5px 10px; font-size: 0.95rem; }
+  .menue-kopf .knopf.rund { width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
+}
+/* Kleine Handys im Hochformat: Alle Menüpunkte bleiben ohne Scrollen erreichbar */
+@media (orientation: portrait) and (max-height: 760px) {
+  .menue-knopf { padding: 0.45em 1em; font-size: 1.05rem; }
+  .menue-knopf-unter { font-size: 0.72rem; }
+  .menue-liste, .menue-spalte { gap: 5px; }
+  .menue-titel { font-size: 0.9rem; }
+  .menue-auto-info { margin-top: 33vh; font-size: 1.2rem; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
   .menue-knopf { padding: 0.45em 1em; font-size: 1.05rem; }
@@ -306,3 +321,7 @@ html.farbenblind .schalter.an span::after { content: '✓'; color: #062614; font
   .battle-wahl-panel { gap: 8px; }
   .battle-vorschau-info { margin-bottom: 2vh; }
 }
+
+/* Große Schrift oder sehr kleine Bildschirme: Die Liste scrollt, statt aus dem Bild zu ragen */
+.menue-spalte { min-height: 0; max-height: 100%; }
+.menue-liste { overflow-y: auto; min-height: 0; padding-right: 6px; } /* Platz für den Versatz beim Fokus */

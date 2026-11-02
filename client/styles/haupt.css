@@ -111,6 +111,9 @@ html, body {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* clip statt hidden: Auch der Fokus auf ein tiefes Element darf den Bildschirm nicht verschieben */
+  overflow: hidden;
+  overflow: clip;
 }
 #ui > *, #overlay > * { pointer-events: auto; }
 #overlay { z-index: 50; }

@@ -13,6 +13,7 @@ import { RennKamera } from '../render/kamera.js';
 import { Umgebung } from '../render/umgebung.js';
 import { StreckeModell } from '../render/strecke/streckeModell.js';
 import { AutoModell } from '../render/auto/autoModell.js';
+import { RennVfx } from '../render/vfx/rennVfx.js';
 import { winkelLerp } from '../render/koordinaten.js';
 import { Hud } from '../ui/hud.js';
 import { Minimap } from '../ui/minimap.js';
@@ -78,6 +79,7 @@ export class Rennen {
     this.nacht = S.def.tageszeit === 'Nacht';
 
     this.aufstellen();
+    this.vfx = new RennVfx(this);
 
     this.minimap = new Minimap(S, 150);
     this.hud = new Hud(spiel.uiWurzel, {
@@ -148,6 +150,7 @@ export class Rennen {
     this.bestRunde = null;
     this.rennKamera.erstesBild = true;
     this.hud.countdownZeigen('');
+    this.vfx?.leeren();
   }
 
   /** Ende des Countdowns: fliegender Start. */
@@ -205,11 +208,20 @@ export class Rennen {
   _qualitaet(q) {
     this.umgebung.qualitaet(q);
     for (const a of this.autos) a.modell.qualitaet(q);
+    this.vfx?.einstellungenNeu();
+  }
+
+  /** Kurze Zeitlupe für große Momente: nie online und nicht bei reduzierten Effekten. */
+  zeitlupe(dauer, faktor) {
+    if (this.art === 'online' || this.spiel.wenigerEffekte) return;
+    this._zeitlupeBis = performance.now() / 1000 + dauer;
+    this.spiel.schleife.zeitFaktor = faktor;
   }
 
   _einstellungenNeu() {
     const e = this.spiel.daten.einstellungen;
     this.rennKamera.reduziert = this.spiel.wenigerEffekte;
+    this.vfx?.einstellungenNeu();
     Object.assign(this.spieler.fahrzeug.assistenz, this._assistenz());
     void e;
   }
@@ -261,12 +273,11 @@ export class Rennen {
       a.fahrzeug.schritt(e, dt, this.S.gitter);
     }
     // Weiche Auto-Auto-Kollision (lokal simulierte Autos)
-    this._kontakt = false;
     for (let i = 0; i < this.autos.length; i++) {
       for (let j = i + 1; j < this.autos.length; j++) {
         const a = this.autos[i], b = this.autos[j];
         if (a.netz || b.netz) continue;
-        if (autoKontakt(a.fahrzeug, b.fahrzeug)) this._kontakt = true;
+        autoKontakt(a.fahrzeug, b.fahrzeug);
       }
     }
     // Rundenlogik, Hänger, Ereignisse
@@ -312,6 +323,7 @@ export class Rennen {
   rundenEreignis(a, ev) {
     if (a !== this.spieler) return;
     if (ev.art === 'falschrum') this.hud.meldungZeigen(t('rennen.falschrum'), 2.5, 'gefahr');
+    if (ev.art === 'runde') this.spiel.audio?.ton?.('runde');
     if (ev.art === 'runde' && ev.zeit) {
       const neu = this.bestRunde === null || ev.zeit < this.bestRunde;
       if (neu) this.bestRunde = ev.zeit;
@@ -344,6 +356,10 @@ export class Rennen {
       if (ak === 'runter') this._aktionen.runter = true;
     }
     const zeit = performance.now() / 1000;
+    if (this._zeitlupeBis && zeit >= this._zeitlupeBis) {
+      this._zeitlupeBis = 0;
+      this.spiel.schleife.zeitFaktor = 1;
+    }
     for (const a of this.autos) {
       const d = a.netz ? a.netzDarstellung(alpha) : interpoliert(a.fahrzeug, this.pausiert ? 1 : alpha, a.darstellung);
       a.darstellung = d;
@@ -382,7 +398,7 @@ export class Rennen {
     this.hud.fpsAnzeigen(this.spiel.daten.einstellungen.anzeige.fps ? this.spiel.schleife.fps : null);
     this.hud.frame(frameDt);
     this.minimap.zeichnen(this.autos.map((a) => ({ x: a.darstellung.x, y: a.darstellung.y, theta: a.darstellung.theta, farbe: a.farbe })));
-    this.audioFrame?.(frameDt);
+    this.spiel.audio?.fahrt?.(this.autos, sp, this.letzteEingabe?.gas ?? 0);
     this.vfx?.frame?.(frameDt, this);
   }
 

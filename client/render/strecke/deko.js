@@ -32,6 +32,35 @@ function faerben(geo, farbe) {
   return k;
 }
 
+/** Lichtkegel ohne harte Kanten: blendet zum Rand und nach unten aus. */
+function lichtkegelMaterial() {
+  return new THREE.ShaderMaterial({
+    vertexShader: `
+      varying vec3 vN;
+      varying vec3 vV;
+      varying float vY;
+      void main() {
+        vec4 mv = viewMatrix * modelMatrix * instanceMatrix * vec4(position, 1.0);
+        vN = normalize(mat3(viewMatrix) * mat3(modelMatrix) * mat3(instanceMatrix) * normal);
+        vV = normalize(-mv.xyz);
+        vY = uv.y;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      varying vec3 vN;
+      varying vec3 vV;
+      varying float vY;
+      void main() {
+        float kante = pow(abs(dot(normalize(vN), normalize(vV))), 2.2);
+        gl_FragColor = vec4(vec3(1.0, 0.86, 0.66), kante * vY * vY * 0.22);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending
+  });
+}
+
 export function baueDeko(S, dichte, modell) {
   const def = S.def;
   const d = def.deko || {};
@@ -136,6 +165,15 @@ export function baueDeko(S, dichte, modell) {
       hof.rotateX(-Math.PI / 2);
       const m = instanziert(hof, new THREE.MeshBasicMaterial({ map: glowTextur(), color: '#ffd9a0', transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }), liste.map(([x, y, w]) => [x + Math.cos(-w) * 0.55, y - Math.sin(-w) * 0.55, 0]), { hoehe: () => 0.03 });
       if (m) m.renderOrder = 1;
+      // Lichtkegel: nach unten auslaufend, im Regen sichtbar
+      const kegel = new THREE.ConeGeometry(2.8, 7.6, 20, 1, true);
+      kegel.translate(0.55, 3.9, 0);
+      const km = instanziert(kegel, lichtkegelMaterial(), liste.map(([x, y, w]) => [x, y, -w]));
+      if (km) {
+        km.renderOrder = 3;
+        km.castShadow = false;
+        km.receiveShadow = false;
+      }
     }
   }
   // Hallen

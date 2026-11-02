@@ -14,6 +14,8 @@ export function layoutEditor(spiel) {
     const war = touch.sichtbar;
     touch.zeigen(true);
     touch.wurzel.classList.add('bearbeiten');
+    const hinten = spiel.modus?.ui;
+    if (hinten) hinten.style.visibility = 'hidden';
 
     const groesseText = h('span.zahl');
     const leiste = h('div.layout-leiste.panel',
@@ -92,6 +94,7 @@ export function layoutEditor(spiel) {
       spiel.einstellungenAnwenden();
       touch.zeigen(war);
       wurzel.remove();
+      if (hinten) hinten.style.visibility = '';
       aufloesen(speichern);
     }
     anwenden();

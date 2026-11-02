@@ -113,6 +113,41 @@ try {
     });
     speicher.push({ i: i + 1, strecke, ...m });
   }
+
+  // Speicher bei wiederholtem Moduswechsel über das Hauptmenü. Hier nur locator(), nie waitForSelector():
+  // Dessen Element-Handles hielten sonst alte Modi samt Szene im Speicher, die Messung zeigte ein falsches Leck.
+  const kontext2 = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const seite2 = await kontext2.newPage();
+  const cdp2 = await kontext2.newCDPSession(seite2);
+  await seite2.goto(`http://127.0.0.1:${PORT}/`);
+  await seite2.locator('.menue-knopf').first().waitFor({ timeout: 60000 });
+  await warte(500);
+  const willkommen = seite2.locator('.dialog-hintergrund .knopf', { hasText: 'Überspringen' });
+  if (await willkommen.count()) await willkommen.click();
+  await seite2.evaluate(() => {
+    const sp = window.__driftkoenig;
+    window.__modi = [];
+    const wechsel = sp.wechsleModus.bind(sp);
+    sp.wechsleModus = (neu, p) => { window.__modi.push(new WeakRef(neu)); return wechsel(neu, p); };
+  });
+  const modusWechsel = [];
+  for (let runde = 1; runde <= 5; runde++) {
+    for (const [ziel, warteAuf] of [['Garage', '.garage'], ['Shop', '.shop-liste']]) {
+      await seite2.getByText(ziel, { exact: true }).click();
+      await seite2.locator(warteAuf).first().waitFor({ timeout: 60000 });
+      await warte(400);
+      await seite2.locator('[aria-label="Zurück"]').first().click();
+      await seite2.locator('.menue-knopf').first().waitFor({ timeout: 30000 });
+    }
+    await warte(300);
+    await cdp2.send('HeapProfiler.collectGarbage');
+    await cdp2.send('HeapProfiler.collectGarbage');
+    modusWechsel.push(await seite2.evaluate(() => ({
+      texturen: window.__driftkoenig.renderer.renderer.info.memory.textures,
+      heapMB: performance.memory.usedJSHeapSize / 1048576,
+      lebendeModi: window.__modi.filter((r) => r.deref()).length
+    })));
+  }
   await browser.close();
 
   console.log(`GPU: ${ergebnisse[0]?.gpu}\n`);
@@ -122,6 +157,9 @@ try {
   console.log('\n| Wechsel | Strecke | Geometrien | Texturen | JS-Heap (MB) |');
   console.log('|---|---|---|---|---|');
   for (const s of speicher) console.log(`| ${s.i} | ${s.strecke} | ${s.geometrien} | ${s.texturen} | ${s.heapMB?.toFixed(1)} |`);
+  console.log('\n| Runde (Menü → Garage → Menü → Shop → Menü) | Texturen | JS-Heap (MB) | Lebende Modi |');
+  console.log('|---|---|---|---|');
+  for (const [i, s] of modusWechsel.entries()) console.log(`| ${i + 1} | ${s.texturen} | ${s.heapMB.toFixed(1)} | ${s.lebendeModi} |`);
 } finally {
   server.kill();
 }
