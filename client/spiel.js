@@ -77,7 +77,8 @@ export class Spiel {
     pwaStarten();
     homeBildschirmHinweis();
     this.schleife.start();
-    await this.wechsleModus(startModus);
+    const modus = typeof startModus === 'function' ? await startModus() : startModus;
+    await this.wechsleModus(modus);
   }
 
   /** Wendet die gespeicherten Einstellungen auf alle Systeme an. */

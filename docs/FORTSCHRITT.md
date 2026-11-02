@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 3 – Autos, Strecken, Rendering
+**Aktuelle Phase:** 4 – Wertung und Tandem-Battle gegen Bots
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -22,21 +22,21 @@
 
 Gebaut: `shared/physik/fahrzeug.js` (Einspurmodell, Lastverlagerung, Pacejka vorne, Hinterachse mit Raddrehzahl-Zustand, Kamm'scher Kreis, Sperre, Turbo, Kupplungstritt, Rückwärtsgang, Automatik/manuell, Wandkollision mit Impuls, weiche Auto-Auto-Kollision), `kollision.js` (Uniform Grid, Kreise, OBB, Strahl für Kamera), `haenger.js`, `messung.js` (0–100, Vmax, Wendekreis, Bremsweg, Driftwinkel, Driftstabilität), `tuning.js`, `leistungsindex.js`; Client: Verfolgerkamera mit Drift-Verhalten und 4 Modi, Umgebung (Himmel-Shader, Env-Map, mitwandernde Shadow-Map), prozedurale Texturen, Testfahrt-Modus mit Autowahl.
 
-## Phase 3: Autos, Strecken, Rendering – 🚧 in Arbeit (Zwischenstand committet)
+## Phase 3: Autos, Strecken, Rendering – ✅ abgeschlossen
 
-Fertig:
-- Streckenbau (`shared/strecken/streckenBau.js`): Segmente → Spline, Ränder, Wände, Kollisionsraster, Ideallinie (Minimal-Krümmung), Zielgeschwindigkeit, Drift-Zonen, Checkpoints, Startaufstellung. Werkzeuge: `scripts/streckenVorschau.js`, `scripts/streckenPosen.js`.
-- 3 Strecken: Industriehof (893 m, 6 Zonen), Küstenpass (1568 m, 9 Zonen), Neon-Hafen (1264 m, 8 Zonen) – geschlossen, ohne Überschneidung.
-- Grip-Bots fahren mit allen 6 Autos auf allen 3 Strecken eine komplette Runde ohne Wandkontakt/Reset (`node scripts/botTest.js grip`).
-- Automodelle: Karosserie-Loft mit Radhäusern, Kabine, Säulen, Zonen-UVs, Anker; Räder (12 Felgen, instanziert, Unschärfe), Anbauteile (alle Slots/Varianten, Neon), Lichter, Innenraum, Kennzeichen, Blob-Schatten. Im Browser geprüft.
-- Strecken-Renderer + Deko, Rundenlogik (`shared/rundenLogik.js`), Bot-Fahrer (Grip + Drift, Drift noch abzustimmen), Rennmodus-Basis, Freies Fahren, Zeitangriff (Rundenzeiten), HUD, Minimap, Pause, Ergebnis, Hauptmenü, Streckenwahl, Einstellungen, Layout-Editor, Ladebildschirm.
+- [x] Alle 6 Autos fahren sich spürbar unterschiedlich, Messwerte liegen im Rahmen von Abschnitt 4 (, Tests ±15 % für 0–100 und Vmax)
+- [x] Alle 3 Strecken komplett befahrbar ohne Steckenbleiben (: jedes Auto fährt jede Strecke ohne Reset; keine Überschneidungen; Kamera mit Wand-Strahltest gegen Clipping)
+- [x] 60 FPS Desktop, ≥ 30 FPS bei 4× CPU-Drosselung (: 138–165 FPS bei 4×, 57–95 FPS bei 6×, max. 73 Draw Calls)
+- [x] Kein Speicheranstieg bei wiederholtem Streckenwechsel (9 Wechsel, Texturen/Geometrien konstant; PMREM-Leck gefunden und behoben)
 
-Nächste Schritte:
-1. Hauptmenü im Browser prüfen (Fehler beim Start eben behoben: Kamera vor Drehteller), dann Freies Fahren/Zeitangriff auf allen Strecken im Browser testen.
-2. `tests/strecken.test.js` (Geschlossenheit, Längen, Breiten, Zonen, keine Überschneidung, Grip-Bot-Runde).
-3. Performance messen (Playwright + CPU-Drosselung 4×) → `docs/PERFORMANCE.md`; Speicherfreigabe bei Streckenwechsel prüfen.
-4. `docs/AUTOS.md` mit Messtabelle (`node scripts/autoMessung.js --md`) und PI-Formel.
-5. Phase-3-Commit. Danach Phase 4 (Wertung, Drift-Bot-Abstimmung, Battle).
+Gebaut: Streckenbau mit Ideallinie, 3 Strecken (Industriehof 893 m/6 Zonen, Küstenpass 1568 m/9 Zonen, Neon-Hafen 1264 m/8 Zonen), modulare Automodelle mit Ankern, 12 Felgen, alle Anbauteile, Innenraum, Lichter; Strecken-Renderer mit Deko je Strecke, Tageszeit/Licht, nasser Asphalt; Rennmodus, Freies Fahren, Zeitangriff (3 Runden, Zeitlimit), HUD, Minimap, Pause, Ergebnis, Hauptmenü, Streckenwahl, Einstellungen (inkl. Tastenbelegung, Layout-Editor, Export/Import, Zurücksetzen), Ladebildschirm, Qualitätsstufen, Speicherfreigabe. Werkzeuge: , , , , .
+
+## Phase 4: Wertung und Tandem-Battle – 🚧 als Nächstes
+
+1.  +  (20 Ticks/s, Führer/Verfolger-Formeln, Combo, Abzüge, Flüssigkeit, Normierung) + Unit-Tests, .
+2. Drift-Bot () abstimmen: weniger Wandkontakte, Stufen-Zielpunkte erreichen; Referenzpunkte und Referenzzeiten je Strecke per Legende-Simulation () in die Streckendateien schreiben.
+3. Battle-Ablauf (: Läufe, Rollentausch, Gleichstand), Battle-Modus im Client, Gegner-Pool (15 Fahrer), Battle-Auswahl, HUD-Battle-Teile, Ergebnis, Belohnungen, Freischaltungen.
+4. Wertung im Freien Fahren / Zeitangriff einhängen (Punkte, Medaillen).
 
 ## Offen / bekannte Probleme
 

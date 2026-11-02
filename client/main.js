@@ -35,8 +35,7 @@ async function starten() {
   fortschritt(0.8);
   const spiel = new Spiel();
   window.__driftkoenig = spiel; // für Tests/Debugging
-  const modus = await startModusErzeugen(spiel);
-  await spiel.start({ startModus: modus });
+  await spiel.start({ startModus: () => startModusErzeugen(spiel) });
   fortschritt(1);
   const lade = document.getElementById('lade');
   lade.style.transition = 'opacity 350ms';

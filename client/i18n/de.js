@@ -166,6 +166,7 @@ export const TEXTE = {
     training: 'Training',
     zeitangriff: 'Zeitangriff',
     zeitAbgelaufen: 'Zeit abgelaufen',
+    zurLinie: 'Weiter zur Startlinie',
     abgebrochen: 'abgebrochen',
     abkuerzung: 'Abkürzung zählt nicht'
   },

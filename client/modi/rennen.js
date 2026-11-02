@@ -17,6 +17,8 @@ import { winkelLerp } from '../render/koordinaten.js';
 import { Hud } from '../ui/hud.js';
 import { Minimap } from '../ui/minimap.js';
 import { pauseMenue } from '../ui/pause.js';
+import { BotFahrer } from '../../shared/bots/botFahrer.js';
+import { botStufe } from '../../shared/bots/botStufen.js';
 import { t } from '../i18n/de.js';
 import { displayWachHalten } from '../core/geraet.js';
 
@@ -126,6 +128,10 @@ export class Rennen {
     const st = this.S.start.einzel;
     this.spieler.fahrzeug.setzen(st.x, st.y, st.theta, 0);
     this.spieler.runden = new Rundenzaehler(this.S, st);
+    // Autopilot (nur für Messungen/Tests, z. B. ?perf=1): ein Bot fährt das Spielerauto
+    if (this.konfig.autopilot) {
+      this.autopilot = new BotFahrer(this.S, this.spieler.fahrzeug, botStufe(this.konfig.autopilot), { seed: 1, modus: 'drift' });
+    }
   }
 
   /** Start bzw. Neustart. */
@@ -231,7 +237,8 @@ export class Rennen {
     if (sp && !sp.netzGesteuert) {
       const eingabe = this.zustand === 'ende' || this.zustand === 'ziel' && this.auslaufOhneEingabe
         ? { lenken: 0, gas: 0, bremse: 0.3, handbremse: 0, kupplung: 0 }
-        : { ...this.spiel.eingabe.werte, hoch: this._aktionen.hoch, runter: this._aktionen.runter };
+        : this.autopilot ? this.autopilot.schritt(dt)
+          : { ...this.spiel.eingabe.werte, hoch: this._aktionen.hoch, runter: this._aktionen.runter };
       this._aktionen.hoch = this._aktionen.runter = false;
       sp.fahrzeug.schritt(eingabe, dt, this.S.gitter);
     }

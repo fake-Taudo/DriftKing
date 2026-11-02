@@ -127,7 +127,9 @@ export class Umgebung {
       hilfe.add(m);
     }
     const ziel = this._pmrem.fromScene(hilfe, 0.03);
-    if (this.envMap) this.envMap.dispose();
+    // Render-Target selbst freigeben (nur die Textur freizugeben ließe den Framebuffer liegen)
+    if (this._envZiel) this._envZiel.dispose();
+    this._envZiel = ziel;
     this.envMap = ziel.texture;
     this.szene.environment = this.envMap;
     this.szene.environmentIntensity = s.envIntensitaet ?? 1;
@@ -168,7 +170,7 @@ export class Umgebung {
   freigeben() {
     this.himmel.geometry.dispose();
     this.himmelMaterial.dispose();
-    this.envMap?.dispose();
+    this._envZiel?.dispose();
     this._pmrem?.dispose();
     this.sonne.shadow.map?.dispose();
   }

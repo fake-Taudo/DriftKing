@@ -39,6 +39,20 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | P10 | **Leistungsindex = Basis-PI × (1 + Tuningzuschlag)**; Zuschlag maximal +45 %. | Eine rein physikalische Formel (Leistungsgewicht) würde getunte Einsteigerautos über die teuren Autos heben. Die Formel bewertet Leistung, Gewicht, Grip und Stabilität des Serienautos und addiert die Tuningstufen prozentual – genau wie in der Spezifikation gefordert. |
 | P11 | **Weiche Auto-Auto-Kollision** über drei Kreise je Auto: nur Positions- und Geschwindigkeitsangleich, keine Drehung. | Spezifikation: kein harter Rückstoß, kein Festkleben, keine Rotation durch Berührung. |
 
+## Autos, Strecken, Darstellung
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| D1 | **Onyx RS: Allrad mit nur 12 % Frontanteil** (statt der zunächst angesetzten 30 %), Wankanteil vorne 0,47. | Mit 30 % Frontanteil ließ sich der Onyx in Simulationen überhaupt nicht im Drift halten. Mit 12 % bleibt er „Allrad mit Heckbetonung“ und schwerer zu driften, ist aber fahrbar (stationär bis ca. 55°). |
+| D2 | **Strecken als Segmentlisten** (Gerade/Bogen/Schließen) statt handgesetzter Kontrollpunkte; daraus werden Kontrollpunkte und ein zentripetaler Catmull-Rom-Spline erzeugt. | Längen, Radien und Zonen lassen sich gezielt einstellen; neue Strecken sind leicht zu ergänzen. Drift-Zonen und Wandarten hängen am Segment und bleiben bei Änderungen richtig. |
+| D3 | **Ideallinie = Minimal-Krümmungs-Linie** (mehrstufige Relaxation innerhalb der Fahrbahn), zu 65–70 % mit der Mitte gemischt, plus optionale Handkorrekturen. | Ergibt automatisch „außen–innen–außen“, ohne Handarbeit. Die Mischung hält die Linie driftfreundlich (nicht ganz am Rand). |
+| D4 | **Fliegender Start:** Führer 15 m vor der Startlinie, Verfolger 10 m dahinter; eine Runde zählt ab dem Überfahren der Linie. | Spezifikation: versetzte Aufstellung + fliegender Start; so ist ein Durchgang genau eine volle Runde. |
+| D5 | **Abkürzungsschutz:** Sprünge der Streckenposition um mehr als ca. 8 m pro Frame zählen nicht als Fortschritt; Checkpoints müssen in Reihenfolge passiert werden. | Verhindert Abkürzen durchs Infield (z. B. Industriehof), ohne echte Fahrt zu stören. |
+| D6 | **Nasser Asphalt** (Neon-Hafen): Env-Map, geringe Rauheit und additive, langgezogene Lichtstreifen auf der Fahrbahn. | Vorgabe: keine Echtzeit-Spiegelung. |
+| D7 | **Performance-Messung mit `playwright-core` und dem installierten Edge** statt eines heruntergeladenen Test-Browsers. | Kein großer Browser-Download, echte GPU. Handy-Profil emuliert CPU und Bildschirm, nicht die Handy-GPU (siehe docs/PERFORMANCE.md). |
+| D8 | **Autopilot-Startparameter** `?perf=1&strecke=…` (Freies Fahren, ein Legende-Bot fährt das Spielerauto). | Reproduzierbare Messungen ohne Eingaben. Hat keinen Einfluss aufs normale Spiel. |
+| D9 | **Messgröße „max. stationärer Driftwinkel“** mit einem PI-Halteregler, nicht mit konstanten Eingaben. | Ein Drift ist (auch real) kein stabiles Gleichgewicht bei konstanter Eingabe; gemessen wird, was ein geübter Fahrer halten kann. |
+
 ## Wortfilter
 
 | # | Entscheidung | Begründung |

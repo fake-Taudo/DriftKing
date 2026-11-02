@@ -123,14 +123,37 @@ export function driftHalten(autoId, sollGrad, { optionen, assistenz = 0.6, dauer
 }
 
 /**
- * Maximaler stationärer Driftwinkel (Grad) bei Halte-Kreisfahrt: größter Soll-Winkel, der
- * 4 s lang stabil (Abweichung < 8°, Streuung < 6°) gehalten werden kann.
+ * Maximaler stationärer Driftwinkel (Grad) bei Halte-Kreisfahrt. Nach dem Einleiten per Handbremse
+ * hält ein PI-Regler (Gas → Winkel, Lenkung über Gegenlenk-Assistenz 85 %) Soll-Winkel von 25° bis 70°.
+ * Gewertet wird der größte Winkel, der in den letzten 4 s stabil gehalten wird
+ * (Abweichung < 6°, Streuung < 4°, kein Dreher).
  */
 export function maxDriftWinkel(autoId, optionen) {
   let best = 0;
-  for (let soll = 20; soll <= 90; soll += 5) {
-    const r = driftHalten(autoId, soll, { optionen });
-    if (r && Math.abs(r.mittel - soll) < 8 && r.streuung < 6) best = Math.max(best, r.mittel);
+  for (let soll = 25; soll <= 70; soll += 5) {
+    const f = neuesAuto(autoId, optionen, { gegenlenken: 0.85 });
+    f.setzen(0, 0, 0, 60 / 3.6);
+    let integ = 0, vorher = 0, ok = true;
+    const werte = [];
+    for (let t = 0; t < 10; t += DT) {
+      const b = -f.schwimmwinkel / GRAD;
+      let e;
+      if (t < 0.4) e = E({ lenken: -1, gas: 0.5, handbremse: 1 });
+      else {
+        const fehler = soll - b;
+        const rate = (b - vorher) / DT;
+        integ = klemme(integ + fehler * DT, -40, 40);
+        e = E({ lenken: klemme(-0.08 * fehler + 0.01 * rate, -1, 1), gas: klemme(0.55 + 0.06 * fehler + 0.06 * integ - 0.002 * rate, 0, 1) });
+      }
+      vorher = b;
+      f.schritt(e, DT);
+      if (t > 1 && (Math.abs(b) > 110 || f.tempo < 4)) { ok = false; break; }
+      if (t > 6) werte.push(b);
+    }
+    if (!ok) continue;
+    const mittel = werte.reduce((x, y) => x + y, 0) / werte.length;
+    const streuung = Math.sqrt(werte.reduce((x, y) => x + (y - mittel) ** 2, 0) / werte.length);
+    if (Math.abs(mittel - soll) < 6 && streuung < 4) best = Math.max(best, mittel);
   }
   return best;
 }

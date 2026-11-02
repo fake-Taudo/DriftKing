@@ -63,7 +63,8 @@ export class Hauptmenue {
     flaeche('#ffffff', 0, 10, 0, 12, 12);
     flaeche('#ff3d6e', -10, 2, 0, 4, 8);
     flaeche('#2ee6ff', 10, 2, 0, 4, 8);
-    this.envMap = pmrem.fromScene(hilfe, 0.02).texture;
+    this._envZiel = pmrem.fromScene(hilfe, 0.02);
+    this.envMap = this._envZiel.texture;
     pmrem.dispose();
     hilfe.traverse((o) => { if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); } });
     this.szene.environment = this.envMap;
@@ -183,7 +184,7 @@ export class Hauptmenue {
     for (const aus of this._hoerer) aus();
     this.ui.remove();
     if (this.auto) this.auto.freigeben();
-    this.envMap.dispose();
+    this._envZiel.dispose();
     this.szene.traverse((o) => { if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); } });
     this.spiel.audio?.menueMusik?.(false);
   }

@@ -212,7 +212,7 @@ export const AUTOS = [
     traegheitFaktor: 0.95,
     abmessungen: { laenge: 4.45, breite: 1.92, hoehe: 1.18 },
     antrieb: 'allrad',
-    allradVorneAnteil: 0.3,
+    allradVorneAnteil: 0.12, // starke Heckbetonung: driftbar, aber anspruchsvoller als die Hecktriebler
     leistungPS: 380,
     drehmomentKurve: KURVE_SPORT,
     leerlauf: 1000,
@@ -227,7 +227,7 @@ export const AUTOS = [
     bremsBalance: 0.58,
     handbremse: 1.0,
     sperre: 0.7,
-    wankVorne: 0.52,
+    wankVorne: 0.47,
     lenkwinkelMax: 42,
     stabilitaet: 1.1,
     gierDaempfung: 1.1,
