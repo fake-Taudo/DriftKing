@@ -10,6 +10,7 @@ Alle Inhalte des Spiels (Autos, Strecken, Teile, Aufkleber, Muster, Icons, Sound
 | vite | 8.3.5 | MIT | Bündeln des Clients |
 | express | 5.3.0 | MIT | HTTP-Server |
 | ws | 8.22.1 | MIT | WebSocket-Server |
+| playwright-core | 1.64.1 | Apache-2.0 | Nur Entwicklung: Abläufe im Browser in `scripts/`, nicht Teil des Spiels |
 
 ## Schriften (lokal eingebunden über @fontsource, keine Anfragen an Dritte)
 

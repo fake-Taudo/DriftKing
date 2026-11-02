@@ -190,8 +190,10 @@ export class AudioSystem {
 
   _sichtbarkeit() {
     if (!this.ctx) return;
+    // Auch im pausierten Rennen fortsetzen: Motor und Reifen sind dann stumm, die Knöpfe sollen aber klingen.
+    // Gamepad-Spieler lösen sonst nie das Fortsetzen über eine Zeiger- oder Tastatureingabe aus.
     if (document.hidden) this.ctx.suspend().catch(() => {});
-    else if (!this.pausiert || this.musikGewuenscht) this.ctx.resume().catch(() => {});
+    else this.ctx.resume().catch(() => {});
   }
 
   /** Lautstärken aus den Einstellungen. */

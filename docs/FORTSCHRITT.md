@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 9 – Abschluss und Deploy
+**Aktuelle Phase:** alle Phasen abgeschlossen. Offen ist nur das einmalige Anlegen des Render-Dienstes (`docs/DEPLOY_RENDER.md`)
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -91,10 +91,21 @@ Gebaut: Partikel mit Instancing (`client/render/vfx/partikel.js`), Reifenspuren 
 
 Beim Prüfen gefunden und behoben: Speicherleck der Menü-Schattenkarte (2 Texturen je Moduswechsel), Shader-Fehler am Leuchtfaden, Punktefeld im Hochformat genau über dem Vordermann (`left: 50%` halbierte die Breite), unerreichbare Menüpunkte und ein aus dem Bild ragender Knopf auf 360×640, Ergebnisbildschirm scrollte ans Ende, zu starker Bloom, harte Kanten an den Scheinwerferkegeln, Leuchtfaden als breiter Streifen vor der Kamera.
 
+## Phase 9: Abschluss und Deploy – ✅ abgeschlossen
+
+- [x] Alle automatisierten Tests grün (`npm test`: 182 Tests, 180 bestanden, 0 Fehler, 2 als bekannte Abweichung markiert, siehe unten)
+- [x] Kompletter Durchlauf als neuer Spieler: Tutorial, erstes Battle, Kauf, Garage, Look im Rennen, Online-Duell (`scripts/gesamtAblauf.js`: 21 Prüfungen, keine Fehler in der Konsole, 165 FPS)
+- [x] README (Start, Steuerung, Tests, Deploy auf Render) vollständig
+- [x] `docs/ENTSCHEIDUNGEN.md`, `docs/FORTSCHRITT.md`, `docs/TESTPLAN_MANUELL.md`, `docs/LIZENZEN.md` vollständig
+
+Zusätzlich: Produktionstest aus einem frischen Klon des Repositories (`npm ci`, `npm run build`, `npm test`, `npm start`).
+
 ## Offen / bekannte Probleme
 
 - Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test).
-- Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister unter Ziel (siehe `docs/WERTUNG.md`, Entscheidung B5).
+- Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister liegt unter dem Ziel und beendet nicht jede Runde. Das sind die zwei als `todo` markierten Tests (siehe `docs/WERTUNG.md`, Entscheidung B5).
+- Nicht auf echten Geräten geprüft: Touch, GPU-Last eines Handys, Klang mit echtem Ohr, Gamepad, Duell über echte Netze. Dafür gibt es `docs/TESTPLAN_MANUELL.md`.
+- Der Render-Dienst muss einmalig angelegt werden, das braucht das Konto des Besitzers (`docs/DEPLOY_RENDER.md`).
 
 ## Wichtige Entscheidungen
 
