@@ -282,10 +282,16 @@ export class BotBattle extends Rennen {
       meldungen,
       knoepfe: [
         { text: t('ergebnis.revanche'), art: 'haupt', aktion: () => this.neustart() },
+        { text: t('ergebnis.garage'), aktion: () => this._garage() },
         { text: t('battle.andereWahl'), aktion: () => this._neueWahl() },
         { text: t('ergebnis.menue'), aktion: () => this.beenden() }
       ]
     });
+  }
+
+  async _garage() {
+    const { Garage } = await import('./garage.js');
+    this.spiel.wechsleModus(new Garage());
   }
 
   /** Zurück zur Battle-Auswahl (mit der bisherigen Wahl vorbelegt). */
@@ -347,7 +353,7 @@ export class BotBattle extends Rennen {
     const b = this.botAuto.darstellung;
     const v = zuWelt(b.x, b.y, 1.9, this._v).project(this.kamera);
     const el = this.hud.el;
-    const sichtbar = abstand < 90 && abstand > 2.5 && v.z > -1 && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
+    const sichtbar = this.spiel.daten.einstellungen.anzeige.namensTag && abstand < 90 && abstand > 2.5 && v.z > -1 && v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
     this.hud.namensschild(this.gegner.name, ((v.x + 1) / 2) * el.clientWidth, ((1 - v.y) / 2) * el.clientHeight, sichtbar, abstand);
   }
 }

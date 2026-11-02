@@ -1,0 +1,382 @@
+/* Garage: Bedienfeld rechts (Querformat) bzw. unten (Hochformat), das Auto bleibt im freien Bereich sichtbar. */
+.garage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important;
+  --panel-breite: min(430px, 46vw);
+}
+.garage > * { pointer-events: auto; }
+
+.garage-kopf {
+  position: absolute;
+  left: calc(10px + var(--sicher-links));
+  right: calc(var(--panel-breite) + 22px + var(--sicher-rechts));
+  top: calc(10px + var(--sicher-oben));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+.garage-kopf > * { pointer-events: auto; }
+.garage-auto { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.garage-auto-text { text-align: center; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); min-width: 0; }
+.garage-auto-name { font-family: var(--schrift-titel); font-size: 1.35rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.garage-pi { font-size: 0.78rem; color: var(--farbe-akzent); white-space: nowrap; }
+.garage-kopf-rechts { display: flex; align-items: center; gap: 6px; }
+.knopf.rund.garage-rund { width: 40px; height: 40px; min-height: 40px; font-size: 1.15rem; background: rgba(11, 14, 28, 0.6); }
+.knopf.rund.garage-rund[disabled] { opacity: 0.35; }
+.menue-muenzen.feier { animation: muenzenFeier 700ms var(--feder); }
+@keyframes muenzenFeier {
+  0% { transform: scale(1); box-shadow: none; }
+  40% { transform: scale(1.18); box-shadow: 0 0 22px rgba(255, 209, 102, 0.8); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+
+.garage-ansichten {
+  position: absolute;
+  left: calc(10px + var(--sicher-links));
+  right: calc(var(--panel-breite) + 22px + var(--sicher-rechts));
+  bottom: calc(10px + var(--sicher-unten));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  pointer-events: none;
+}
+.garage-ansichten > * { pointer-events: auto; }
+.ansicht-knopf {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 1px solid var(--farbe-linie);
+  border-radius: 999px;
+  background: rgba(11, 14, 28, 0.72);
+  color: var(--farbe-text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.ansicht-knopf:hover { border-color: var(--farbe-akzent); }
+.ansicht-knopf.aktiv { background: var(--farbe-akzent); color: #04202a; }
+.ansicht-knopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 2px; }
+.showroom-menue {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  padding: 8px;
+  border-radius: var(--radius);
+  background: rgba(11, 14, 28, 0.9);
+  animation: bildschirmEin 180ms ease-out;
+}
+.showroom-punkt { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.5); }
+
+.garage-panel {
+  position: absolute;
+  top: calc(10px + var(--sicher-oben));
+  right: calc(10px + var(--sicher-rechts));
+  bottom: calc(10px + var(--sicher-unten));
+  width: var(--panel-breite);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(16, 20, 40, 0.94);
+  transition: transform var(--uebergang);
+}
+.garage-griff {
+  appearance: none;
+  flex: none;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--farbe-text-2);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.garage-griff:focus-visible { outline: 2px solid var(--farbe-akzent); outline-offset: -2px; }
+.garage-panel.eingeklappt .garage-reiter,
+.garage-panel.eingeklappt .garage-inhalt,
+.garage-panel.eingeklappt .garage-anprobe { display: none; }
+.garage-panel.eingeklappt { width: 56px; bottom: auto; }
+
+/* Reiter: im Querformat zwei Zeilen (alle sichtbar, auch mit der Maus); auf kleinen Touch-Bildschirmen eine wischbare Zeile */
+.garage-reiter { flex: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 0 8px 8px; }
+.garage-reiter-knopf { min-width: 0; }
+@media (orientation: portrait), (max-height: 520px) {
+  .garage-reiter { display: flex; overflow-x: auto; scrollbar-width: none; }
+  .garage-reiter::-webkit-scrollbar { display: none; }
+  .garage-reiter-knopf { min-width: 62px; }
+}
+.garage-reiter-knopf {
+  appearance: none;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-height: 48px;
+  padding: 5px 4px;
+  border: 0;
+  border-radius: var(--radius-klein);
+  background: var(--farbe-flaeche);
+  color: var(--farbe-text-2);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+.reiter-symbol { font-size: 1.05rem; line-height: 1.2; }
+.garage-reiter-knopf.aktiv { background: var(--farbe-haupt); color: #fff; }
+.garage-reiter-knopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: -3px; }
+
+.garage-inhalt { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 12px 14px; display: flex; flex-direction: column; gap: 16px; overscroll-behavior: contain; }
+.garage-abschnitt { display: flex; flex-direction: column; gap: 8px; }
+.garage-abschnitt h3 { margin: 0; font-family: var(--schrift-titel); font-size: 1rem; color: var(--farbe-akzent); letter-spacing: 0.04em; }
+.garage-abschnitt .einst-zeile { padding: 8px 10px; }
+.garage-abschnitt .einst-text { min-width: 110px; }
+.garage-abschnitt .schieber input[type='range'] { width: min(170px, 34vw); }
+.garage-notiz { padding: 8px 10px; border-radius: var(--radius-klein); background: rgba(255, 255, 255, 0.04); line-height: 1.35; }
+
+.teil-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 6px; }
+.teil-karte {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 2px solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  background: var(--farbe-flaeche);
+  color: var(--farbe-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--uebergang), transform var(--uebergang);
+}
+.teil-karte:hover { border-color: var(--farbe-akzent); }
+.teil-karte:active { transform: scale(0.98); }
+.teil-karte.aktiv { border-color: var(--farbe-haupt); box-shadow: var(--glow-haupt); }
+.teil-karte:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 2px; }
+.teil-name { font-weight: 700; font-size: 0.9rem; line-height: 1.15; }
+.teil-preis { font-size: 0.78rem; color: var(--farbe-gold); font-family: var(--schrift-zahl); }
+.teil-preis.besitz { color: var(--farbe-text-3); font-family: var(--schrift-text); }
+
+/* Farbwähler */
+.farb-feld { display: flex; flex-direction: column; gap: 8px; }
+.farb-zeile {
+  appearance: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--radius-klein);
+  background: rgba(33, 39, 72, 0.7);
+  color: var(--farbe-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.farb-zeile:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 2px; }
+.farb-titel small { display: block; color: var(--farbe-text-3); font-size: 0.78rem; }
+.farb-rechts { display: flex; align-items: center; gap: 8px; }
+.farb-wert { font-size: 0.74rem; color: var(--farbe-text-2); }
+.farb-muster { display: inline-block; flex: none; width: 26px; height: 26px; border-radius: 7px; border: 2px solid rgba(255, 255, 255, 0.45); }
+.farb-muster.regenbogen { background: linear-gradient(90deg, #ff3b3b, #ff8a1f, #f2c230, #33e07a, #3b8bff, #a24bff); }
+.farbwaehler { display: flex; flex-wrap: wrap; gap: 12px; padding: 10px; border-radius: var(--radius-klein); background: var(--farbe-grund-2); animation: bildschirmEin 160ms ease-out; }
+.farb-rad-box { position: relative; width: 168px; height: 168px; flex: none; touch-action: none; cursor: crosshair; }
+.farb-rad { display: block; border-radius: 50%; }
+.farb-griff { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); pointer-events: none; }
+.farb-spalte { flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 8px; }
+.farb-beschriftung { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; color: var(--farbe-text-2); }
+.farb-hell { width: 100%; accent-color: var(--farbe-akzent); height: 26px; }
+.farb-hex { width: 100%; padding: 6px 8px; border-radius: 7px; font-family: var(--schrift-zahl); font-size: 0.82rem; }
+.farb-fehler { color: var(--farbe-gefahr); font-size: 0.78rem; min-height: 0; }
+.farb-schnell { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.farb-punkt { appearance: none; aspect-ratio: 1; min-width: 0; padding: 0; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 5px; cursor: pointer; }
+.farb-punkt:focus-visible { outline: 2px solid var(--farbe-akzent); outline-offset: 1px; }
+
+/* Anprobe-Leiste */
+.garage-anprobe { display: none; flex: none; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--farbe-linie); background: rgba(255, 209, 102, 0.1); }
+.garage-anprobe.sichtbar { display: flex; animation: bildschirmEin 180ms ease-out; }
+.anprobe-text { flex: 1 1 100%; min-width: 0; display: flex; flex-direction: column; font-size: 0.86rem; }
+.anprobe-text strong { color: var(--farbe-gold); }
+.anprobe-teile { color: var(--farbe-text-2); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.garage-anprobe .knopf { flex: 1; }
+
+/* Aufkleber */
+.ebenen-kopf { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ebenen-zaehler { flex: 1; min-width: 90px; font-size: 0.82rem; color: var(--farbe-text-2); }
+.ebenen-aktionen { display: flex; flex-wrap: wrap; gap: 6px; }
+.ebenen-liste { display: flex; flex-direction: column; gap: 4px; }
+.ebene { display: flex; align-items: stretch; gap: 3px; }
+.ebene-wahl {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 8px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-klein);
+  background: rgba(33, 39, 72, 0.7);
+  color: var(--farbe-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ebene.aktiv .ebene-wahl { border-color: var(--farbe-haupt); }
+.ebene-wahl:focus-visible, .ebene-pfeil:focus-visible { outline: 2px solid var(--farbe-akzent); outline-offset: 1px; }
+.ebene-haken { font-size: 1.1rem; }
+.aufkleber-bild { width: 30px; height: 30px; flex: none; }
+.ebene-textbild { width: 30px; flex: none; text-align: center; font-family: var(--schrift-titel); font-size: 1.3rem; }
+.ebene-text { min-width: 0; display: flex; flex-direction: column; }
+.ebene-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700; font-size: 0.9rem; }
+.ebene-text small { color: var(--farbe-text-3); font-size: 0.76rem; }
+.ebene-pfeil { appearance: none; flex: none; width: 34px; border: 0; border-radius: var(--radius-klein); background: var(--farbe-flaeche); color: var(--farbe-text-2); cursor: pointer; font-size: 0.72rem; }
+.ebene-pfeil[disabled] { opacity: 0.3; cursor: default; }
+.zonen-vorschau-box { display: flex; flex-direction: column; gap: 4px; }
+.zonen-vorschau { width: 100%; height: auto; border-radius: var(--radius-klein); border: 1px solid var(--farbe-linie); touch-action: none; cursor: move; display: block; }
+.gruppen-hinweis { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-klein); background: rgba(46, 230, 255, 0.12); font-size: 0.86rem; }
+.gruppen-hinweis span { flex: 1; }
+.aufkleber-bibliothek { display: flex; flex-direction: column; gap: 8px; }
+.bibliothek-kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bibliothek-kopf h3 { margin: 0; font-family: var(--schrift-titel); color: var(--farbe-akzent); font-size: 1.05rem; }
+.paket-leiste { border-radius: var(--radius-klein); }
+.paket-leiste .auswahl-knopf { border-radius: 7px; font-size: 0.82rem; }
+.aufkleber-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 6px; }
+.aufkleber-knopf { appearance: none; aspect-ratio: 1; padding: 8px; border: 2px solid var(--farbe-linie); border-radius: var(--radius-klein); background: var(--farbe-flaeche); color: var(--farbe-text); cursor: pointer; }
+.aufkleber-knopf:hover { border-color: var(--farbe-akzent); }
+.aufkleber-knopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 1px; }
+.aufkleber-knopf .aufkleber-bild { width: 100%; height: 100%; }
+
+.text-feld { width: 100%; padding: 9px 10px; border-radius: var(--radius-klein); font-size: 1rem; }
+.kennzeichen-feld { max-width: 220px; font-family: var(--schrift-zahl); letter-spacing: 0.08em; text-transform: uppercase; }
+.text-dialog { display: flex; flex-direction: column; gap: 10px; }
+.text-vorschau { padding: 10px; text-align: center; font-size: 1.6rem; border-radius: var(--radius-klein); background: var(--farbe-grund-2); overflow: hidden; white-space: nowrap; }
+.code-feld { width: 100%; font-family: var(--schrift-zahl); font-size: 0.76rem; word-break: break-all; }
+
+/* Tuning und Setup */
+.pi-kopf { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pi-klasse { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 8px; background: var(--farbe-haupt); font-family: var(--schrift-titel); font-size: 1.3rem; }
+.pi-zahl { font-size: 1.3rem; }
+.tuning-balken { display: flex; flex-direction: column; gap: 5px; }
+.balken-zeile { display: grid; grid-template-columns: 82px 1fr minmax(88px, auto); gap: 8px; align-items: center; font-size: 0.8rem; }
+.balken-spur { position: relative; height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.balken-wert, .balken-neu { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; }
+.balken-wert { background: var(--farbe-akzent); }
+.balken-neu { background: var(--farbe-erfolg); }
+.balken-zahl { text-align: right; color: var(--farbe-text-2); font-size: 0.7rem; white-space: nowrap; }
+.stufen-reihe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.stufe-knopf {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-height: 50px;
+  padding: 5px 2px;
+  border: 2px solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  background: var(--farbe-flaeche);
+  color: var(--farbe-text);
+  font: inherit;
+  cursor: pointer;
+}
+.stufe-knopf.aktiv { border-color: var(--farbe-haupt); box-shadow: var(--glow-haupt); }
+.stufe-knopf.vorschau { border-color: var(--farbe-erfolg); }
+.stufe-knopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 1px; }
+.stufe-name { font-size: 0.72rem; font-weight: 700; }
+.stufe-preis { font-size: 0.64rem; color: var(--farbe-text-3); }
+.stufe-knopf.ungekauft .stufe-preis { color: var(--farbe-gold); font-family: var(--schrift-zahl); }
+.slot-reihe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.slot-knopf { appearance: none; min-height: 44px; padding: 6px; border: 2px solid var(--farbe-linie); border-radius: var(--radius-klein); background: var(--farbe-flaeche); color: var(--farbe-text); font: inherit; font-weight: 700; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot-knopf.aktiv { border-color: var(--farbe-haupt); box-shadow: var(--glow-haupt); }
+.slot-knopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 1px; }
+.setup-regler { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: var(--radius-klein); background: rgba(33, 39, 72, 0.7); }
+.setup-kopf { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-weight: 700; font-size: 0.92rem; }
+.setup-pole { font-weight: 500; font-size: 0.76rem; color: var(--farbe-text-3); }
+.setup-regler .schieber input[type='range'] { width: 100%; }
+.setup-regler .schieber { width: 100%; }
+
+/* Looks */
+.look-liste { display: flex; flex-direction: column; gap: 5px; }
+.look-reihe { display: flex; align-items: center; gap: 6px; }
+.look-wahl { appearance: none; flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 6px 10px; border: 2px solid transparent; border-radius: var(--radius-klein); background: rgba(33, 39, 72, 0.7); color: var(--farbe-text); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.look-reihe.aktiv .look-wahl { border-color: var(--farbe-haupt); }
+.look-wahl:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 1px; }
+.look-wahl small { color: var(--farbe-akzent); font-weight: 500; }
+.look-punkt { width: 22px; height: 22px; flex: none; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.5); }
+.look-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Fotomodus */
+.garage.foto .garage-panel, .garage.foto .garage-kopf, .garage.foto .garage-ansichten { display: none; }
+.foto-leiste {
+  position: absolute;
+  left: 50%;
+  bottom: calc(14px + var(--sicher-unten));
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: max-content;
+  max-width: calc(100% - 20px);
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: rgba(11, 14, 28, 0.8);
+}
+.foto-status { font-size: 0.86rem; color: var(--farbe-text-2); }
+
+@media (orientation: portrait) {
+  .garage { --panel-breite: 0px; }
+  .garage-kopf { right: calc(10px + var(--sicher-rechts)); flex-wrap: wrap; }
+  .garage-kopf-rechts { margin-left: auto; }
+  .garage-panel {
+    left: calc(6px + var(--sicher-links));
+    right: calc(6px + var(--sicher-rechts));
+    bottom: calc(6px + var(--sicher-unten));
+    top: 46%;
+    width: auto;
+  }
+  .garage-panel.eingeklappt { top: auto; bottom: calc(6px + var(--sicher-unten)); left: auto; right: calc(6px + var(--sicher-rechts)); width: 56px; }
+  .garage-ansichten { right: calc(10px + var(--sicher-rechts)); bottom: calc(54% + 8px); }
+  .garage.eingeklappt .garage-ansichten { bottom: calc(46px + var(--sicher-unten)); right: 66px; }
+  .ansicht-knopf { min-height: 34px; padding: 4px 9px; font-size: 0.78rem; }
+  .garage-auto-name { font-size: 1.1rem; }
+  .balken-zeile { grid-template-columns: 70px 1fr minmax(78px, auto); }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .garage-reiter-knopf { min-height: 40px; min-width: 54px; font-size: 0.68rem; padding: 3px 5px; }
+  .reiter-symbol { font-size: 0.9rem; }
+  .garage-griff { height: 18px; }
+  .ansicht-knopf { min-height: 32px; padding: 3px 8px; font-size: 0.76rem; }
+  .garage-auto-name { font-size: 1rem; }
+  .garage-auto { flex: 1; justify-content: center; }
+  .garage-pi { font-size: 0.62rem; overflow: hidden; text-overflow: ellipsis; }
+  .garage-zurueck-text { display: none; }
+  .knopf.rund.garage-rund { width: 34px; height: 34px; min-height: 34px; font-size: 1rem; }
+  .garage .menue-muenzen { padding: 4px 9px; font-size: 0.86rem; }
+  .garage-kopf { gap: 4px; }
+}

@@ -2,6 +2,9 @@
 // Alle Funktionen arbeiten auf dem Spielstand-Objekt und ändern Guthaben und Besitz gemeinsam.
 // Begründung der Werte: docs/OEKONOMIE.md.
 import { BOT_STUFEN, MEDAILLEN, MAX_GUTHABEN } from './spielstand.js';
+import { teilInfo, QUALM } from './teile.js';
+import { standardLook } from './look.js';
+import { aufkleberKaufId } from '../client/assets/aufkleber.js';
 
 /** Belohnungen Bot-Battle (Best of 3); „Schnell“ zahlt die Hälfte. */
 export const BATTLE_BELOHNUNG = {
@@ -171,4 +174,130 @@ export function statistikVerbuchen(daten, a) {
   s.wandkontakte = Math.min(1e9, s.wandkontakte + (a.wand || 0));
   s.laengsterDrift = Math.max(s.laengsterDrift, runde1(a.laengsterDrift || 0));
   s.besterWinkel = Math.max(s.besterWinkel, Math.round(a.besterWinkel || 0));
+}
+
+// ---------------------------------------------------------------------------
+// Kaufen und Besitz
+
+/** Auto-Eintrag aus dem Spielstand. */
+function autoEintrag(daten, autoId) {
+  return daten.autos.find((a) => a.id === autoId) || null;
+}
+
+/** Besitzt der Spieler diese Kauf-ID (global oder für dieses Auto)? */
+export function besitzt(daten, kaufId, autoId) {
+  const info = teilInfo(kaufId, autoId);
+  if (!info) return false;
+  if (info.preis === 0) return true;
+  if (!info.autoGebunden) return daten.besitzGlobal.includes(kaufId);
+  const a = autoEintrag(daten, autoId);
+  return !!a && a.gekaufteTeile.includes(kaufId);
+}
+
+/**
+ * Kauft ein oder mehrere Teile atomar: entweder alle (Guthaben und Besitz gemeinsam) oder keines.
+ * Bereits besessene Teile werden übersprungen und nicht berechnet (kein Doppelkauf beim Doppelklick).
+ * @returns {{ok:boolean, grund?:string, preis:number, fehlt?:number, gekauft:string[]}}
+ */
+export function kaufen(daten, kaufIds, autoId) {
+  const offen = [];
+  let preis = 0;
+  for (const id of new Set(Array.isArray(kaufIds) ? kaufIds : [kaufIds])) {
+    const info = teilInfo(id, autoId);
+    if (!info) return { ok: false, grund: 'unbekannt', preis: 0, gekauft: [] };
+    if (info.autoGebunden && !autoEintrag(daten, autoId)) return { ok: false, grund: 'auto', preis: 0, gekauft: [] };
+    if (besitzt(daten, id, autoId)) continue;
+    offen.push({ id, info });
+    preis += info.preis;
+  }
+  if (preis > daten.waehrung) return { ok: false, grund: 'guthaben', preis, fehlt: preis - daten.waehrung, gekauft: [] };
+  const b = buchen(daten, { betrag: -preis, art: 'kauf' });
+  if (!b.ok) return { ok: false, grund: b.grund, preis, gekauft: [] };
+  const a = autoEintrag(daten, autoId);
+  for (const { id, info } of offen) {
+    if (info.autoGebunden) a.gekaufteTeile.push(id);
+    else daten.besitzGlobal.push(id);
+  }
+  return { ok: true, preis, gekauft: offen.map((o) => o.id) };
+}
+
+/**
+ * Alle Kauf-IDs, die ein Look braucht. Serienwerte (Scheinwerfer usw.) kosten nichts.
+ * @param {string} autoId
+ * @param {object} look
+ * @returns {string[]}
+ */
+export function lookKaufIds(autoId, look) {
+  const ids = new Set();
+  ids.add('finish:' + look.lack.finish);
+  ids.add('muster:' + look.muster.id);
+  ids.add('felge:' + look.felgen.design);
+  for (const a of look.aufkleber) {
+    const k = aufkleberKaufId(a.id);
+    if (k) ids.add(k);
+  }
+  for (const [slot, teil] of Object.entries(look.teile)) ids.add(`teil:${slot}:${teil.variante}`);
+  if (look.qualm === 'regenbogen') ids.add('qualm:regenbogen');
+  else {
+    const preset = QUALM.find((q) => q.farbe && q.farbe.toLowerCase() === String(look.qualm).toLowerCase());
+    ids.add('qualm:' + (preset ? preset.id : 'frei'));
+  }
+  const serie = standardLook(autoId);
+  if (look.neon.an) ids.add('extra:neon');
+  if (look.scheiben > 0) ids.add('extra:toenung');
+  if (look.scheinwerfer.toLowerCase() !== serie.scheinwerfer.toLowerCase()) ids.add('extra:lichtfarbe');
+  if (look.rueck.toLowerCase() !== serie.rueck.toLowerCase() || look.rueckDesign !== serie.rueckDesign) ids.add('extra:ruecklicht');
+  if (look.backfire > 0) ids.add('extra:backfire');
+  return [...ids];
+}
+
+/**
+ * Was am Look noch nicht gekauft ist (Anprobe): Liste mit Preisen und Summe.
+ * @returns {{teile:Array<{id:string, name:string, preis:number}>, summe:number}}
+ */
+export function lookBedarf(daten, autoId, look) {
+  const teile = [];
+  let summe = 0;
+  for (const id of lookKaufIds(autoId, look)) {
+    if (besitzt(daten, id, autoId)) continue;
+    const info = teilInfo(id, autoId);
+    if (!info) continue;
+    teile.push({ id, name: info.name, preis: info.preis });
+    summe += info.preis;
+  }
+  return { teile, summe };
+}
+
+/**
+ * Nimmt nicht gekaufte Anproben aus einem Look zurück: Jedes Teil geht auf den Stand des gespeicherten
+ * Looks zurück, alle anderen Änderungen bleiben erhalten. Danach braucht der Look nichts mehr.
+ * @param {object} look wird verändert
+ * @param {object} gespeichert letzter gespeicherter Look (nur Gekauftes)
+ * @param {string[]} kaufIds die zu entfernenden Kauf-IDs
+ */
+export function anprobeEntfernen(look, gespeichert, kaufIds) {
+  const serie = standardLook(look.auto);
+  for (const id of kaufIds) {
+    const [art, a] = id.split(':');
+    if (art === 'finish') look.lack.finish = gespeichert.lack.finish;
+    else if (art === 'muster') look.muster = { ...gespeichert.muster };
+    else if (art === 'felge') look.felgen.design = gespeichert.felgen.design;
+    else if (art === 'teil') look.teile[a] = { ...gespeichert.teile[a] };
+    else if (art === 'qualm') look.qualm = gespeichert.qualm;
+    else if (art === 'aufkleber') look.aufkleber = look.aufkleber.filter((x) => aufkleberKaufId(x.id) !== id);
+    else if (id === 'extra:neon') look.neon = { ...look.neon, an: false };
+    else if (id === 'extra:toenung') look.scheiben = 0;
+    else if (id === 'extra:lichtfarbe') look.scheinwerfer = serie.scheinwerfer;
+    else if (id === 'extra:ruecklicht') { look.rueck = serie.rueck; look.rueckDesign = serie.rueckDesign; }
+    else if (id === 'extra:backfire') look.backfire = 0;
+  }
+}
+
+/** Baut eine gekaufte Tuningstufe ein (Stufe 1 = Serie ist immer möglich). */
+export function tuningEinbauen(daten, autoId, kategorie, stufe) {
+  const a = autoEintrag(daten, autoId);
+  const kaufId = `tuning:${kategorie}:${stufe}`;
+  if (!a || !teilInfo(kaufId, autoId) || !besitzt(daten, kaufId, autoId)) return false;
+  a.tuning[kategorie] = stufe;
+  return true;
 }

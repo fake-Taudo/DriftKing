@@ -1,6 +1,7 @@
 // Einstellungen: Grafik, Audio, Steuerung (inkl. Tastenbelegung, Layout-Editor), Kamera, Assistenz,
 // Barrierefreiheit, Spieler, Spielstand (Export/Import, Zurücksetzen mit doppelter Sicherheitsabfrage).
 import { h, leeren, dialog, bestaetigen, toast, inZwischenablage } from '../dom.js';
+import { schieber, auswahl, schalter, zeile } from '../bausteine.js';
 import { t } from '../../i18n/de.js';
 import { STANDARD_TASTEN, STANDARD_GAMEPAD } from '../../../shared/spielstand.js';
 import { pruefeName } from '../../../shared/wortfilter.js';
@@ -9,50 +10,6 @@ import { KAMERA_MODI } from '../../render/kamera.js';
 import { istTouchGeraet } from '../../core/geraet.js';
 
 const REITER = ['grafik', 'audio', 'steuerung', 'assistenz', 'zugang', 'spieler', 'spielstand'];
-
-function schieber(wert, min, max, schritt, beiAenderung, format = (x) => String(x)) {
-  const anzeige = h('span.schieber-wert.zahl', format(wert));
-  const eingabe = h('input', { type: 'range', min, max, step: schritt, value: wert });
-  eingabe.addEventListener('input', () => {
-    const w = Number(eingabe.value);
-    anzeige.textContent = format(w);
-    beiAenderung(w);
-  });
-  return h('div.schieber', eingabe, anzeige);
-}
-
-function auswahl(optionen, aktuell, beiAenderung) {
-  const gruppe = h('div.auswahl-gruppe', { role: 'radiogroup' });
-  for (const [wert, text] of optionen) {
-    const k = h('button.auswahl-knopf' + (wert === aktuell ? '.aktiv' : ''), {
-      role: 'radio',
-      'aria-checked': wert === aktuell ? 'true' : 'false',
-      onClick: () => {
-        gruppe.querySelectorAll('.auswahl-knopf').forEach((b) => { b.classList.remove('aktiv'); b.setAttribute('aria-checked', 'false'); });
-        k.classList.add('aktiv');
-        k.setAttribute('aria-checked', 'true');
-        beiAenderung(wert);
-      }
-    }, text);
-    gruppe.appendChild(k);
-  }
-  return gruppe;
-}
-
-function schalter(an, beiAenderung) {
-  const k = h('button.schalter' + (an ? '.an' : ''), { role: 'switch', 'aria-checked': an ? 'true' : 'false' }, h('span'));
-  k.addEventListener('click', () => {
-    const neu = !k.classList.contains('an');
-    k.classList.toggle('an', neu);
-    k.setAttribute('aria-checked', neu ? 'true' : 'false');
-    beiAenderung(neu);
-  });
-  return k;
-}
-
-function zeile(titel, steuerung, hinweis) {
-  return h('div.einst-zeile', h('div.einst-text', h('div.einst-titel', titel), hinweis ? h('div.einst-hinweis', hinweis) : null), h('div.einst-steuerung', steuerung));
-}
 
 /**
  * Zeigt die Einstellungen als Overlay. Liefert ein Promise, das beim Schließen erfüllt wird.

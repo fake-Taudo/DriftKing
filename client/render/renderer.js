@@ -114,6 +114,30 @@ export class Renderer {
     this.dreiecke = this.renderer.info.render.triangles;
   }
 
+  /**
+   * Foto in hoher Auflösung mit Bloom: rendert einmal und liest das Bild im selben Frame aus
+   * (der Zeichenpuffer bleibt sonst nicht erhalten).
+   * @returns {Promise<Blob|null>} PNG
+   */
+  async foto(szene, kamera) {
+    const faktor = Math.min(3, 3840 / Math.max(this.breite, this.hoehe));
+    this._composerVerwerfen();
+    this.renderer.setPixelRatio(faktor);
+    this.renderer.setSize(this.breite, this.hoehe, false);
+    const c = new EffectComposer(this.renderer);
+    c.setPixelRatio(faktor);
+    c.setSize(this.breite, this.hoehe);
+    c.addPass(new RenderPass(szene, kamera));
+    c.addPass(new UnrealBloomPass(new THREE.Vector2(this.breite, this.hoehe), 0.45, 0.5, 0.85));
+    c.addPass(new OutputPass());
+    c.render();
+    const versprechen = new Promise((fertig) => this.canvas.toBlob(fertig, 'image/png'));
+    const blob = await versprechen;
+    c.dispose();
+    this.groesseAnpassen();
+    return blob;
+  }
+
   /** Schatten-Auflösung entsprechend der Qualitätsstufe. */
   get schattenAn() {
     return this.qualitaet.aktuell.schatten === 'map';

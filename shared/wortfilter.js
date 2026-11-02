@@ -5,7 +5,7 @@
 // Wortstämme (normalisiert, ohne Umlaute). Kurze Stämme nur dort, wo sie kaum Fehlalarme erzeugen.
 const STAEMME = [
   'arsch', 'fick', 'fotze', 'hure', 'wichs', 'schlampe', 'bastard', 'spast', 'mongo',
-  'missgeburt', 'nazi', 'hitler', 'kanake', 'schwuchtel', 'neger', 'nigg', 'nigga',
+  'missgeburt', 'nazi', 'hitler', 'kanake', 'schwuchtel', 'neger', 'nigg', 'nigga', 'niger',
   'fuck', 'fuk', 'shit', 'bitch', 'cunt', 'dick', 'cock', 'pussy', 'whore', 'slut', 'fag',
   'retard', 'penis', 'vagina', 'porno', 'porn', 'sex', 'kotz', 'pisser', 'scheiss', 'scheis',
   'kacke', 'opfer', 'behindert', 'idiot', 'trottel', 'depp', 'vollpfosten', 'hurensohn',
@@ -36,8 +36,9 @@ export function istAnstoessig(text) {
   for (const s of STAEMME) {
     if (kompakt.includes(s)) return true;
     const sg = s.replace(/(.)\1+/g, '$1');
-    // Gestauchter Vergleich nur bei ausreichend langen Stämmen (sonst würde „kkk“ zu „k“)
-    if (sg.length >= 3 && gestaucht.includes(sg)) return true;
+    // Gestauchter Vergleich nur bei ausreichend langen Stämmen: „kkk“ würde sonst zu „k“, und ein
+    // verkürzter Stamm unter 4 Zeichen träfe harmlose Wörter (z. B. König, Honig)
+    if (sg.length >= (sg === s ? 3 : 4) && gestaucht.includes(sg)) return true;
   }
   const woerter = norm.split(/[^a-z]+/).filter(Boolean);
   for (const w of woerter) if (GANZE_WOERTER.includes(w)) return true;

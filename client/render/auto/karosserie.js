@@ -79,10 +79,10 @@ export function baueKarosserie(p, f) {
     // Obere Kante (Haube/Kofferraum/Gürtel)
     let oben;
     if (z >= zWS) {
-      const t = (zFront - z) / Math.max(0.01, zFront - zWS);
+      const t = klemme((zFront - z) / Math.max(0.01, zFront - zWS), 0, 1); // begrenzt: Rundungsfehler ergäben sonst NaN
       oben = f.haubeVorne + (f.guertel - f.haubeVorne) * Math.pow(t, 0.7) + f.keil * (1 - t) * 0;
     } else if (z <= zRW) {
-      const t = (z - zHeck) / Math.max(0.01, zRW - zHeck);
+      const t = klemme((z - zHeck) / Math.max(0.01, zRW - zHeck), 0, 1);
       oben = f.heckHinten + (f.heckOben - f.heckHinten) * Math.pow(t, 0.5);
     } else {
       oben = f.guertel;
@@ -301,6 +301,15 @@ export function baueKarosserie(p, f) {
     saeulen: saeulen.geometrie(),
     unterboden: unterboden.geometrie(),
     anker,
-    masse: { zFront, zHeck, Lb, W, H: hoehe, zWS, zDV, zDH, zRW, radV, radH, radBogen, radhausOben }
+    masse: { zFront, zHeck, Lb, W, H: hoehe, zWS, zDV, zDH, zRW, radV, radH, radBogen, radhausOben },
+    // Größe der Livery-Zonen auf der Karosserie (Meter), damit Aufkleber und Muster unverzerrt bleiben
+    zonen: {
+      seiteL: { b: Lb, h: hoehe },
+      seiteR: { b: Lb, h: hoehe },
+      haube: { b: 2 * W, h: Math.max(0.3, zFront - zWS) },
+      dach: { b: 2 * W, h: Math.max(0.3, zDV - zDH) },
+      heck: { b: 2 * W, h: Math.max(0.3, zRW - zHeck) + hoehe * 0.75 },
+      front: { b: 2 * W, h: hoehe }
+    }
   };
 }

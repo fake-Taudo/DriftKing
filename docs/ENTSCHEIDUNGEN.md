@@ -59,6 +59,7 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | # | Entscheidung | Begründung |
 |---|---|---|
 | W1 | Normalisierung (Kleinschreibung, Umlaute, Leetspeak, Sonderzeichen entfernen) plus Liste von Wortstämmen; einige kurze Kürzel nur als ganzes Wort. | Fängt die üblichen Verschleierungen ab, ohne bei normalen Namen zu viele Fehlalarme zu erzeugen. Lieber einmal zu viel ablehnen. |
+| W2 | Beim Zusammenziehen wiederholter Buchstaben wird ein Stamm nur verglichen, wenn danach noch mindestens 4 Zeichen übrig sind (Stämme ohne Doppelbuchstaben: 3). | Ein verkürzter Stamm traf harmlose Wörter wie „König“ und sperrte damit den Spielnamen. Tests prüfen jetzt beide Richtungen. |
 
 ## Wertung und Bots
 
@@ -76,6 +77,19 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | B10 | **Abbruch eines Bot-Battles** (Pause → Beenden, mit Rückfrage) zählt nicht: keine Belohnung, keine Niederlage in der Statistik. | Einfach und nicht ausnutzbar (ein Abbruch bringt nie etwas). |
 | B11 | **Gegner-Vorschlag:** höchste freigeschaltete Stufe ohne Erstsieg auf der gewählten Strecke, sonst die höchste; innerhalb der Stufe wechselt der Gegner mit der Zahl gespielter Battles. | „Nach Fortschritt vorgeschlagen“ (Spezifikation 7.3); der Erstsieg-Bonus lenkt zur nächsten Herausforderung. |
 | B12 | **Autopilot** (nur per URL-Parameter für Messungen und Tests) fährt im Battle die Rolle des jeweiligen Durchgangs. Autopilot-Fahrten werden **nie belohnt** und nicht in die Statistik gebucht. | Reproduzierbare Ablauftests ohne Eingaben; kein Weg, mit dem Parameter Münzen zu farmen. |
+
+## Garage
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| G1 | **Anprobe statt Kaufzwang:** Der bearbeitete Look darf ungekaufte Teile enthalten. Gespeichert wird automatisch, sobald er nur noch Gekauftes enthält; sonst zeigt eine Leiste, was fehlt, mit „Kaufen“ und „Verwerfen“. Verwerfen nimmt nur das Ungekaufte zurück, freie Änderungen bleiben. Beim Verlassen, Auto- oder Slot-Wechsel wird nachgefragt. | Spezifikation: Teile vor dem Kauf anprobieren. So kann ein Rennen nie mit ungekauften Teilen starten, und man verliert keine kostenlosen Änderungen. |
+| G2 | **Rückgängig gilt für den ganzen Look** (60 Schritte), nicht nur für Aufkleber. Aufeinanderfolgende Änderungen desselben Reglers zählen als ein Schritt. | Mehr als gefordert (30 Schritte im Aufkleber-Editor), einfacher zu verstehen und mit derselben Technik gelöst. |
+| G3 | **Ein neues Anbauteil startet in Wagenfarbe** statt im dunklen Serienton. | In dunklen Showrooms war ein dunkler Heckflügel kaum zu sehen und wirkte, als fehle er. |
+| G4 | **Muster und Aufkleber werden in Metern gezeichnet** (Zonenmaße je Auto), Skala 1 = 1 m. | Die Atlas-Zonen haben andere Seitenverhältnisse als die Flächen am Auto; sonst wären Kreise auf der Haube Ellipsen. |
+| G5 | **Kauf-Logik schon in Phase 5** (`kaufen`, `lookBedarf`, `anprobeEntfernen`); der Shop in Phase 6 nutzt sie mit. | Die Garage braucht Anprobe und Kauf bereits. |
+| G6 | **Tuningstufen sind einzeln kaufbar**, ohne die niedrigeren zuerst kaufen zu müssen. | Die Spezifikation verlangt keine Reihenfolge; so zwingt das Spiel niemanden zu Zwischenkäufen. Höhere Stufen kosten ohnehin deutlich mehr. |
+| G7 | **Showroom-Stimmung wird nur im Browser gemerkt**, nicht im Spielstand. | Sie ist eine reine Ansichtseinstellung und soll den Spielstand-Export nicht verändern. |
+| G8 | **`shared/oekonomie.js` importiert die Aufkleber-Bibliothek aus `client/assets/`.** Die Datei enthält nur Daten. | Die Spezifikation legt den Ort der Bibliothek fest, der Server braucht dieselben IDs für die Look-Prüfung. |
 
 ## Ökonomie
 

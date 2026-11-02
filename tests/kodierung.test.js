@@ -39,7 +39,8 @@ test('Prüfsumme ist stabil', () => {
 
 test('Wortfilter erkennt Beleidigungen auch verschleiert', () => {
   for (const s of ['Arschloch', 'F1CK', 'fuuuuck', 'Sch3iße', 'b i t c h', 'NAZI']) assert.equal(istAnstoessig(s), true, s);
-  for (const s of ['Drift King', 'Kestrel', 'Bastion', 'Speed 88', 'Grüße', 'Max Mustermann', 'Hasenbraten']) assert.equal(istAnstoessig(s), false, s);
+  for (const s of ['Drift King', 'Kestrel', 'Bastion', 'Speed 88', 'Grüße', 'Max Mustermann', 'Hasenbraten', 'KÖNIG', 'DRIFTKÖNIG', 'Honig', 'wenig', 'einig']) assert.equal(istAnstoessig(s), false, s);
+  for (const s of ['niiigger', 'n1gg3r', 'SS88', 'HH88']) assert.equal(istAnstoessig(s), true, s);
 });
 
 test('Namen, Kennzeichen und Text-Aufkleber werden geprüft', () => {

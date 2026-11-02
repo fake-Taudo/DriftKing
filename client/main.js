@@ -3,6 +3,7 @@ import './styles/haupt.css';
 import './styles/steuerung.css';
 import './styles/hud.css';
 import './styles/menue.css';
+import './styles/garage.css';
 import { installiereFehlerbehandlung, zeigeFehlerbildschirm } from './core/fehler.js';
 import { pruefeWebGL2 } from './core/geraet.js';
 import { t, TEXTE } from './i18n/de.js';

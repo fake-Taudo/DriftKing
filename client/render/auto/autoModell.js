@@ -79,7 +79,7 @@ export class AutoModell {
     const k = baueKarosserie(this.p, this.form);
     this.k = k;
     this.anker = k.anker;
-    this.livery = new Livery(qualitaet ? qualitaet.livery : 1024);
+    this.livery = new Livery(qualitaet ? qualitaet.livery : 1024, k.zonen);
 
     // Materialien
     this.lackMat = new THREE.MeshPhysicalMaterial({ map: this.livery.textur, flatShading: true });
@@ -287,6 +287,7 @@ export class AutoModell {
     if (!alt || JSON.stringify(alt.teile) !== JSON.stringify(look.teile) || alt.lack.zweitSpiegel !== l.zweitSpiegel || alt.neon?.an !== look.neon?.an) {
       this._teileNeu(look);
     }
+    if (this.neon) this.neon.material.color.set(look.neon.farbe);
     // Tieferlegung: Karosserie absenken (Mindest-Bodenfreiheit verhindert Boden-Clipping)
     const maxAbsenkung = Math.max(0, Math.min(0.07, this.form.bodenHoehe - 0.09));
     this.absenkung = look.fahrwerk.tiefe * maxAbsenkung;

@@ -3,11 +3,22 @@
 import * as THREE from 'three';
 import { ATLAS } from './liveryAtlas.js';
 import { zeichneMuster } from './muster.js';
-import { zeichneAufkleber } from './aufkleberMaler.js';
+import { zeichneAufkleber, schriftenVonLook } from './aufkleberMaler.js';
+
+/** Rückfall-Maße (Meter), falls keine Karosserie-Maße übergeben werden. */
+const STANDARD_MASSE = {
+  seiteL: { b: 4.4, h: 1.3 }, seiteR: { b: 4.4, h: 1.3 }, haube: { b: 1.8, h: 1.1 },
+  dach: { b: 1.8, h: 1.2 }, heck: { b: 1.8, h: 1.6 }, front: { b: 1.8, h: 1.3 }
+};
 
 export class Livery {
-  constructor(groesse = 1024) {
+  /**
+   * @param {number} [groesse] Kantenlänge der Textur in Pixeln
+   * @param {Object<string,{b:number,h:number}>} [masse] Größe jeder Zone auf der Karosserie in Metern
+   */
+  constructor(groesse = 1024, masse = STANDARD_MASSE) {
     this.groesse = groesse;
+    this.masse = masse;
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.canvas.height = groesse;
     this.ctx = this.canvas.getContext('2d');
@@ -39,6 +50,7 @@ export class Livery {
     const sig = JSON.stringify([look.lack, look.muster, look.aufkleber, optionen.auswahl ?? -1]);
     if (sig === this._signatur) return false;
     this._signatur = sig;
+    this._schriftenNachladen(look, optionen);
     const ctx = this.ctx;
     const g = this.groesse;
     const l = look.lack;
@@ -54,19 +66,31 @@ export class Livery {
     // Muster je Zone
     if (look.muster && look.muster.id !== 'keins') {
       for (const zone of Object.keys(ATLAS)) {
-        if ((zone === 'dach' && l.zweitDach) || (zone === 'haube' && l.zweitHaube)) {
-          // Muster liegt auch auf Zweitfarben-Flächen
-        }
-        this._inZone(zone, (b, h) => zeichneMuster(ctx, look.muster, zone, b, h));
+        this._inZone(zone, (b, h) => zeichneMuster(ctx, look.muster, zone, b, h, this.masse[zone]));
       }
     }
     // Aufkleber in Ebenen-Reihenfolge
     look.aufkleber.forEach((a, i) => {
-      this._inZone(a.zone, (b, h) => zeichneAufkleber(ctx, a, b, h, i === optionen.auswahl));
+      this._inZone(a.zone, (b, h) => zeichneAufkleber(ctx, a, b, h, this.masse[a.zone], i === optionen.auswahl));
     });
     ctx.restore();
     this.textur.needsUpdate = true;
     return true;
+  }
+
+  /** Noch nicht geladene Schriften nachladen und danach neu zeichnen (Text und Logos). */
+  _schriftenNachladen(look, optionen) {
+    if (typeof document === 'undefined' || !document.fonts) return;
+    for (const css of schriftenVonLook(look)) {
+      const font = `34px ${css}`;
+      if (document.fonts.check(font)) continue;
+      document.fonts.load(font).then(() => {
+        if (this.frei || this.look !== look) return;
+        this._signatur = '';
+        this.zeichnen(look, optionen);
+      }).catch(() => {});
+    }
+    this.look = look;
   }
 
   _zoneFuellen(zone, farbe) {
@@ -93,6 +117,7 @@ export class Livery {
   }
 
   freigeben() {
+    this.frei = true;
     this.textur.dispose();
     this.canvas.width = this.canvas.height = 1;
   }

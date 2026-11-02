@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 5 – Garage und Individualisierung
+**Aktuelle Phase:** 6 – Währung, Shop, Fortschritt
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -39,21 +39,39 @@ Werkzeuge: `scripts/streckenVorschau.js`, `scripts/streckenPosen.js`, `scripts/b
 
 Gebaut: `shared/wertung.js` + `wertungsParameter.js`, `shared/battle.js` (Läufe, Rollentausch, Gleichstand), `shared/oekonomie.js` (Buchungen, Battle-/Zeitangriff-/Trainings-Belohnungen, Freischaltungen, Statistik), Gegner-Pool mit 16 Fahrern (`shared/bots/gegnerPool.js`), Bot-Kalibrierung je Strecke (`scripts/stufenKalibrierung.js`), Client: Bot-Battle (`client/modi/botBattle.js`) mit Zwischenständen und Ergebnis, Battle-Auswahl mit Gegner-Vorschau auf der Drehscheibe, Battle-HUD (beide Punktestände, Rolle, Abstand mit Farbe und Symbol, Namensschild), Wertung im Freien Fahren und Zeitangriff (`client/modi/rennenWertung.js`), `docs/WERTUNG.md`, `docs/DEPLOY_RENDER.md`.
 
-## Phase 5: Garage und Individualisierung – 🚧 als Nächstes
+## Betrieb: Render und Produktionstest – ✅ erledigt
 
-1. Aufkleber-Bibliothek (≥ 60, eigene Vektorgrafiken) in `client/assets/aufkleber.js`, 12 Muster (`render/auto/muster.js`), Aufkleber-Zeichnen auf die Livery (`render/auto/aufkleberMaler.js`).
-2. Garage-Modus: Lack, Muster, Aufkleber-Editor (Ebenen, Spiegeln, Text), Felgen/Reifen, Bodykit, Fahrwerk-Optik, Details, Leistungs-Tuning, Setup-Regler; Anprobe vor dem Kauf.
-3. Look-Slots, Look-Code (Export/Import), Fotomodus, Showroom.
-4. Menüeintrag „Garage“ und Knopf „Garage“ im Battle-Ergebnis.
+- [x] `render.yaml` geprüft und verbessert (Region Frankfurt, `npm ci`, Health-Check, Node 22); Anleitung in `docs/DEPLOY_RENDER.md`
+- [x] Produktionstest wie auf Render: frischer Klon von GitHub, `npm ci` (90 Pakete), `npm run build`, `npm start` mit eigenem `PORT`: `/healthz`, Startseite, Service Worker, Manifest und WebSocket-Echo (2 ms) funktionieren, Sicherheits-Header und Cache-Regeln korrekt
+- [x] Klickweg Menü → Tandem-Battle → Rennen im Produktionsbuild in echtem Edge ohne Konsolenfehler
+- [ ] Veröffentlichung selbst: Der Dienst muss einmalig im Render-Dashboard angelegt werden (Schritte in `docs/DEPLOY_RENDER.md`); danach veröffentlicht jeder Push auf `main` automatisch
+
+## Phase 5: Garage und Individualisierung – ✅ abgeschlossen
+
+- [x] Jede Änderung ist live am 3D-Auto sichtbar (`scripts/garageAblauf.js`; höchstens eine Neuzeichnung pro Bild)
+- [x] Aufkleber-Editor mit mindestens 30 Ebenen, Rückgängig/Wiederholen stabil (30 Ebenen geprüft, die 31. wird abgelehnt; 40 Schritte rückgängig stellen den Look exakt wieder her; 60 Schritte Verlauf)
+- [x] Look-Code Export/Import fehlerfrei, ungültige Codes werden abgelehnt (`tests/garage.test.js`, auch 30 Text-Ebenen bleiben unter 8 KB; im Browser durchgeklickt)
+- [x] Gespeicherte Looks erscheinen im Rennen exakt wie in der Garage (`scripts/garageAblauf.js`: Look im Rennen identisch, auch nach dem Neuladen; dasselbe Modell und dieselbe Livery)
+- [x] Alle 6 Autos nehmen alle Teilearten korrekt an (`scripts/garageCheck.js`: 516 Kombinationen ohne ungültige Geometrie und innerhalb der Karosseriegrenzen; `scripts/garageBilder.js`: Sichtprüfung per Kontaktbogen)
+
+Gebaut: Garage (`client/modi/garage.js`, `client/ui/garage/*`) mit Showroom in 5 Stimmungen, freier Kamera mit Schnellansichten, Farbwähler (Rad, Hex, Schnellfarben), 12 Mustern, 87 Aufklebern in 8 Paketen plus Text in 6 Schriften, Ebenen-Editor mit Zonen-Vorschau, Gruppen und „Auf andere Seite“, Felgen, Bodykit, Fahrwerk-Optik, Qualm, Neon, Scheiben, Licht, Backfire, Kennzeichen, Leistungs-Tuning mit Vorher/Nachher und PI, Setup- und Look-Slots, Look-Code, Fotomodus, Anprobe mit Kauf-Flow, `docs/LIVERY.md`.
+Gefundene und behobene Fehler: Wortfilter sperrte „König“ (und damit den Spielnamen); Frontkappe des Onyx RS fehlte wegen eines NaN aus einem Rundungsfehler.
+
+## Phase 6: Währung, Shop, Fortschritt – 🚧 als Nächstes
+
+1. Shop-Bildschirm (Kategorien, Suche, Filter, Sortierung, Vorschau): Autos und Teile kaufen und verkaufen (50 %), letztes Auto nie.
+2. Tagesaufgaben (≥ 12 im Pool, 3 je Tag, 100–400 DM), Anzeige im Hauptmenü.
+3. Interaktives Tutorial beim ersten Start (überspringbar, in den Einstellungen wiederholbar).
+4. `docs/OEKONOMIE.md` mit Balance-Tabelle und Tests gegen Währungs-Vermehrung.
 
 ## Offen / bekannte Probleme
 
 - Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test).
-- `client/assets/aufkleber.js`, Muster und Aufkleber-Zeichnen folgen in Phase 5.
+- Qualmfarbe und Backfire sind schon wählbar, die Effekte selbst kommen in Phase 8.
 - HUD-Größen sind in px; auf sehr großen Fenstern wirkt das HUD klein (Politur in Phase 8).
 - Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister unter Ziel (siehe `docs/WERTUNG.md`, Entscheidung B5).
 - Phase 7: Beim Verbinden zum (ggf. schlafenden) Render-Server „Server wird gestartet …“ anzeigen und bis zu 90 s erneut versuchen.
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1, B1–B12, E1–E4, R1–R2).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E4, R1–R2, G1–G8).

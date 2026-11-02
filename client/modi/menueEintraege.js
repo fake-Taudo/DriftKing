@@ -26,6 +26,12 @@ export const MENUE_EINTRAEGE = {
   haupt: [
     { text: 'menue.spielen', untertext: 'menue.spielenUnter', art: 'haupt', aktion: (m) => m.ansicht('spielen') },
     {
+      text: 'menue.garage', untertext: 'menue.garageUnter', aktion: async (_m, spiel) => {
+        const { Garage } = await import('./garage.js');
+        spiel.wechsleModus(new Garage());
+      }
+    },
+    {
       text: 'menue.einstellungen', aktion: async (_m, spiel) => {
         const { einstellungenZeigen } = await import('../ui/bildschirme/einstellungen.js');
         einstellungenZeigen(spiel);
