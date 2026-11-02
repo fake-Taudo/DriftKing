@@ -22,6 +22,7 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | T14 | **Beim Import bleibt die Client-ID des Geräts erhalten.** | Sonst ließe sich das Online-Tageslimit durch Import fremder Spielstände umgehen. |
 | T15 | **Debug-Overlay**: `?debug=1` funktioniert immer, Taste F3 nur im Entwicklungsmodus; **Cheats nur im Entwicklungs-Build**. | So steht es in Abschnitt 1; die Freischalt-Cheats aus Abschnitt 6 sind damit nur lokal (`npm run dev`) nutzbar. |
 | T16 | **Touch-Layouts getrennt für Quer- und Hochformat.** | Im Hochformat ist zu wenig Breite für das Querformat-Layout; die Tasten würden sich überlappen. |
+| T17 | **Scrollen per Touch wird je Berührung entschieden:** Liegt der Startpunkt in einem Bereich, der gerade überläuft, darf der Browser scrollen, sonst unterdrückt der Handler die Geste. | Die Unterdrückung verhindert Pull-to-Refresh und Zoom im Rennen, darf aber Menüs nicht blockieren. Eine feste Klasse pro Bereich wird leicht vergessen (so entstand der Fehler). Die Prüfung läuft einmal je Berührung und kostet im Rennen nichts. |
 
 ## Fahrphysik
 

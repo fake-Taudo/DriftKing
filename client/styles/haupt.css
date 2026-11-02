@@ -118,6 +118,17 @@ html, body {
 #ui > *, #overlay > * { pointer-events: auto; }
 #overlay { z-index: 50; }
 
+/* Bereiche mit langem Inhalt: body verbietet Gesten (touch-action: none), hier sind sie ausdrücklich erlaubt.
+   Am Ende des Bereichs läuft die Geste nicht auf die Seite über (kein Gummiband, kein Pull-to-Refresh). */
+.garage-inhalt, .garage-reiter, .shop-detail, .einst-inhalt, .einst-reiter, .battle-wahl-panel, .strecken-liste,
+.menue-liste, .dialog, .ergebnis-panel {
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Waagerecht zieht der Regler, senkrecht scrollt der Bereich darum */
+input[type='range'] { touch-action: pan-y; }
+
 input, textarea, select {
   -webkit-user-select: text;
   user-select: text;

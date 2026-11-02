@@ -383,7 +383,8 @@
 
 /* Shop */
 .shop-griff-platz { height: 8px; flex: none; }
-.shop-steuerung { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 0 10px 8px; }
+.shop-steuerung { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.shop-liste { gap: 8px; }
 .shop-suche { padding: 7px 10px; font-size: 0.92rem; }
 .shop-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; justify-content: space-between; }
 .shop-chips { border-radius: var(--radius-klein); }
@@ -412,7 +413,7 @@
 @media (orientation: portrait) {
   .garage.shop .garage-panel { top: 34%; }
   .garage.shop .garage-kopf { flex-wrap: nowrap; }
-  .shop-steuerung { gap: 4px; padding-bottom: 6px; }
+  .shop-steuerung { gap: 4px; }
   .shop-werte { grid-template-columns: repeat(3, 1fr); }
   .shop-wert { font-size: 0.68rem; }
   .shop-wert strong { font-size: 0.74rem; }
@@ -420,7 +421,7 @@
 }
 @media (max-height: 520px) and (orientation: landscape) {
   .shop-griff-platz { height: 4px; }
-  .shop-steuerung { flex-direction: row; align-items: center; gap: 4px; padding-bottom: 4px; }
+  .shop-steuerung { flex-direction: row; align-items: center; gap: 4px; }
   .shop-suche { flex: 1 1 70px; min-width: 0; padding: 4px 8px; }
   .shop-filter { flex-wrap: nowrap; gap: 4px; }
   .shop-chips .auswahl-knopf { padding: 2px 6px; min-height: 26px; font-size: 0.72rem; }

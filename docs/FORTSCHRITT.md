@@ -100,6 +100,10 @@ Beim Prüfen gefunden und behoben: Speicherleck der Menü-Schattenkarte (2 Textu
 
 Zusätzlich: Produktionstest aus einem frischen Klon des Repositories (`npm ci`, `npm run build`, `npm test`, `npm start`).
 
+## Nach dem Abschluss
+
+- **Scrollen auf Touch-Geräten (Rückmeldung vom ersten Test):** Menüs mit langem Inhalt und die Reiterleisten ließen sich nicht wischen, der Gestenhandler blockierte alles außer einer Klasse, die es nirgends gab. Behoben (T17). Außerdem bleiben Suche und Filter im Shop nicht mehr stehen, die Liste hatte neben dem Detail auf kleinen Handys nur 47 px Höhe. `scripts/scrollAblauf.js` prüft das mit echten Berührungen auf 6 Ansichten (alter Code 50 Fehler, neuer Code 0), dazu Regler, Aufkleber ziehen und Touch-Tasten. **Grenze:** Getestet ist Chromium, nicht Safari auf dem iPhone.
+
 ## Offen / bekannte Probleme
 
 - Gamepad konnte mangels Gerät nur über den Code-Pfad geprüft werden (manueller Test).
@@ -110,4 +114,4 @@ Zusätzlich: Produktionstest aus einem frischen Klon des Repositories (`npm ci`,
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8, N1–N11, V1–V10, A1–A5).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T17, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8, N1–N11, V1–V10, A1–A5).

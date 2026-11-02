@@ -95,9 +95,11 @@ export class ShopUi {
       this.listeZeichnen();
     });
     this.filterZeile = h('div.shop-filter');
-    this.inhalt = h('div.garage-inhalt.shop-liste');
+    // Suche und Filter rollen mit der Liste weg: Auf kleinen Handys bliebe ihr neben dem Detail sonst kaum Höhe
+    this.eintraegeEl = h('div.shop-eintraege');
+    this.inhalt = h('div.garage-inhalt.shop-liste', h('div.shop-steuerung', this.suchFeld, this.filterZeile), this.eintraegeEl);
     this.detail = h('div.shop-detail');
-    this.panel = h('section.garage-panel.panel', h('div.shop-griff-platz'), this.leiste, h('div.shop-steuerung', this.suchFeld, this.filterZeile), this.inhalt, this.detail);
+    this.panel = h('section.garage-panel.panel', h('div.shop-griff-platz'), this.leiste, this.inhalt, this.detail);
     this.wurzel.append(this.kopf, this.panel);
     this.zeichnen();
   }
@@ -182,9 +184,9 @@ export class ShopUi {
 
   listeZeichnen() {
     const liste = this.gefiltert();
-    leeren(this.inhalt);
+    leeren(this.eintraegeEl);
     if (!liste.length) {
-      this.inhalt.appendChild(h('div.shop-leer', t('shop.leer')));
+      this.eintraegeEl.appendChild(h('div.shop-leer', t('shop.leer')));
       return;
     }
     const raster = h('div.teil-raster.shop-raster');
@@ -202,7 +204,7 @@ export class ShopUi {
         h('span.teil-preis' + (e.besitz ? '.besitz' : '') + (leistbar || e.besitz ? '' : '.zu-teuer'), e.besitz ? t('garage.gekauftKurz') : e.preis === 0 ? t('garage.inklusive') : zahl(e.preis) + ' DM')
       ));
     }
-    this.inhalt.appendChild(raster);
+    this.eintraegeEl.appendChild(raster);
   }
 
   waehlen(schluessel) {

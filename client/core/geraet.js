@@ -83,12 +83,29 @@ document.addEventListener('visibilitychange', () => {
 // ---------------------------------------------------------------------------
 // Gesten unterdrücken: kein Pinch-Zoom, kein Doppeltipp-Zoom, kein Kontextmenü, kein Markieren
 
+/** Liegt das Element in einem Bereich, der sich gerade wirklich scrollen lässt? */
+function inScrollBereich(el) {
+  for (let p = el; p && p !== document.body; p = p.parentElement) {
+    const s = getComputedStyle(p);
+    if (/(auto|scroll)/.test(s.overflowY) && p.scrollHeight > p.clientHeight + 1) return true;
+    if (/(auto|scroll)/.test(s.overflowX) && p.scrollWidth > p.clientWidth + 1) return true;
+  }
+  return false;
+}
+
 export function gestenUnterdruecken() {
   const nichtEingabe = (e) => !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement);
   document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
   document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+  // Einmal je Berührung entscheiden, nicht bei jeder Bewegung: Im Rennen kommen sehr viele Bewegungen an
+  let scrollenErlaubt = false;
+  document.addEventListener('touchstart', (e) => {
+    scrollenErlaubt = e.touches.length === 1 && inScrollBereich(e.target);
+  }, { passive: true, capture: true });
   document.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 1 || (nichtEingabe(e) && !e.target.closest?.('.scrollbar'))) e.preventDefault();
+    // Läuft schon ein Scrollen, lässt der Browser die Geste nicht mehr abbrechen
+    if (!e.cancelable) return;
+    if (e.touches.length > 1 || (nichtEingabe(e) && !scrollenErlaubt)) e.preventDefault();
   }, { passive: false });
   let letzterTipp = 0;
   document.addEventListener('touchend', (e) => {
