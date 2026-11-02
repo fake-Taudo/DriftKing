@@ -433,6 +433,32 @@
   .shop-wert strong { font-size: 0.7rem; }
 }
 
+/* Online-Duell */
+.online-status { min-height: 1.3em; font-size: 0.92rem; color: var(--farbe-akzent); }
+.online-status[data-art='fehler'] { color: var(--farbe-gefahr); }
+.online-inhalt { display: flex; flex-direction: column; gap: 14px; }
+.online-text { margin: 0; color: var(--farbe-text-2); font-size: 0.9rem; line-height: 1.35; }
+.online-wert { padding: 6px 10px; border-radius: 7px; background: var(--farbe-grund-2); font-weight: 700; width: fit-content; }
+.code-zeile { display: flex; gap: 8px; }
+.code-eingabe { flex: 1; min-width: 0; font-family: var(--schrift-zahl); font-size: 1.15rem; letter-spacing: 0.2em; text-transform: uppercase; text-align: center; }
+.code-gross { font-size: clamp(2rem, 7vw, 2.8rem); letter-spacing: 0.14em; color: var(--farbe-gold); text-shadow: 0 0 18px rgba(255, 209, 102, 0.45); }
+.code-anzeige { padding: 12px 14px; border-radius: var(--radius); background: rgba(255, 209, 102, 0.08); }
+.spieler-reihe { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.spieler-karte { appearance: none; display: flex; flex-direction: column; gap: 3px; min-height: 76px; padding: 10px 12px; border: 2px solid var(--farbe-linie); border-radius: var(--radius-klein); background: var(--farbe-flaeche); color: var(--farbe-text); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.spieler-karte.leer { align-items: center; justify-content: center; color: var(--farbe-text-3); cursor: default; font-size: 0.88rem; text-align: center; }
+.spieler-karte.bereit { border-color: var(--farbe-erfolg); }
+.spieler-karte.weg { opacity: 0.55; }
+.spieler-karte:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 1px; }
+.spieler-name { font-family: var(--schrift-titel); font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spieler-name small { font-family: var(--schrift-text); font-size: 0.74rem; color: var(--farbe-text-3); }
+.spieler-auto { font-size: 0.78rem; color: var(--farbe-text-2); }
+.spieler-status { font-size: 0.78rem; color: var(--farbe-text-3); }
+.spieler-karte.bereit .spieler-status { color: var(--farbe-erfolg); font-weight: 700; }
+.online-bereit { width: 100%; }
+.emote-reihe { display: flex; flex-wrap: wrap; gap: 6px; }
+.online-zwischen { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 20; width: min(420px, calc(100% - 24px)); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; background: rgba(16, 20, 40, 0.94); animation: bildschirmEin 200ms ease-out; }
+.online-zwischen h2 { margin: 0; text-align: center; font-family: var(--schrift-titel); font-size: 1.5rem; }
+
 /* Tagesaufgaben im Hauptmenü */
 .tages-box {
   position: absolute;

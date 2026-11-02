@@ -231,7 +231,7 @@ export class Rennen {
   // Spielschritt (fester Zeitschritt)
 
   schritt(dt) {
-    if (this.pausiert) return;
+    if (this.pausiert || this.zustand === 'warten') return;
     if (this.zustand === 'countdown') {
       this.countdown -= dt;
       if (this.countdown <= 0.6 && this.zustand === 'countdown') this.los();
@@ -251,6 +251,7 @@ export class Rennen {
         : this.autopilot ? this.autopilot.schritt(dt)
           : { ...this.spiel.eingabe.werte, hoch: this._aktionen.hoch, runter: this._aktionen.runter };
       this._aktionen.hoch = this._aktionen.runter = false;
+      this.letzteEingabe = eingabe;
       sp.fahrzeug.schritt(eingabe, dt, this.S.gitter);
     }
     // Bots
@@ -357,7 +358,7 @@ export class Rennen {
 
     // Countdown
     if (this.zustand === 'countdown') {
-      const wert = this.countdown > 2.6 ? '3' : this.countdown > 1.6 ? '2' : this.countdown > 0.6 ? '1' : '';
+      const wert = this.countdown > 3.6 ? '' : this.countdown > 2.6 ? '3' : this.countdown > 1.6 ? '2' : this.countdown > 0.6 ? '1' : '';
       if (wert !== this._countdownWert) {
         this._countdownWert = wert;
         this.hud.countdownZeigen(wert);

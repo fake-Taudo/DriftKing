@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { neuerSpielstand, pruefeSpielstand } from '../shared/spielstand.js';
-import { kaufen, verkaufen, verkaufswert, autoKaufen, autoVerkaufen, autoVerkaufswert, besitzt, lookBedarf, tuningEinbauen, battleAbschliessen, anprobeAnwenden, lookKaufIds, buchen, BATTLE_BELOHNUNG, ZEITANGRIFF_BELOHNUNG } from '../shared/oekonomie.js';
+import { kaufen, verkaufen, verkaufswert, autoKaufen, autoVerkaufen, autoVerkaufswert, besitzt, lookBedarf, tuningEinbauen, battleAbschliessen, anprobeAnwenden, lookKaufIds, buchen, onlineErgebnisBuchen, BATTLE_BELOHNUNG, ZEITANGRIFF_BELOHNUNG } from '../shared/oekonomie.js';
 import { teilInfo, alleGlobalenIds, alleAutoIds, FINISHS, MUSTER, FELGEN, AUFKLEBER_PAKETE, QUALM, EXTRAS, SLOTS, TUNING, STUFEN_NAMEN } from '../shared/teile.js';
 import { AUTOS, AUTO_IDS, autoDaten } from '../shared/autos.js';
 import { standardLook, kopiereLook, pruefeLook } from '../shared/look.js';
@@ -160,6 +160,38 @@ test('Anprobe im Shop: Vorschau betrifft genau das gezeigte Teil und bleibt ein 
       if (!id.endsWith(':0') && teilInfo(id, 'vireo_turbo').preis > 0) assert.ok(lookKaufIds('vireo_turbo', l).includes(id), id);
     }
   }
+});
+
+test('Online-Duell: Belohnung genau einmal, 3 je Gegner, 10 je Tag, nie mehr als vorgesehen, Tageswechsel', () => {
+  const d = neu();
+  const start = d.waehrung;
+  const buche = (nr, gegnerId, betrag = 400, sieg = true, datum = '2026-11-02') => onlineErgebnisBuchen(d, { duellId: 'd' + nr, gegnerId, betrag, sieg, datum });
+  assert.deepEqual(buche(1, 'x'), { ok: true, betrag: 400 });
+  assert.equal(d.waehrung, start + 400);
+  assert.equal(d.statistik.onlineDuelle, 1);
+  assert.equal(d.statistik.onlineSiege, 1);
+  // Doppelt gemeldet (etwa nach einer Wiederverbindung): zählt nicht noch einmal
+  assert.equal(buche(1, 'x').ok, false);
+  assert.equal(d.waehrung, start + 400);
+  assert.equal(d.statistik.onlineDuelle, 1);
+  // Der Betrag ist gedeckelt, auch wenn ein manipulierter Server mehr meldet
+  assert.equal(buche(2, 'x', 99999).betrag, 400);
+  // Eine Niederlage bringt weniger, ohne reguläres Ende gibt es nichts
+  assert.equal(buche(3, 'x', 100, false).betrag, 100);
+  assert.equal(d.statistik.onlineSiege, 2);
+  const stand = d.waehrung;
+  assert.deepEqual(buche(4, 'x', 0, false), { ok: true, betrag: 0, grund: 'keine' });
+  // Dritter belohnter Gegner-Lauf war Nummer 3, der vierte geht leer aus
+  assert.deepEqual(buche(5, 'x'), { ok: true, betrag: 0, grund: 'gegner' });
+  assert.equal(d.waehrung, stand);
+  // Tagesgrenze über verschiedene Gegner
+  for (let i = 0; i < 7; i++) assert.equal(buche(10 + i, 'g' + i).betrag, 400);
+  assert.equal(d.online.belohnt, 10);
+  assert.deepEqual(buche(30, 'neu'), { ok: true, betrag: 0, grund: 'tag' });
+  // Am nächsten Tag zählt alles neu
+  assert.equal(buche(31, 'x', 400, true, '2026-11-03').betrag, 400);
+  assert.equal(d.online.belohnt, 1);
+  assert.equal(pruefeSpielstand(d).ok, true);
 });
 
 test('Tagesaufgaben: Pool ≥ 12, 3 je Tag, Belohnung 100–400, je Spieler und Tag fest, Wechsel um Mitternacht', () => {

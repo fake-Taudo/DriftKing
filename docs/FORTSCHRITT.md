@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 7 – Online-Duell per Einladungscode
+**Aktuelle Phase:** 8 – VFX, Audio, UI-Politur
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -66,9 +66,19 @@ Gefundene und behobene Fehler: Wortfilter sperrte „König“ (und damit den Sp
 
 Gebaut: Shop (`client/modi/shop.js`, `client/ui/shop/shopUi.js`) mit 9 Kategorien, Suche, Filtern, Sortierung und Vorschau am Auto; Kauf und Verkauf von Teilen und Autos (`client/ui/kauf.js`); Tagesaufgaben mit 15 Aufgaben (`shared/tagesaufgaben.js`, `client/core/aufgaben.js`) und Anzeige im Hauptmenü; Tutorial in 7 Schritten (`client/modi/tutorial.js`, `shared/tutorialLogik.js`) mit Angebot beim ersten Start; neu ausbalancierte Preise.
 
-## Phase 7: Online-Duell per Einladungscode – 🚧 als Nächstes
+## Phase 7: Online-Duell per Einladungscode – ✅ abgeschlossen
 
-Abschnitt 10 der Spezifikation: Lobby mit Code, Autoritäts-Server für die Wertung, Interpolation, Wiederverbindung, Rate-Limits, Fuzz-Tests, `docs/NETZWERK.md`, Belohnungen mit Tageslimit, Client-Menü „Online-Duell“.
+- [x] Zwei Browser-Fenster können per Code ein komplettes Duell spielen (`scripts/onlineAblauf.js`: echtes Edge, Produktionsbuild, Duell bis zum Ergebnis, Revanche)
+- [x] Gegnerauto wird flüssig und mit korrektem Look angezeigt, auch bei 200 ms Latenz und 5 % Paketverlust (Browser-Test mit 200 ms je Richtung: 0 Sprünge, Look exakt gleich, auch mit nicht besessenen Teilen; `tests/match.test.js`: unter 2 % extrapolierte Bilder)
+- [x] Abbruch, Wiederverbindung, ungültige und abgelaufene Codes funktionieren sauber (Browser: Abriss mit Rückkehr, Aufgabe, endgültiger Verlust nach 15,7 s; Tests für abgelaufene, benutzte und eigene Codes)
+- [x] Fuzz- und Rate-Limit-Tests bringen den Server nicht zum Absturz (`tests/netzwerk.test.js`)
+- [x] Belohnung nur nach regulärem Ende, Tageslimits greifen (`tests/match.test.js`, `tests/oekonomie.test.js`, im Browser Münze für Münze nachgerechnet)
+
+Gebaut: Protokoll mit strenger Prüfung (`shared/netzwerkSchema.js`, dokumentiert in `docs/NETZWERK.md`), Lobby und Codes (`server/lobbys.js`), Duell-Ablauf mit serverseitiger Wertung, Plausibilität, AFK und Rollentausch (`server/match.js`), Interpolation (`shared/interpolator.js`), Sitzung mit Wiederverbindung (`client/netz/duellSitzung.js`), Lobby-Bildschirm (`client/ui/bildschirme/onlineLobby.js`), Duell-Modus (`client/modi/onlineDuell.js`), Ping und Verbindungsqualität im HUD. Tests: 164 (162 bestanden, 2 als bekannte Punkte markiert).
+
+Beim Testen gefunden und behoben: dauernde Extrapolation bei hoher Latenz (N5), verlorene Nachrichten nach einem Abriss (N6), 90 s statt 15 s Wartezeit beim Wiederverbinden, „null“ als Text in der Lobby, Versprechen der halben Belohnung trotz zu kurzer Fahrzeit.
+
+**Ehrlich zur Messung:** Im Software-Rendering liefen die beiden Fenster nur mit etwa 7 FPS. Sprünge lassen sich so prüfen, den Anteil extrapolierter Bilder aber nicht verlässlich (Nachrichten kommen gebündelt an), deshalb ist er per Simulation belegt. Ein Duell mit echten Geräten und einem echten Mitspieler steht im manuellen Testplan.
 
 ## Offen / bekannte Probleme
 
@@ -76,8 +86,7 @@ Abschnitt 10 der Spezifikation: Lobby mit Code, Autoritäts-Server für die Wert
 - Qualmfarbe und Backfire sind schon wählbar, die Effekte selbst kommen in Phase 8.
 - HUD-Größen sind in px; auf sehr großen Fenstern wirkt das HUD klein (Politur in Phase 8).
 - Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister unter Ziel (siehe `docs/WERTUNG.md`, Entscheidung B5).
-- Phase 7: Beim Verbinden zum (ggf. schlafenden) Render-Server „Server wird gestartet …“ anzeigen und bis zu 90 s erneut versuchen.
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8, N1–N10).

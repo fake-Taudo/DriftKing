@@ -4,6 +4,7 @@
 import { BOT_STUFEN, MEDAILLEN, MAX_GUTHABEN, neuerAutoEintrag } from './spielstand.js';
 import { teilInfo, QUALM } from './teile.js';
 import { autoDaten, istAutoId } from './autos.js';
+import { ONLINE_SIEG, MAX_BELOHNT_PRO_TAG, MAX_BELOHNT_PRO_GEGNER } from './netzwerkSchema.js';
 import { standardLook } from './look.js';
 import { aufkleberKaufId } from '../client/assets/aufkleber.js';
 
@@ -176,6 +177,36 @@ export function statistikVerbuchen(daten, a) {
   s.wandkontakte = Math.min(1e9, s.wandkontakte + (a.wand || 0));
   s.laengsterDrift = Math.max(s.laengsterDrift, runde1(a.laengsterDrift || 0));
   s.besterWinkel = Math.max(s.besterWinkel, Math.round(a.besterWinkel || 0));
+}
+
+// ---------------------------------------------------------------------------
+// Online-Duell
+
+/**
+ * Bucht das vom Server gemeldete Ergebnis eines Online-Duells: Statistik immer, Münzen nur innerhalb der
+ * Tagesgrenzen (10 Duelle je Tag, 3 je Gegner) und nie mehr als der höchste vorgesehene Betrag.
+ * @returns {{ok:boolean, betrag:number, grund?:string}}
+ */
+export function onlineErgebnisBuchen(daten, { duellId, gegnerId, betrag, sieg, datum }) {
+  const o = daten.online;
+  if (o.verarbeitet.includes(duellId)) return { ok: false, betrag: 0, grund: 'doppelt' };
+  if (o.datum !== datum) {
+    o.datum = datum;
+    o.belohnt = 0;
+    o.proGegner = {};
+  }
+  o.verarbeitet.push(duellId);
+  if (o.verarbeitet.length > 200) o.verarbeitet.splice(0, o.verarbeitet.length - 200);
+  daten.statistik.onlineDuelle++;
+  if (sieg) daten.statistik.onlineSiege++;
+  if (!(betrag > 0)) return { ok: true, betrag: 0, grund: 'keine' };
+  if (o.belohnt >= MAX_BELOHNT_PRO_TAG) return { ok: true, betrag: 0, grund: 'tag' };
+  if ((o.proGegner[gegnerId] || 0) >= MAX_BELOHNT_PRO_GEGNER) return { ok: true, betrag: 0, grund: 'gegner' };
+  const wert = Math.min(ONLINE_SIEG, Math.round(betrag));
+  o.belohnt++;
+  o.proGegner[gegnerId] = (o.proGegner[gegnerId] || 0) + 1;
+  buchen(daten, { betrag: wert, id: 'on:' + duellId, art: 'online' });
+  return { ok: true, betrag: wert };
 }
 
 // ---------------------------------------------------------------------------

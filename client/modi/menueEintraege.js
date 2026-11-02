@@ -27,6 +27,12 @@ export const MENUE_EINTRAEGE = {
   haupt: [
     { text: 'menue.spielen', untertext: 'menue.spielenUnter', art: 'haupt', aktion: (m) => m.ansicht('spielen') },
     {
+      text: 'menue.online', untertext: 'menue.onlineUnter', aktion: async (m, spiel) => {
+        const { onlineOeffnen } = await import('../ui/bildschirme/onlineLobby.js');
+        onlineOeffnen(m, spiel);
+      }
+    },
+    {
       text: 'menue.garage', untertext: 'menue.garageUnter', aktion: async (_m, spiel) => {
         const { Garage } = await import('./garage.js');
         spiel.wechsleModus(new Garage());

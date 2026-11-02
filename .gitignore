@@ -8,3 +8,7 @@ coverage/
 test-results/
 playwright-report/
 tests/ui/screenshots/
+.env
+.env.*
+*.pem
+*.key

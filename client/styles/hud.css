@@ -96,7 +96,10 @@
 }
 .hud-pause { font-size: 0.9rem; letter-spacing: -0.1em; }
 .hud-ping, .hud-fps { font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; background: rgba(11, 14, 28, 0.6); }
-.hud-ping.schlecht { color: var(--farbe-gefahr); }
+.hud-ping::before { content: '●'; margin-right: 4px; font-size: 0.7em; vertical-align: 1px; }
+.hud-ping[data-guete='gut']::before { color: var(--farbe-erfolg); }
+.hud-ping[data-guete='mittel']::before { color: var(--farbe-gold); }
+.hud-ping[data-guete='schlecht'] { color: var(--farbe-gefahr); }
 
 .hud-tacho {
   position: absolute;

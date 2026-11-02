@@ -113,6 +113,21 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | U3 | **Jeder Schritt lässt sich nach 45 Sekunden überspringen, das ganze Tutorial jederzeit.** Überspringen zählt als gesehen, wiederholen geht in den Einstellungen. | Niemand soll festhängen. |
 | U4 | **Keine Münzen für das Tutorial.** | Es ist wiederholbar und soll kein Einkommen sein; die Balance rechnet ohnehin mit dem Startguthaben. |
 
+## Online-Duell
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| N1 | **Kein Betrugsschutz gegen Bots innerhalb der Physik.** Der Server erkennt unmögliche Fahrdaten, aber keinen Autopiloten, der sich an die Physik hält. | Die Spezifikation legt fest, dass jeder Client sein Auto selbst simuliert. Gespielt wird unter Freunden per Einladungscode, ohne Rangliste. Ein Server, der alles nachrechnet, wäre auf dem Free-Plan nicht tragbar. |
+| N2 | **JSON statt Binärformat**, Fahrzustand als Zahlenfeld mit drei Nachkommastellen. | Die Spezifikation erlaubt beides. Rund 70 Bytes je Zustand reichen, und das Format lässt sich leichter prüfen und mitlesen. |
+| N3 | **Der Server erkennt den Auto-Kontakt selbst aus beiden Zuständen**, statt eine Meldung des Clients zu bestätigen. | Die Spezifikation verlangt lokale Erkennung mit Bestätigung durch den Server. Punkte gibt es so nur durch die Rechnung des Servers, und `Wertung.tick` kennt beide Autos ohnehin. Lokal reagiert nur die Physik des eigenen Autos. |
+| N4 | **Halbe Belohnung nach Abbruch erst ab 30 s Fahrzeit**, sonst nichts. | Die Spezifikation nennt die halbe Belohnung ohne Mindestzeit. Ohne Grenze ließen sich mit einem zweiten Fenster Münzen abholen, indem man sofort abbricht. |
+| N5 | **Darstellungszeit aus dem gemessenen Alter der Zustände** (`Serverzeit − Alter − 110 ms`), nicht aus Serverzeit minus Puffer. | Bei 200 ms Latenz lag die Anzeigezeit sonst 90 ms hinter dem neuesten Zustand, das Auto wurde dauernd extrapoliert. So bleibt der Puffer bei jeder Latenz wirksam, und ein Fehler im Uhrenabgleich hebt sich auf. |
+| N6 | **Der Server sendet nach einer Wiederverbindung den aktuellen Stand erneut** (Durchgang, letztes Ende, Ergebnis). Der Client sortiert über `dgNr` und `duellId` aus. | Über TCP gehen Nachrichten beim Abriss verloren. Ohne Nachsenden hätte der Zurückgekehrte die falsche Rolle oder verlöre seine Belohnung. |
+| N7 | **Tagesgrenzen im Arbeitsspeicher des Servers und zusätzlich im Spielstand.** | Der Server speichert laut Spezifikation nichts dauerhaft. Ein Neustart setzt seinen Zähler zurück, die Prüfung im Spielstand greift dann weiter. |
+| N8 | **Der Client bucht die Belohnung selbst**, der Server meldet nur den Betrag. | Spielstände liegen beim Spieler, ohne Konten. Doppelte Meldungen fängt `duellId` ab, und der Betrag ist beim Buchen gedeckelt. |
+| N9 | **Warnhinweis ab 180 ms Ping oder 25 % Bildern ohne aktuellen Zustand**, einmal je Duell. Im HUD zeigt ein farbiger Punkt die Güte. | Spieler sollen wissen, warum das Gegnerauto ruckelt, ohne im Duell dauernd gestört zu werden. |
+| N10 | **Der Gastgeber wählt nur Strecken, die beide freigeschaltet haben**, der Industriehof zählt immer dazu. | Sonst könnte es Duelle ohne gemeinsame Strecke geben. Die Freischaltungen meldet der Client, das Duell selbst bleibt fair, weil beide dieselbe Strecke fahren. |
+
 ## Betrieb
 
 | # | Entscheidung | Begründung |

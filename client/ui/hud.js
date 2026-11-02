@@ -190,10 +190,10 @@ export class Hud {
     this.resetKnopf.style.display = an ? '' : 'none';
   }
 
-  pingAnzeigen(ms, schlecht) {
+  pingAnzeigen(ms, guete) {
     this.ping.style.display = ms === null ? 'none' : '';
     if (ms !== null) this._setze(this.ping, 'ping', `${ms} ms`);
-    this.ping.classList.toggle('schlecht', !!schlecht);
+    this.ping.dataset.guete = guete;
   }
 
   fpsAnzeigen(fps) {
