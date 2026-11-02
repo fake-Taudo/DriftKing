@@ -26,6 +26,9 @@ seite.on('pageerror', (e) => fehler.push('pageerror: ' + e.message));
 
 await seite.goto(basis + '/', { waitUntil: 'load' });
 await seite.waitForSelector('.menue-knopf', { timeout: 60000 });
+await seite.waitForTimeout(400);
+const willkommen = seite.locator('.dialog-hintergrund .knopf', { hasText: 'Überspringen' });
+if (await willkommen.count()) await willkommen.click();
 await seite.getByText('Garage', { exact: true }).click();
 await seite.waitForSelector('.garage', { timeout: 60000 });
 await seite.waitForTimeout(1500);

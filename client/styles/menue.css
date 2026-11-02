@@ -51,7 +51,7 @@
   .menue-bildschirm { background: linear-gradient(180deg, rgba(11, 14, 28, 0.3) 0%, rgba(11, 14, 28, 0) 30%, rgba(11, 14, 28, 0.9) 58%); }
   .menue-inhalt { flex-direction: column-reverse; justify-content: flex-end; align-items: stretch; }
   .menue-spalte { width: 100%; margin-top: auto; }
-  .menue-auto-info { align-self: center; margin: 32vh 0 0; }
+  .menue-auto-info { align-self: center; margin: 37vh 0 0; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
   .menue-knopf { padding: 0.45em 1em; font-size: 1.05rem; }

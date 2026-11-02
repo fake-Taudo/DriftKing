@@ -48,6 +48,7 @@ export class FreiesFahren extends Rennen {
     this.einzel.start();
     if (!this.konfig.autopilot) {
       statistikVerbuchen(d, a);
+      this.spiel.ereignisse.senden('fahrtGewertet', { rolle: 'einzel', wertung: a });
       const r = trainingRundeAbschliessen(d, { laufId: `${this.sitzung}:${this.rundenGewertet++}`, streckeId: id, punkte: a.punkte });
       this.hud.popup(t('wertung.rundenPunkte', { n: zahl(a.punkte, 1) }), 'combo');
       if (r.neuerBestwert) this.hud.popup(t('wertung.neuerBestwert'), 'combo');

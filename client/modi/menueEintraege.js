@@ -1,5 +1,6 @@
 // Einträge des Hauptmenüs. Jeder Eintrag führt zu einem funktionierenden Bildschirm/Modus.
 import { aktivesAutoKonfig } from '../spielerDaten.js';
+import { tagesBox } from '../ui/tagesBox.js';
 
 async function rennenStarten(spiel, Klasse, streckeId) {
   spiel.wechsleModus(new Klasse({ streckeId, spieler: aktivesAutoKonfig(spiel.daten) }));
@@ -32,6 +33,12 @@ export const MENUE_EINTRAEGE = {
       }
     },
     {
+      text: 'menue.shop', untertext: 'menue.shopUnter', aktion: async (_m, spiel) => {
+        const { Shop } = await import('./shop.js');
+        spiel.wechsleModus(new Shop());
+      }
+    },
+    {
       text: 'menue.einstellungen', aktion: async (_m, spiel) => {
         const { einstellungenZeigen } = await import('../ui/bildschirme/einstellungen.js');
         einstellungenZeigen(spiel);
@@ -61,5 +68,5 @@ export const MENUE_EINTRAEGE = {
       }
     }
   ],
-  fuss: null
+  fuss: (_m, spiel) => tagesBox(spiel)
 };

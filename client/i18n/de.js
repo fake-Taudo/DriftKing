@@ -291,6 +291,80 @@ export const TEXTE = {
     starten: 'Battle starten'
   },
 
+  aufgaben: {
+    titel: 'Tagesaufgaben {n}/{von}',
+    geschafft: 'Tagesaufgabe geschafft: {text} (+{n} DM)',
+    text: {
+      siege2: 'Gewinne 2 Bot-Battles',
+      battle1: 'Fahre ein Bot-Battle zu Ende',
+      battles3: 'Fahre 3 Bot-Battles zu Ende',
+      drift50: 'Halte einen Drift über 50° für 5 Sekunden',
+      drift8s: 'Halte einen Drift 8 Sekunden am Stück',
+      sauber3: 'Fahre 3 Runden ohne Wandkontakt',
+      runden5: 'Fahre 5 Runden',
+      punkte300: 'Sammle 300 Drift-Punkte',
+      fuehrer70: 'Erreiche als Führer 70 Punkte',
+      verfolger60: 'Erreiche als Verfolger 60 Punkte',
+      medaille: 'Hole eine Zeitangriff-Medaille',
+      combo2: 'Erreiche eine Combo von ×2,0',
+      fluessig5: 'Schaffe 5 flüssige Übergänge',
+      fahrzeit10: 'Fahre insgesamt 10 Minuten',
+      online1: 'Spiele ein Online-Duell zu Ende'
+    }
+  },
+
+  tutorial: {
+    angebotTitel: 'Willkommen bei DRIFTKÖNIG!',
+    angebotText: 'Möchtest du in etwa 2 Minuten lernen, wie man driftet? Du kannst das Tutorial später in den Einstellungen wiederholen.',
+    starten: 'Tutorial starten',
+    ueberspringen: 'Überspringen',
+    weiter: 'Schritt überspringen',
+    rolle: 'Tutorial',
+    zaehler: 'Schritt {n} von {von}',
+    gutGemacht: 'Gut gemacht!',
+    botName: 'Fahrlehrer',
+    zumMenue: 'Zum Hauptmenü',
+    eingabe: {
+      tastatur: { gas: 'W oder ↑', bremse: 'S oder ↓', lenken: 'A/D oder ←/→', handbremse: 'die Leertaste' },
+      touch: { gas: 'die Gas-Taste rechts', bremse: 'die Brems-Taste', lenken: 'die Pfeile links', handbremse: 'die Handbremse (H)' },
+      gamepad: { gas: 'den rechten Trigger', bremse: 'den linken Trigger', lenken: 'den linken Stick', handbremse: 'die A-Taste' }
+    },
+    gas: { titel: 'Gas geben', text: 'Halte {gas} gedrückt und beschleunige auf 40 km/h.' },
+    lenken: { titel: 'Lenken', text: 'Lenke mit {lenken} einmal nach links und einmal nach rechts.' },
+    bremse: { titel: 'Bremsen', text: 'Fahre schneller als 30 km/h und bremse dann mit {bremse} deutlich ab.' },
+    handbremse: { titel: 'Handbremse', text: 'Fahre zügig und tippe kurz {handbremse} an. Das Heck wird leicht und bricht aus.' },
+    drift: { titel: 'Dein erster Drift', text: 'Fahre schnell, lenke in die Kurve und ziehe kurz {handbremse}. Gib dann sofort wieder Gas: Das Auto rutscht seitwärts.' },
+    halten: { titel: 'Drift halten', text: 'Halte den Drift: Bleib nach der Handbremse auf dem Gas und lass die Lenkung los. Die Hilfe lenkt gegen, mit dem Gas steuerst du den Winkel.' },
+    tandem: { titel: 'Tandem: Folge dem Führer', text: 'Im Battle fährt einer vor (Führer), der andere folgt (Verfolger). Rollentausch danach. Bleib dem Fahrlehrer auf den Fersen: näher als {abstand} m. Als Verfolger gibt es bei 6–10 m Abstand die meisten Punkte.' },
+    fertig: { titel: 'Geschafft!', text: 'Du kannst driften. Starte jetzt dein erstes Tandem-Battle und verdiene Driftmünzen für neue Autos und Teile. Viel Spaß!' }
+  },
+
+  shop: {
+    suche: 'Suchen …',
+    sortierung: 'Sortierung',
+    leer: 'Nichts gefunden. Ändere die Suche oder den Filter.',
+    fuerAlle: 'Gilt für alle deine Autos.',
+    nurFuer: 'Gilt nur für den {auto}. Wähle oben ein anderes Auto, um dort zu kaufen.',
+    fehlt: 'Dir fehlen noch {n} DM.',
+    anpassen: 'In der Garage anpassen',
+    fahren: 'Dieses Auto fahren',
+    aktiv: 'Aktives Auto',
+    verkaufen: 'Verkaufen: +{erloes} DM',
+    verkaufTitel: 'Wirklich verkaufen?',
+    verkaufText: '{name} für {erloes} DM verkaufen (50 % des Preises)? Es wird aus allen Looks entfernt.',
+    autoVerkaufText: '{name} samt aller dafür gekauften Teile für {erloes} DM verkaufen? Looks und Setups dieses Autos gehen verloren.',
+    verkauft: 'Verkauft für {erloes} DM.',
+    letztesAuto: 'Dein letztes Auto kannst du nicht verkaufen.',
+    autoGekauft: '{name} gehört jetzt dir!',
+    piAenderung: 'Leistungsindex: {von} → {nach}.',
+    textAufkleber: 'Eigene Texte mit bis zu 16 Zeichen in 6 Schriftarten.',
+    kategorie: { autos: 'Autos', lack: 'Lack', muster: 'Muster', felgen: 'Felgen', bodykit: 'Bodykit', aufkleber: 'Aufkleber', qualm: 'Qualm', extras: 'Extras', tuning: 'Tuning' },
+    filter: { alle: 'Alle', gekauft: 'Gekauft', leistbar: 'Leistbar', neu: 'Neu' },
+    sort: { preisAuf: 'Preis aufsteigend', preisAb: 'Preis absteigend', name: 'Name' },
+    wert: { leistung: 'Leistung', masse: 'Gewicht', nullHundert: '0–100', spitze: 'Höchstgeschwindigkeit', antrieb: 'Antrieb', pi: 'Leistungsindex' },
+    antrieb: { heck: 'Heckantrieb', allrad: 'Allrad (Heckbetonung)' }
+  },
+
   farbe: {
     rad: 'Farbrad',
     helligkeit: 'Helligkeit',

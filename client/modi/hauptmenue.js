@@ -109,7 +109,7 @@ export class Hauptmenue {
     if (vorschauHoch) this.kamera.position.set(0, 3.5, 20);
     else if (hoch) this.kamera.position.set(0, 2.6, 11.5);
     else this.kamera.position.set(-2.2, 2.1, 8.6);
-    this.kamera.lookAt(hoch ? 0 : -2.2, vorschauHoch ? -4.2 : 0.6, 0);
+    this.kamera.lookAt(hoch ? 0 : -2.2, vorschauHoch ? -4.2 : hoch ? -0.9 : 0.6, 0);
     if (!hoch) this.kamera.position.x += 0;
     this.kameraVersatz = hoch ? 0 : 2.2;
     if (this.drehteller) this.drehteller.position.x = hoch ? 0 : 0.2;

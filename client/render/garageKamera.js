@@ -38,7 +38,7 @@ export class GarageKamera {
     // Abstand, bei dem das Auto (ca. 5 m lang, 2 m hoch) in den freien Bereich passt
     const freiB = Math.max(80, b - rechts), freiH = Math.max(80, h - unten);
     const tanH = Math.tan((k.fov * GRAD) / 2) * 2;
-    const neu = Math.max(4.6, Math.max((5.4 * h) / (freiB * tanH), (2.3 * h) / (freiH * tanH)));
+    const neu = Math.max(4.6, Math.max((6.2 * h) / (freiB * tanH), (2.4 * h) / (freiH * tanH)));
     const faktor = neu / this.basisAbstand;
     this.basisAbstand = neu;
     this.minAbstand = neu * 0.55;

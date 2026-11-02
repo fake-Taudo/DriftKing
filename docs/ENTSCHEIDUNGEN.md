@@ -98,7 +98,20 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | E1 | **Zeitangriff:** Jede Medaille zahlt je Strecke einmal den vollen Betrag. Wer direkt eine höhere Medaille holt, bekommt die übersprungenen niedrigeren mit. Ist keine Medaille neu, zahlt die erreichte Medaille 25 %. | Die Gesamtsumme je Strecke (2.050) hängt nicht davon ab, ob man sich schrittweise steigert oder direkt Gold holt. |
 | E2 | **Abgebrochene Zeitangriff-Runde** (Zeitlimit) zählt mit den bis dahin erreichten Punkten. | Durchschnitt über genau 3 Runden, wie in der Spezifikation; die Punkte wurden fair erfahren. |
 | E3 | **Trainings-Bonus** = 50 + Rundenpunkte (max. 150), nur ab 20 Punkten und nur, wenn der zuletzt **belohnte** Bestwert um mindestens 5 Punkte übertroffen wird. | „Kleiner Bonus bei Bestwert“ ohne Farmen in 0,1-Punkte-Schritten: höchstens ca. 17 Boni je Strecke. |
-| E4 | **Jede Belohnung hat eine eindeutige Buchungs-ID** (`battle:…`, `za:…`, `tr:…`); doppelte IDs werden abgelehnt. Gespeichert werden die letzten 200 IDs. | Keine Doppelbuchung durch doppelte Auswertung, Doppelklick oder erneutes Anzeigen des Ergebnisses. |
+| E4 | **Jede Belohnung hat eine eindeutige Buchungs-ID** (`battle:…`, `za:…`, `tr:…`, `ta:…`); doppelte IDs werden abgelehnt. Gespeichert werden die letzten 200 IDs. | Keine Doppelbuchung durch doppelte Auswertung, Doppelklick oder erneutes Anzeigen des Ergebnisses. |
+| E5 | **Tagesaufgaben nutzen die lokale Uhrzeit; ein Verstellen der Geräteuhr wird nicht verhindert.** Die Auswahl hängt fest von Spieler-ID und Datum ab, Belohnungen werden beim Abschluss sofort gutgeschrieben. | Vorgabe der Spezifikation: Die Tagesaufgaben sind der einzige Ort, an dem Zeit eine Rolle spielt. Ohne Konten ist eine echte Prüfung nicht möglich und bei einem Spiel unter Freunden unnötig. |
+| E6 | **Teile und Tuning deutlich günstiger als zuerst angesetzt** (Gesamtkosten 268.720 statt ca. 380.000 DM). | Autopreise und Belohnungen sind vorgegeben; nur so sind 25–40 Stunden erreichbar. Rechnung in docs/OEKONOMIE.md, per Test begrenzt. |
+| E7 | **Verkauf entfernt das Teil aus allen betroffenen Looks** (zurück auf Serie), eine verkaufte Tuningstufe wird ausgebaut. Beim Verkauf eines Autos gehen dessen Looks und Setups verloren. | Ein gespeicherter Look besteht immer nur aus Gekauftem. Der Dialog sagt das vorher deutlich. |
+| E8 | **Globale Teile gehören zum Spieler, nicht zum Auto**: Sie bleiben beim Autoverkauf erhalten und werden nicht mit erstattet. | So beschreibt es die Spezifikation („pro Auto, wo nötig“), und es gibt keinen Weg, sie mehrfach anzurechnen. |
+
+## Tutorial
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| U1 | **Tutorial auf dem Industriehof** statt auf der Testfläche, mit dem aktiven Auto. | Es zeigt gleich die echte Strecke. Die Bedingungen hängen nicht vom Ort ab, und wer in die Wand fährt, wird wie im Spiel zurückgesetzt. |
+| U2 | **Großzügige Hilfen nur im Tutorial** (Gegenlenken mindestens 75 %, Drift-Halten mindestens 30 %). Bedienhinweise passen sich dem Eingabegerät an. | Der erste Drift soll gelingen. Ein Test zeigt mit echter Physik, dass einfache Eingaben genügen (kurz Handbremse, dann Gas halten und Lenkung loslassen). |
+| U3 | **Jeder Schritt lässt sich nach 45 Sekunden überspringen, das ganze Tutorial jederzeit.** Überspringen zählt als gesehen, wiederholen geht in den Einstellungen. | Niemand soll festhängen. |
+| U4 | **Keine Münzen für das Tutorial.** | Es ist wiederholbar und soll kein Einkommen sein; die Balance rechnet ohnehin mit dem Startguthaben. |
 
 ## Betrieb
 

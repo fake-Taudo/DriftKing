@@ -170,7 +170,10 @@ export class BotBattle extends Rennen {
     const ergebnis = this.ablauf.durchgangEintragen({ fuehrerPunkte, verfolgerNorm });
     const eigene = this.spielerFuehrt ? aF : { ...aV, endpunkte: verfolgerPunkte };
     this.spielerFahrten.push(eigene);
-    if (!this.konfig.autopilot) statistikVerbuchen(this.spiel.daten, eigene);
+    if (!this.konfig.autopilot) {
+      statistikVerbuchen(this.spiel.daten, eigene);
+      this.spiel.ereignisse.senden('fahrtGewertet', { rolle: this.spielerFuehrt ? 'fuehrer' : 'verfolger', wertung: eigene });
+    }
     if (this.spielerFuehrt && fuehrerPunkte > PERFEKT_SCHWELLE && aF.wand === 0) {
       this.perfekt++;
       this.hud.popup(t('battle.perfekt'), 'combo');
@@ -178,7 +181,6 @@ export class BotBattle extends Rennen {
     this.letzter = { durchgang: this.durchgang, spielerFuehrt: this.spielerFuehrt, fuehrerPunkte, verfolgerPunkte, grund, ergebnis };
     this.hud.meldungZeigen(grund === 'zeit' ? t('rennen.zeitAbgelaufen') : t('battle.durchgangEnde'), AUSLAUF_ZEIT, grund === 'zeit' ? 'gefahr' : 'erfolg');
     this.auslaufBis = this.zeit + AUSLAUF_ZEIT;
-    this.spiel.ereignisse.senden('durchgangEnde', { rolle: this.spielerFuehrt ? 'fuehrer' : 'verfolger', wertung: eigene });
   }
 
   /** Punkte eines Durchgangs aus Sicht des Spielers. */

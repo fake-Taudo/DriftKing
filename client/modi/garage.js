@@ -6,14 +6,14 @@ import { Showroom } from '../render/showroom.js';
 import { GarageKamera } from '../render/garageKamera.js';
 import { AutoModell } from '../render/auto/autoModell.js';
 import { GarageUi } from '../ui/garage/garageUi.js';
-import { dialog, toast } from '../ui/dom.js';
+import { dialog } from '../ui/dom.js';
+import { teileKaufen } from '../ui/kauf.js';
 import { t, zahl } from '../i18n/de.js';
 import { kopiereLook, pruefeLook } from '../../shared/look.js';
 import { AUFKLEBER_IDS } from '../assets/aufkleber.js';
 import { Verlauf } from '../../shared/verlauf.js';
-import { kaufen, lookBedarf, anprobeEntfernen } from '../../shared/oekonomie.js';
+import { besitzt, lookBedarf, anprobeEntfernen } from '../../shared/oekonomie.js';
 import { teilInfo } from '../../shared/teile.js';
-import { besitzt } from '../../shared/oekonomie.js';
 
 const RUHE = { delta: 0, radWinkelV: 0, radWinkelH: 0, radGeschwV: 0, radGeschwH: 0, ayGl: 0, axGl: 0, bremsEff: 0 };
 
@@ -211,36 +211,8 @@ export class Garage {
    * Nicht leistbares zeigt den fehlenden Betrag.
    * @returns {Promise<boolean>} true, wenn gekauft
    */
-  async kaufDialog(kaufIds, { titel } = {}) {
-    const offen = kaufIds.filter((id) => !besitzt(this.daten, id, this.autoId));
-    if (!offen.length) return true;
-    const summe = offen.reduce((s, id) => s + this.preisInfo(id).preis, 0);
-    const fehlt = summe - this.daten.waehrung;
-    const namen = offen.map((id) => this.preisInfo(id).name).join(', ');
-    if (fehlt > 0) {
-      await dialog({
-        titel: t('garage.nichtLeistbarTitel'),
-        text: t('garage.nichtLeistbarText', { teile: namen, preis: zahl(summe), fehlt: zahl(fehlt) })
-      });
-      return false;
-    }
-    const ja = await dialog({
-      titel: titel || t('garage.kaufTitel'),
-      text: t('garage.kaufText', { teile: namen, preis: zahl(summe), rest: zahl(this.daten.waehrung - summe) }),
-      knoepfe: [
-        { text: t('allgemein.abbrechen'), art: 'geist', wert: false },
-        { text: t('garage.kaufen', { preis: zahl(summe) }), art: 'haupt', wert: true }
-      ]
-    });
-    if (ja !== true) return false;
-    const r = kaufen(this.daten, offen, this.autoId);
-    if (!r.ok) {
-      toast(t('garage.kaufFehler'), { art: 'fehler' });
-      return false;
-    }
-    this.spiel.speicher.sofortSpeichern();
-    this.spiel.audio?.ton?.('kasse');
-    toast(t('garage.gekauft', { preis: zahl(r.preis) }), { art: 'erfolg' });
+  async kaufDialog(kaufIds, optionen = {}) {
+    if (!(await teileKaufen(this.spiel, kaufIds, this.autoId, optionen))) return false;
     this.ui?.kaufFeier();
     this._speichernWennMoeglich();
     this.ui?.kopfAktualisieren();

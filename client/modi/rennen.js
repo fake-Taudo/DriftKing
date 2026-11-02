@@ -239,7 +239,10 @@ export class Rennen {
       return;
     }
     this.zeit += dt;
-    if (this.zustand === 'laeuft') this.fahrzeit += dt;
+    if (this.zustand === 'laeuft') {
+      this.fahrzeit += dt;
+      if (!this.konfig.autopilot) this.spiel.aufgaben?.fahrtSchritt(this.spieler.fahrzeug, dt);
+    }
     // Spieler
     const sp = this.spieler;
     if (sp && !sp.netzGesteuert) {
@@ -269,7 +272,10 @@ export class Rennen {
     for (const a of this.autos) {
       if (a.runden) {
         const ev = a.runden.aktualisieren(a.fahrzeug.z.x, a.fahrzeug.z.y, this.zeit, dt);
-        for (const x of ev) this.rundenEreignis(a, x);
+        for (const x of ev) {
+          if (a === this.spieler && x.art === 'runde' && !this.konfig.autopilot) this.spiel.aufgaben?.runde();
+          this.rundenEreignis(a, x);
+        }
       }
       const h = a.haenger.aktualisieren(a.fahrzeug.tempo, dt, this.zustand === 'laeuft');
       if (a === this.spieler) {
@@ -292,6 +298,7 @@ export class Rennen {
   fahrzeugEreignis(a, ev) {
     if (a === this.spieler) {
       if (ev.art === 'wand') {
+        this.spiel.aufgaben?.wand(ev.staerke);
         this.rennKamera.stoss(Math.min(1, ev.staerke / 12));
         if (ev.staerke > 3) this.spiel.eingabe.gamepad.rumpeln(Math.min(1, ev.staerke / 12), 140);
       }

@@ -22,8 +22,8 @@ export const FINISHS = [
   { id: 'matt', name: 'Matt', preis: 400 },
   { id: 'satin', name: 'Satin', preis: 450 },
   { id: 'metallic', name: 'Metallic', preis: 700 },
-  { id: 'perleffekt', name: 'Perleffekt', preis: 2400 },
-  { id: 'chrom', name: 'Chrom', preis: 4000 }
+  { id: 'perleffekt', name: 'Perleffekt', preis: 1800 },
+  { id: 'chrom', name: 'Chrom', preis: 3000 }
 ];
 
 export const MUSTER = [
@@ -55,8 +55,8 @@ export const FELGEN = [
   { id: 'stern', name: 'Sternform', preis: 900 },
   { id: 'tiefbett', name: 'Tiefbett', preis: 1100 },
   { id: 'y_speichen', name: 'Y-Speichen', preis: 1000 },
-  { id: 'netz', name: 'Netz', preis: 1300 },
-  { id: 'dreispeichen', name: 'Dreispeichen', preis: 1500 }
+  { id: 'netz', name: 'Netz', preis: 1100 },
+  { id: 'dreispeichen', name: 'Dreispeichen', preis: 1200 }
 ];
 
 // ---------------------------------------------------------------------------
@@ -83,8 +83,8 @@ export const QUALM = [
   { id: 'lila', name: 'Lila', farbe: '#a24bff', preis: 350 },
   { id: 'gruen', name: 'Grün', farbe: '#33e07a', preis: 350 },
   { id: 'orange', name: 'Orange', farbe: '#ff8a1f', preis: 350 },
-  { id: 'regenbogen', name: 'Regenbogen', farbe: 'regenbogen', preis: 2500 },
-  { id: 'frei', name: 'Freie Farbe', farbe: null, preis: 1500 }
+  { id: 'regenbogen', name: 'Regenbogen', farbe: 'regenbogen', preis: 1800 },
+  { id: 'frei', name: 'Freie Farbe', farbe: null, preis: 1000 }
 ];
 
 // ---------------------------------------------------------------------------
@@ -94,23 +94,26 @@ export const EXTRAS = [
   { id: 'toenung', name: 'Scheibentönung', preis: 200 },
   { id: 'lichtfarbe', name: 'Scheinwerferfarbe', preis: 350 },
   { id: 'ruecklicht', name: 'Rücklicht-Design', preis: 300 },
-  { id: 'backfire', name: 'Backfire-Auspuff', preis: 1200 }
+  { id: 'backfire', name: 'Backfire-Auspuff', preis: 900 }
 ];
 
 // ---------------------------------------------------------------------------
 // Bodykit-Slots (je Auto). Variante 0 = Serie (bzw. „kein Spoiler“) und kostenlos.
 // "preise" gelten für Variante 1..n und werden mit AUTO_PREISFAKTOR multipliziert.
 export const SLOTS = [
-  { id: 'frontstoss', name: 'Frontstoßstange', varianten: ['Serie', 'Frontlippe', 'Frontsplitter', 'Rennschürze'], preise: [350, 600, 900] },
-  { id: 'heckstoss', name: 'Heck & Diffusor', varianten: ['Serie', 'Diffusor', 'Rennheck', 'Breitheck'], preise: [300, 550, 850] },
-  { id: 'schweller', name: 'Seitenschweller', varianten: ['Serie', 'Sportschweller', 'Rennschweller', 'Breitschweller'], preise: [250, 450, 700] },
-  { id: 'verbreiterung', name: 'Kotflügelverbreiterung', varianten: ['Serie', 'Dezent', 'Genietet', 'Extrem'], preise: [450, 800, 1300] },
-  { id: 'haube', name: 'Motorhaube', varianten: ['Serie', 'Lufthutze', 'Karbonhaube', 'Lüftungshaube'], preise: [350, 700, 950] },
-  { id: 'dach', name: 'Dach', varianten: ['Serie', 'Dachspoiler', 'Dachträger', 'Dach-Lufthutze'], preise: [250, 450, 650] },
-  { id: 'spiegel', name: 'Spiegel', varianten: ['Serie', 'Rennspiegel', 'Aero-Spiegel', 'Retro-Spiegel'], preise: [120, 200, 250] },
-  { id: 'auspuff', name: 'Auspuffblenden', varianten: ['Serie', 'Doppelrohr', 'Großrohr', 'Seitenausgang'], preise: [200, 350, 550] },
-  { id: 'spoiler', name: 'Spoiler', varianten: ['Kein Spoiler', 'Bürzel', 'Lippe', 'Kleiner Flügel', 'Großer Heckflügel', 'Doppelflügel'], preise: [250, 300, 550, 1000, 1500] }
+  { id: 'frontstoss', name: 'Frontstoßstange', varianten: ['Serie', 'Frontlippe', 'Frontsplitter', 'Rennschürze'], preise: [170, 290, 430] },
+  { id: 'heckstoss', name: 'Heck & Diffusor', varianten: ['Serie', 'Diffusor', 'Rennheck', 'Breitheck'], preise: [140, 260, 410] },
+  { id: 'schweller', name: 'Seitenschweller', varianten: ['Serie', 'Sportschweller', 'Rennschweller', 'Breitschweller'], preise: [120, 220, 340] },
+  { id: 'verbreiterung', name: 'Kotflügelverbreiterung', varianten: ['Serie', 'Dezent', 'Genietet', 'Extrem'], preise: [220, 380, 620] },
+  { id: 'haube', name: 'Motorhaube', varianten: ['Serie', 'Lufthutze', 'Karbonhaube', 'Lüftungshaube'], preise: [170, 340, 460] },
+  { id: 'dach', name: 'Dach', varianten: ['Serie', 'Dachspoiler', 'Dachträger', 'Dach-Lufthutze'], preise: [120, 220, 310] },
+  { id: 'spiegel', name: 'Spiegel', varianten: ['Serie', 'Rennspiegel', 'Aero-Spiegel', 'Retro-Spiegel'], preise: [100, 110, 130] },
+  { id: 'auspuff', name: 'Auspuffblenden', varianten: ['Serie', 'Doppelrohr', 'Großrohr', 'Seitenausgang'], preise: [100, 170, 260] },
+  { id: 'spoiler', name: 'Spoiler', varianten: ['Kein Spoiler', 'Bürzel', 'Lippe', 'Kleiner Flügel', 'Großer Heckflügel', 'Doppelflügel'], preise: [120, 140, 240, 420, 620] }
 ];
+
+/** Kein Anbauteil kostet weniger als das (auch nicht beim günstigsten Auto). */
+export const TEIL_MINDESTPREIS = 100;
 
 export const SLOT_IDS = SLOTS.map((s) => s.id);
 const slotNachId = new Map(SLOTS.map((s) => [s.id, s]));
@@ -145,7 +148,9 @@ export const OPTIK_WIRKUNG = {
 export const STUFEN_NAMEN = ['Serie', 'Sport', 'Rennsport', 'Profi', 'Meister'];
 
 /** Preis-Basis je Stufe (Index = Stufe - 1), wird mit Kategorie-Gewicht und Autofaktor multipliziert. */
-export const STUFEN_PREISE = [0, 110, 270, 560, 1150];
+export const STUFEN_PREISE = [0, 50, 110, 220, 440];
+/** Mindestpreis je Stufe: Höhere Stufen kosten auch bei günstigen Kategorien und Autos deutlich mehr. */
+export const STUFEN_MINDESTPREISE = [0, 100, 140, 200, 300];
 
 export const TUNING = [
   {
@@ -220,14 +225,14 @@ export function teilInfo(kaufId, autoId) {
     const slot = slotNachId.get(a);
     const v = Number(b);
     if (!slot || !Number.isInteger(v) || v < 0 || v > slot.varianten.length - 1 || faktor === undefined) return null;
-    const preis = v === 0 ? 0 : rund(slot.preise[v - 1] * faktor);
+    const preis = v === 0 ? 0 : Math.max(TEIL_MINDESTPREIS, rund(slot.preise[v - 1] * faktor));
     return { preis, autoGebunden: true, name: `${slot.name}: ${slot.varianten[v]}`, art };
   }
   if (art === 'tuning') {
     const t = tuningNachId.get(a);
     const s = Number(b);
     if (!t || !Number.isInteger(s) || s < 1 || s > 5 || faktor === undefined) return null;
-    const preis = s === 1 ? 0 : rund(STUFEN_PREISE[s - 1] * t.gewicht * faktor);
+    const preis = s === 1 ? 0 : Math.max(STUFEN_MINDESTPREISE[s - 1], rund(STUFEN_PREISE[s - 1] * t.gewicht * faktor));
     return { preis, autoGebunden: true, name: `${t.name} – ${STUFEN_NAMEN[s - 1]}`, art };
   }
   return null;

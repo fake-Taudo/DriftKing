@@ -99,7 +99,10 @@ export class Zeitangriff extends Rennen {
     const mittel = runden.reduce((s, r) => s + r.wertung.punkte, 0) / ZEITANGRIFF_RUNDEN;
     const d = this.spiel.daten;
     if (this.konfig.autopilot) return { mittel, medaille: null, belohnung: 0, posten: [], neuerBestwert: false };
-    for (const r of runden) statistikVerbuchen(d, r.wertung);
+    for (const r of runden) {
+      statistikVerbuchen(d, r.wertung);
+      this.spiel.ereignisse.senden('fahrtGewertet', { rolle: 'einzel', wertung: r.wertung });
+    }
     const e = zeitangriffAbschliessen(d, { laufId: this.laufId, streckeId: this.S.id, punkte: mittel });
     this.spiel.speicher.speichern();
     this.spiel.ereignisse.senden('zeitangriffEnde', { streckeId: this.S.id, punkte: mittel, medaille: e.medaille, runden: runden.map((r) => r.wertung) });

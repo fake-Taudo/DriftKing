@@ -380,3 +380,112 @@
   .garage .menue-muenzen { padding: 4px 9px; font-size: 0.86rem; }
   .garage-kopf { gap: 4px; }
 }
+
+/* Shop */
+.shop-griff-platz { height: 8px; flex: none; }
+.shop-steuerung { flex: none; display: flex; flex-direction: column; gap: 6px; padding: 0 10px 8px; }
+.shop-suche { padding: 7px 10px; font-size: 0.92rem; }
+.shop-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; justify-content: space-between; }
+.shop-chips { border-radius: var(--radius-klein); }
+.shop-chips .auswahl-knopf { border-radius: 7px; padding: 4px 9px; min-height: 30px; font-size: 0.82rem; }
+.shop-sortierung { padding: 5px 8px; border-radius: 7px; font-size: 0.82rem; min-height: 32px; }
+.shop-leer { padding: 18px 8px; text-align: center; color: var(--farbe-text-2); }
+.shop-raster { position: relative; }
+.shop-raster .teil-karte { position: relative; }
+.shop-neu { position: absolute; top: 5px; right: 5px; padding: 1px 6px; border-radius: 99px; background: var(--farbe-haupt); color: #fff; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; }
+.shop-unter { font-size: 0.72rem; color: var(--farbe-text-3); }
+.teil-preis.zu-teuer { color: var(--farbe-text-3); }
+.shop-detail { display: none; flex: none; flex-direction: column; gap: 6px; max-height: 48%; overflow-y: auto; padding: 10px 12px; border-top: 1px solid var(--farbe-linie); background: rgba(255, 255, 255, 0.03); }
+.shop-detail.sichtbar { display: flex; animation: bildschirmEin 180ms ease-out; }
+.shop-titel { margin: 0; font-family: var(--schrift-titel); font-size: 1.15rem; }
+.shop-text { margin: 0; color: var(--farbe-text-2); font-size: 0.88rem; line-height: 1.35; }
+.shop-werte { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 4px 10px; }
+.shop-wert { display: flex; flex-direction: column; font-size: 0.74rem; color: var(--farbe-text-3); }
+.shop-wert strong { font-size: 0.82rem; color: var(--farbe-text); font-weight: 600; }
+.shop-fehlt { color: var(--farbe-warnung); }
+.shop-aktionen { margin-top: 2px; }
+.shop-aktionen .knopf { flex: 1 1 auto; }
+.shop-aufkleber { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; color: var(--farbe-akzent); }
+.shop-aufkleber .aufkleber-bild { width: 100%; height: auto; aspect-ratio: 1; }
+
+.shop-aktionen { position: sticky; bottom: -10px; padding: 6px 0 2px; background: #141830; }
+@media (orientation: portrait) {
+  .garage.shop .garage-panel { top: 34%; }
+  .garage.shop .garage-kopf { flex-wrap: nowrap; }
+  .shop-steuerung { gap: 4px; padding-bottom: 6px; }
+  .shop-werte { grid-template-columns: repeat(3, 1fr); }
+  .shop-wert { font-size: 0.68rem; }
+  .shop-wert strong { font-size: 0.74rem; }
+  .shop-text { font-size: 0.8rem; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .shop-griff-platz { height: 4px; }
+  .shop-steuerung { flex-direction: row; align-items: center; gap: 4px; padding-bottom: 4px; }
+  .shop-suche { flex: 1 1 70px; min-width: 0; padding: 4px 8px; }
+  .shop-filter { flex-wrap: nowrap; gap: 4px; }
+  .shop-chips .auswahl-knopf { padding: 2px 6px; min-height: 26px; font-size: 0.72rem; }
+  .shop-sortierung { min-height: 26px; padding: 2px 4px; font-size: 0.72rem; max-width: 92px; }
+  .shop-detail { max-height: 56%; padding: 6px 10px; gap: 3px; }
+  .shop-titel { font-size: 0.95rem; }
+  .shop-text { display: none; }
+  .shop-werte { grid-template-columns: repeat(3, 1fr); gap: 2px 6px; }
+  .shop-wert { font-size: 0.62rem; }
+  .shop-wert strong { font-size: 0.7rem; }
+}
+
+/* Tagesaufgaben im Hauptmenü */
+.tages-box {
+  position: absolute;
+  right: calc(16px + var(--sicher-rechts));
+  top: calc(72px + var(--sicher-oben));
+  width: min(290px, 44vw);
+  padding: 0;
+  overflow: hidden;
+  background: rgba(16, 20, 40, 0.86);
+}
+.tages-kopf { appearance: none; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 40px; padding: 8px 12px; border: 0; background: transparent; color: var(--farbe-text); font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+.tages-kopf:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: -3px; }
+.tages-liste { display: none; flex-direction: column; gap: 7px; padding: 0 12px 10px; }
+.tages-box.offen .tages-liste { display: flex; }
+.tages-zeile { display: flex; justify-content: space-between; gap: 8px; font-size: 0.8rem; line-height: 1.2; }
+.tages-lohn { flex: none; font-size: 0.76rem; }
+.tages-balken { height: 4px; margin-top: 3px; border-radius: 99px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.tages-balken > div { height: 100%; background: var(--farbe-akzent); }
+.tages-aufgabe.erledigt .tages-zeile { color: var(--farbe-erfolg); }
+.tages-aufgabe.erledigt .tages-balken > div { background: var(--farbe-erfolg); }
+@media (orientation: portrait) {
+  .tages-box { top: calc(58px + var(--sicher-oben)); right: calc(10px + var(--sicher-rechts)); width: min(250px, 62vw); }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .tages-box { top: calc(52px + var(--sicher-oben)); width: min(250px, 36vw); }
+  .tages-kopf { min-height: 32px; padding: 4px 10px; }
+  .tages-liste { gap: 4px; padding-bottom: 6px; }
+}
+
+/* Tutorial */
+.tutorial-karte {
+  position: absolute;
+  left: 50%;
+  top: calc(92px + var(--sicher-oben));
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(460px, calc(100% - 20px));
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(16, 20, 40, 0.92);
+  animation: bildschirmEin 200ms ease-out;
+}
+.tutorial-kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.tutorial-zaehler { font-size: 0.78rem; color: var(--farbe-text-3); }
+.tutorial-titel { margin: 0; font-family: var(--schrift-titel); font-size: 1.25rem; color: var(--farbe-akzent); }
+.tutorial-text { margin: 0; color: var(--farbe-text); font-size: 0.95rem; line-height: 1.35; }
+.tutorial-balken { height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.tutorial-balken > div { height: 100%; width: 0; background: var(--farbe-erfolg); transition: width 120ms linear; }
+.tutorial-schluss { justify-content: center !important; margin-top: 6px; }
+@media (max-height: 520px) and (orientation: landscape) {
+  .tutorial-karte { top: calc(6px + var(--sicher-oben)); padding: 6px 10px; width: min(420px, calc(100% - 340px)); gap: 3px; }
+  .tutorial-titel { font-size: 1rem; }
+  .tutorial-text { font-size: 0.8rem; }
+}

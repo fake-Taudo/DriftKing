@@ -39,6 +39,9 @@ const muenzen = () => g(() => window.__driftkoenig.daten.waehrung);
 
 await seite.goto(basis + '/', { waitUntil: 'load' });
 await seite.waitForSelector('.menue-knopf', { timeout: 60000 });
+await seite.waitForTimeout(400);
+const willkommen = seite.locator('.dialog-hintergrund .knopf', { hasText: 'Überspringen' });
+if (await willkommen.count()) await willkommen.click();
 await seite.getByText('Garage', { exact: true }).click();
 await seite.waitForSelector('.garage', { timeout: 60000 });
 await seite.waitForTimeout(800);
@@ -68,7 +71,7 @@ await g(() => { window.__driftkoenig.daten.waehrung = 100; });
 await seite.locator('.garage-anprobe .knopf.haupt').click();
 await seite.waitForSelector('.dialog-hintergrund');
 const text = await seite.locator('.dialog-hintergrund').innerText();
-pruefe(text.includes('3.900'), 'Nicht leistbar zeigt den fehlenden Betrag: ' + text.replace(/\s+/g, ' ').slice(0, 90));
+pruefe(text.includes('2.900'), 'Nicht leistbar zeigt den fehlenden Betrag: ' + text.replace(/\s+/g, ' ').slice(0, 90));
 await dialogKnopf('OK');
 await seite.locator('.garage-anprobe .knopf.geist').click();
 await g((m) => { window.__driftkoenig.daten.waehrung = m; }, 50000);
@@ -248,6 +251,7 @@ await foto('look-im-rennen');
 await g(() => window.__driftkoenig.speicher.sofortSpeichern());
 await seite.reload({ waitUntil: 'load' });
 await seite.waitForSelector('.menue-knopf', { timeout: 60000 });
+await seite.waitForTimeout(400);
 const nachLaden = await g(() => {
   const d = window.__driftkoenig.daten;
   const a = d.autos.find((x) => x.id === d.aktivesAuto);

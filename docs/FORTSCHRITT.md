@@ -2,7 +2,7 @@
 
 > Beim Neustart zuerst diese Datei und den Abschnitt der aktuellen Phase in `SPEC.md` lesen.
 
-**Aktuelle Phase:** 6 – Währung, Shop, Fortschritt
+**Aktuelle Phase:** 7 – Online-Duell per Einladungscode
 
 ## Phase 1: Fundament – ✅ abgeschlossen
 
@@ -57,12 +57,18 @@ Gebaut: `shared/wertung.js` + `wertungsParameter.js`, `shared/battle.js` (Läufe
 Gebaut: Garage (`client/modi/garage.js`, `client/ui/garage/*`) mit Showroom in 5 Stimmungen, freier Kamera mit Schnellansichten, Farbwähler (Rad, Hex, Schnellfarben), 12 Mustern, 87 Aufklebern in 8 Paketen plus Text in 6 Schriften, Ebenen-Editor mit Zonen-Vorschau, Gruppen und „Auf andere Seite“, Felgen, Bodykit, Fahrwerk-Optik, Qualm, Neon, Scheiben, Licht, Backfire, Kennzeichen, Leistungs-Tuning mit Vorher/Nachher und PI, Setup- und Look-Slots, Look-Code, Fotomodus, Anprobe mit Kauf-Flow, `docs/LIVERY.md`.
 Gefundene und behobene Fehler: Wortfilter sperrte „König“ (und damit den Spielnamen); Frontkappe des Onyx RS fehlte wegen eines NaN aus einem Rundungsfehler.
 
-## Phase 6: Währung, Shop, Fortschritt – 🚧 als Nächstes
+## Phase 6: Währung, Shop, Fortschritt – ✅ abgeschlossen
 
-1. Shop-Bildschirm (Kategorien, Suche, Filter, Sortierung, Vorschau): Autos und Teile kaufen und verkaufen (50 %), letztes Auto nie.
-2. Tagesaufgaben (≥ 12 im Pool, 3 je Tag, 100–400 DM), Anzeige im Hauptmenü.
-3. Interaktives Tutorial beim ersten Start (überspringbar, in den Einstellungen wiederholbar).
-4. `docs/OEKONOMIE.md` mit Balance-Tabelle und Tests gegen Währungs-Vermehrung.
+- [x] Kauf, Verkauf und Anprobe funktionieren ohne Fehlbuchungen (`tests/oekonomie.test.js`, `tests/garage.test.js`, Klicktest `scripts/shopAblauf.js`)
+- [x] `docs/OEKONOMIE.md` belegt die Balance-Ziele aus Abschnitt 9 (erstes neues Auto nach 9–13 Siegen bei sparsamem Teilekauf, alles zusammen ca. 25–40 Stunden; Tabellen aus den echten Daten mit `scripts/oekonomieTabelle.js`)
+- [x] Keine Möglichkeit, Währung durch Fehler oder Kreisläufe zu vervielfachen (Zufallstest mit 5.000 Käufen und Verkäufen; jede Kauf-ID bei jedem Auto ergibt beim Wiederverkauf einen Verlust)
+- [x] Tutorial führt einen Neuling zum ersten Drift (Test mit echter Physik; im Browser bis zum Ende durchgespielt)
+
+Gebaut: Shop (`client/modi/shop.js`, `client/ui/shop/shopUi.js`) mit 9 Kategorien, Suche, Filtern, Sortierung und Vorschau am Auto; Kauf und Verkauf von Teilen und Autos (`client/ui/kauf.js`); Tagesaufgaben mit 15 Aufgaben (`shared/tagesaufgaben.js`, `client/core/aufgaben.js`) und Anzeige im Hauptmenü; Tutorial in 7 Schritten (`client/modi/tutorial.js`, `shared/tutorialLogik.js`) mit Angebot beim ersten Start; neu ausbalancierte Preise.
+
+## Phase 7: Online-Duell per Einladungscode – 🚧 als Nächstes
+
+Abschnitt 10 der Spezifikation: Lobby mit Code, Autoritäts-Server für die Wertung, Interpolation, Wiederverbindung, Rate-Limits, Fuzz-Tests, `docs/NETZWERK.md`, Belohnungen mit Tageslimit, Client-Menü „Online-Duell“.
 
 ## Offen / bekannte Probleme
 
@@ -74,4 +80,4 @@ Gefundene und behobene Fehler: Wortfilter sperrte „König“ (und damit den Sp
 
 ## Wichtige Entscheidungen
 
-Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E4, R1–R2, G1–G8).
+Siehe `docs/ENTSCHEIDUNGEN.md` (T1–T16, P1–P11, D1–D10, W1–W2, B1–B12, E1–E8, U1–U4, R1–R2, G1–G8).

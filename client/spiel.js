@@ -14,6 +14,7 @@ import { Eingabe } from './eingabe/eingabe.js';
 import { NetzClient } from './netz/netzClient.js';
 import { toast } from './ui/dom.js';
 import { t } from './i18n/de.js';
+import { AufgabenDienst } from './core/aufgaben.js';
 import { KMH } from '../shared/mathe.js';
 
 export class Spiel {
@@ -35,6 +36,7 @@ export class Spiel {
   async start({ startModus }) {
     gestenUnterdruecken();
     this.speicher.laden();
+    this.aufgaben = new AufgabenDienst(this);
     beiFehler(() => {
       try { this.speicher.sofortSpeichern(); } catch { /* egal */ }
       this.schleife?.stop();

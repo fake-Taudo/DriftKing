@@ -1,8 +1,9 @@
 // Ökonomie: Buchungen (atomar, ohne Doppelbuchung), Belohnungen und Freischaltungen.
 // Alle Funktionen arbeiten auf dem Spielstand-Objekt und ändern Guthaben und Besitz gemeinsam.
 // Begründung der Werte: docs/OEKONOMIE.md.
-import { BOT_STUFEN, MEDAILLEN, MAX_GUTHABEN } from './spielstand.js';
+import { BOT_STUFEN, MEDAILLEN, MAX_GUTHABEN, neuerAutoEintrag } from './spielstand.js';
 import { teilInfo, QUALM } from './teile.js';
+import { autoDaten, istAutoId } from './autos.js';
 import { standardLook } from './look.js';
 import { aufkleberKaufId } from '../client/assets/aufkleber.js';
 
@@ -18,6 +19,7 @@ export const PERFEKT_BONUS = 100; // je perfektem Durchgang (Führer > 90, kein 
 export const PERFEKT_SCHWELLE = 90;
 export const STRECKEN_FREISCHALTUNG = { kuestenpass: { nach: 'industriehof', siege: 3 }, neonhafen: { nach: 'kuestenpass', siege: 3 } };
 export const MAX_BUCHUNGEN = 200;
+export const VERKAUF_ANTEIL = 0.5;
 
 /**
  * Bucht einen Betrag (positiv = Gutschrift, negativ = Ausgabe) atomar und höchstens einmal je ID.
@@ -266,6 +268,96 @@ export function lookBedarf(daten, autoId, look) {
     summe += info.preis;
   }
   return { teile, summe };
+}
+
+// ---------------------------------------------------------------------------
+// Verkaufen und Autos
+
+/** Verkaufswert: die Hälfte des Preises, abgerundet (Kauf und Verkauf ergeben immer einen Verlust). */
+export function verkaufswert(preis) {
+  return Math.floor(preis * VERKAUF_ANTEIL);
+}
+
+/** Verkauft ein gekauftes Teil für 50 %. Danach ist es aus allen betroffenen Looks und vom Auto entfernt. */
+export function verkaufen(daten, kaufId, autoId) {
+  const info = teilInfo(kaufId, autoId);
+  if (!info) return { ok: false, grund: 'unbekannt', erloes: 0 };
+  if (info.preis === 0) return { ok: false, grund: 'kostenlos', erloes: 0 };
+  if (!besitzt(daten, kaufId, autoId)) return { ok: false, grund: 'kein_besitz', erloes: 0 };
+  const erloes = verkaufswert(info.preis);
+  if (info.autoGebunden) {
+    const a = autoEintrag(daten, autoId);
+    a.gekaufteTeile.splice(a.gekaufteTeile.indexOf(kaufId), 1);
+    const [art, kat, stufe] = kaufId.split(':');
+    if (art === 'tuning' && a.tuning[kat] === Number(stufe)) a.tuning[kat] = 1;
+    for (const l of a.looks) if (lookKaufIds(a.id, l.look).includes(kaufId)) anprobeEntfernen(l.look, standardLook(a.id), [kaufId]);
+  } else {
+    daten.besitzGlobal.splice(daten.besitzGlobal.indexOf(kaufId), 1);
+    for (const a of daten.autos) {
+      for (const l of a.looks) if (lookKaufIds(a.id, l.look).includes(kaufId)) anprobeEntfernen(l.look, standardLook(a.id), [kaufId]);
+    }
+  }
+  buchen(daten, { betrag: erloes, art: 'verkauf' });
+  return { ok: true, erloes };
+}
+
+/** Kauft ein Auto (mit Serienausstattung, leeren Looks und Setups). */
+export function autoKaufen(daten, autoId) {
+  if (!istAutoId(autoId)) return { ok: false, grund: 'unbekannt', preis: 0 };
+  if (autoEintrag(daten, autoId)) return { ok: false, grund: 'besitz', preis: 0 };
+  const preis = autoDaten(autoId).preis;
+  if (preis > daten.waehrung) return { ok: false, grund: 'guthaben', preis, fehlt: preis - daten.waehrung };
+  const b = buchen(daten, { betrag: -preis, art: 'auto' });
+  if (!b.ok) return { ok: false, grund: b.grund, preis };
+  daten.autos.push(neuerAutoEintrag(autoId));
+  return { ok: true, preis };
+}
+
+/** Wert eines Autos beim Verkauf: 50 % des Kaufpreises plus 50 % aller dafür gekauften Teile. */
+export function autoVerkaufswert(daten, autoId) {
+  const a = autoEintrag(daten, autoId);
+  if (!a) return 0;
+  let wert = verkaufswert(autoDaten(autoId).preis);
+  for (const id of a.gekaufteTeile) wert += verkaufswert(teilInfo(id, autoId)?.preis ?? 0);
+  return wert;
+}
+
+/** Verkauft ein Auto samt eingebauter Teile. Das letzte Auto lässt sich nie verkaufen. */
+export function autoVerkaufen(daten, autoId) {
+  const a = autoEintrag(daten, autoId);
+  if (!a) return { ok: false, grund: 'kein_besitz', erloes: 0 };
+  if (daten.autos.length <= 1) return { ok: false, grund: 'letztes', erloes: 0 };
+  const erloes = autoVerkaufswert(daten, autoId);
+  daten.autos.splice(daten.autos.indexOf(a), 1);
+  if (daten.aktivesAuto === autoId) daten.aktivesAuto = daten.autos[0].id;
+  buchen(daten, { betrag: erloes, art: 'autoverkauf' });
+  return { ok: true, erloes };
+}
+
+/**
+ * Setzt ein Teil zur Vorschau in einen Look (Shop). Liefert false, wenn es am Auto nichts zu zeigen gibt
+ * (Aufkleber-Pakete und Tuning).
+ */
+export function anprobeAnwenden(look, kaufId) {
+  const [art, a, b] = kaufId.split(':');
+  if (art === 'finish') look.lack.finish = a;
+  else if (art === 'muster') {
+    look.muster.id = a;
+    if (a !== 'keins' && look.muster.farbe.toLowerCase() === look.lack.farbe1.toLowerCase()) look.muster.farbe = '#ffffff';
+  } else if (art === 'felge') look.felgen.design = a;
+  else if (art === 'teil') {
+    if (look.teile[a].variante === 0 && Number(b) > 0) look.teile[a].farbe = look.lack.farbe1;
+    look.teile[a].variante = Number(b);
+  } else if (art === 'qualm') {
+    if (a === 'frei') look.qualm = '#ffb000';
+    else look.qualm = QUALM.find((q) => q.id === a)?.farbe ?? look.qualm;
+  } else if (kaufId === 'extra:neon') look.neon.an = true;
+  else if (kaufId === 'extra:toenung') look.scheiben = Math.max(look.scheiben, 3);
+  else if (kaufId === 'extra:lichtfarbe') look.scheinwerfer = '#ffd56a';
+  else if (kaufId === 'extra:ruecklicht') look.rueckDesign = 1;
+  else if (kaufId === 'extra:backfire') look.backfire = Math.max(look.backfire, 0.7);
+  else return false;
+  return true;
 }
 
 /**

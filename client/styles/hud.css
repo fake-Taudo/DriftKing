@@ -40,6 +40,7 @@
   font-size: 0.95rem;
   white-space: nowrap;
 }
+.hud-status:empty, .hud-zeit:empty { display: none; }
 .hud-rolle { background: var(--farbe-haupt); font-family: var(--schrift-titel); letter-spacing: 0.05em; text-transform: uppercase; }
 .hud-zeit.warnung { color: var(--farbe-gefahr); }
 .hud-punkte {
