@@ -21,7 +21,7 @@ export class Renderer {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap; // PCFSoftShadowMap gibt es seit three.js r187 nicht mehr
     this.canvas = this.renderer.domElement;
     this.canvas.setAttribute('tabindex', '-1');
     container.appendChild(this.canvas);

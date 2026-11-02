@@ -30,7 +30,8 @@ function lackMaterialSetzen(m, finish) {
   m.clearcoatRoughness = w.clearcoatRoughness;
   m.iridescence = w.iridescence;
   m.iridescenceIOR = 1.35;
-  m.iridescenceThicknessRange = [180, 720];
+  m.iridescenceThicknessMinimum = 180;
+  m.iridescenceThicknessMaximum = 720;
   m.needsUpdate = true;
 }
 
