@@ -12,7 +12,8 @@ class LocalStorageAttrappe {
 
 globalThis.localStorage = new LocalStorageAttrappe();
 const { Speicher } = await import('../client/core/speicher.js');
-const { verpacke, neuerSpielstand } = await import('../shared/spielstand.js');
+const { verpacke, neuerSpielstand, SPIELSTAND_VERSION } = await import('../shared/spielstand.js');
+const SCHLUESSEL = `driftkoenig.v${SPIELSTAND_VERSION}.spielstand`;
 
 beforeEach(() => {
   globalThis.localStorage = new LocalStorageAttrappe();
@@ -22,7 +23,7 @@ test('Erster Start legt einen neuen Spielstand an und speichert ihn', () => {
   const s = new Speicher();
   const d = s.laden();
   assert.equal(d.waehrung, 5000);
-  assert.ok(localStorage.getItem('driftkoenig.v1.spielstand'));
+  assert.ok(localStorage.getItem(SCHLUESSEL));
   assert.equal(s.meldungen.length, 0);
 });
 
@@ -52,7 +53,7 @@ test('Defekter Spielstand → letzte gültige Sicherung wird geladen', () => {
   s.daten.waehrung = 999;
   s.sofortSpeichern();
   new Speicher().laden(); // Backup des gültigen Stands (999) entsteht beim Laden
-  localStorage.setItem('driftkoenig.v1.spielstand', '{kaputt');
+  localStorage.setItem(SCHLUESSEL, '{kaputt');
   const s3 = new Speicher();
   const d3 = s3.laden();
   assert.equal(d3.waehrung, 999);
@@ -60,7 +61,7 @@ test('Defekter Spielstand → letzte gültige Sicherung wird geladen', () => {
 });
 
 test('Defekter Spielstand ohne Sicherung → neuer Spielstand mit Meldung', () => {
-  localStorage.setItem('driftkoenig.v1.spielstand', '{"format":"driftkoenig","pruefsumme":"x","daten":{}}');
+  localStorage.setItem(SCHLUESSEL, '{"format":"driftkoenig","pruefsumme":"x","daten":{}}');
   const s = new Speicher();
   const d = s.laden();
   assert.equal(d.waehrung, 5000);
@@ -76,9 +77,28 @@ test('Alte Version im alten Schlüssel wird gefunden und migriert', () => {
   const s = new Speicher();
   const d = s.laden();
   assert.equal(d.waehrung, 2468);
-  assert.equal(d.version, 1);
+  assert.equal(d.version, SPIELSTAND_VERSION);
   assert.ok(s.meldungen.some((m) => m.schluessel === 'speicher.migriert'));
-  assert.ok(localStorage.getItem('driftkoenig.v1.spielstand'));
+  assert.ok(localStorage.getItem(SCHLUESSEL));
+});
+
+test('Spielstand der Vorversion bleibt beim Update erhalten', () => {
+  const alt = neuerSpielstand('update12345678901234');
+  alt.version = 1;
+  alt.waehrung = 31337;
+  alt.spielerName = 'Stammspieler';
+  delete alt.eingeloesteCodes;
+  localStorage.setItem('driftkoenig.v1.spielstand', verpacke(alt));
+  const s = new Speicher();
+  const d = s.laden();
+  assert.equal(d.waehrung, 31337);
+  assert.equal(d.spielerName, 'Stammspieler');
+  assert.deepEqual(d.eingeloesteCodes, []);
+  assert.ok(localStorage.getItem(SCHLUESSEL));
+  // Der nächste Start nimmt den neuen Stand, nicht den alten Schlüssel
+  s.daten.waehrung = 40000;
+  s.sofortSpeichern();
+  assert.equal(new Speicher().laden().waehrung, 40000);
 });
 
 test('Ohne localStorage läuft das Spiel im Arbeitsspeicher mit Hinweis', () => {

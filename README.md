@@ -73,6 +73,7 @@ Dazu kommen Abläufe im echten Browser. Sie brauchen `npm run build` und ein ins
 | `GPU=1 node scripts/onlineAblauf.js` | Online-Duell mit 200 ms Latenz und 5 % Paketverlust, Look-Sync, Wiederverbindung, Abbruch |
 | `GPU=1 node scripts/uiAblauf.js` | Alle Bildschirme in 7 Bildschirmgrößen, Überlappungen, Barrierefreiheit |
 | `node scripts/scrollAblauf.js` | Wischen in allen Menüs mit echten Touch-Ereignissen, dazu Regler, Aufkleber ziehen, Touch-Tasten |
+| `node scripts/codeAblauf.js` | Geschenk-Code im echten Spiel: falscher Code, „Release“, zweiter Versuch, Neuladen, Lage des Symbols |
 | `node scripts/klangCheck.js` | Motor, Reifen, Klangunterschiede, Übersteuern, Regler |
 | `node scripts/garageAblauf.js`, `node scripts/shopAblauf.js` | Garage und Shop im Detail |
 | `node scripts/performance.js` | FPS, Draw Calls und Speicher |

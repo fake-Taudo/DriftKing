@@ -10,6 +10,7 @@ Diese Punkte lassen sich nur mit echten Geräten prüfen: Fahrgefühl, Klang, To
 - [ ] Das Willkommensfenster bietet das Tutorial an, es lässt sich bis zum Ende spielen
 - [ ] Wischen in Einstellungen (Steuerung), Garage, Shop und Battle-Auswahl: Das Ende jeder Liste ist erreichbar, die Reiterleisten lassen sich seitlich bewegen. Auf dem iPhone besonders wichtig, die automatischen Tests laufen nur in Chromium
 - [ ] Lenken, Gas und Handbremse gleichzeitig funktionieren, auch wenn der Finger zwischen den Pfeilen gleitet
+- [ ] Geschenk-Symbol antippen, Code eintippen: Das Feld bleibt über der Bildschirmtastatur sichtbar, die Seite zoomt nicht
 - [ ] Der erste Drift gelingt ohne Vorwissen nach wenigen Versuchen
 - [ ] Beim Drehen des Geräts bleibt alles sauber, nichts überlappt, das laufende Rennen geht weiter
 - [ ] Touch-Modus „Lenkrad“ und „Neigung“ ausprobieren (Neigung fragt auf dem iPhone nach einer Erlaubnis)

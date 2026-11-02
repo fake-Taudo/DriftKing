@@ -5,7 +5,7 @@ import { standardLook, pruefeLook } from './look.js';
 import { standardSetup, SETUP_REGLER, TUNING_IDS, GRATIS_GLOBAL, gratisFuerAuto, teilInfo } from './teile.js';
 import { fnv1a } from './kodierung.js';
 
-export const SPIELSTAND_VERSION = 1;
+export const SPIELSTAND_VERSION = 2;
 export const START_GUTHABEN = 5000;
 export const MAX_GUTHABEN = 999_999_999;
 export const LOOK_SLOTS = 5;
@@ -117,7 +117,8 @@ export function neuerSpielstand(clientId) {
       muenzenVerdient: 0, muenzenAusgegeben: 0, wandkontakte: 0
     },
     einstellungen: standardEinstellungen(),
-    buchungen: []
+    buchungen: [],
+    eingeloesteCodes: []
   };
 }
 
@@ -141,7 +142,9 @@ const MIGRATIONEN = {
     neu.erstellt = d.erstellt || Date.now();
     neu.version = 1;
     return neu;
-  }
+  },
+  // Version 2: Eingelöste Geschenk-Codes
+  1: (d) => ({ ...d, eingeloesteCodes: d.eingeloesteCodes || [], version: 2 })
 };
 
 /** Migriert ein Daten-Objekt auf die aktuelle Version. Wirft bei unbekannter Version. */
@@ -278,6 +281,7 @@ function pruefeStreng(d, { aufkleberIds } = {}) {
 
   if (!istObj(d.einstellungen)) throw new SpeicherFehler('einstellungen');
   if (!Array.isArray(d.buchungen) || d.buchungen.length > 500) throw new SpeicherFehler('buchungen');
+  if (!Array.isArray(d.eingeloesteCodes) || d.eingeloesteCodes.length > 200 || !d.eingeloesteCodes.every((c) => typeof c === 'string' && c.length <= 40)) throw new SpeicherFehler('eingeloesteCodes');
 }
 
 /**

@@ -4,7 +4,24 @@
   background: linear-gradient(90deg, rgba(11, 14, 28, 0.86) 0%, rgba(11, 14, 28, 0.55) 38%, rgba(11, 14, 28, 0) 62%);
   gap: 10px;
 }
-.menue-kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.menue-kopf { position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.menue-kopf-links { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.knopf.rund.menue-geschenk { width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 8px; background: rgba(11, 14, 28, 0.75); }
+.knopf.rund.menue-geschenk:hover { background: rgba(33, 39, 72, 0.9); }
+.geschenk-symbol { display: block; width: 100%; height: 100%; }
+.geschenk-karton { fill: var(--farbe-haupt); }
+.geschenk-band { fill: var(--farbe-gold); }
+.code-feld {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  text-align: center;
+  font-family: var(--schrift-zahl);
+  font-size: 16px; /* Ab 16 px zoomt das iPhone beim Antippen nicht in die Seite */
+  letter-spacing: 0.08em;
+}
+.code-feld::placeholder { color: var(--farbe-text-2); opacity: 1; }
+.code-meldung { min-height: 1.3em; margin-top: 8px; color: var(--farbe-warnung); font-size: 0.9rem; text-align: center; }
 .menue-logo { font-size: clamp(2rem, 6vw, 3.6rem); }
 .menue-kopf-rechts { display: flex; align-items: center; gap: 10px; }
 .menue-muenzen {
@@ -55,6 +72,8 @@
   .menue-auto-info { align-self: center; margin: 37vh 0 0; }
   /* Schmale Handys: Logo, Münzen und Vollbild-Knopf passen in eine Zeile */
   .menue-kopf { gap: 6px; align-items: center; }
+  /* Schwebt über dem freien Bereich um das Auto, die Menüpunkte behalten ihren Platz */
+  .knopf.rund.menue-geschenk { position: absolute; top: calc(100% + 6px); left: 0; }
   .menue-logo { font-size: clamp(1.45rem, 7vw, 3rem); min-width: 0; }
   .menue-kopf-rechts { gap: 6px; flex: none; }
   .menue-muenzen { padding: 5px 10px; font-size: 0.95rem; }
@@ -73,6 +92,14 @@
   .menue-logo { font-size: 1.8rem; }
   .menue-spalte { gap: 6px; }
   .menue-liste { gap: 6px; }
+  .menue-kopf-links { gap: 4px; }
+  .knopf.rund.menue-geschenk { width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 7px; }
+}
+/* Sehr flache Handys im Querformat: Alle Menüpunkte bleiben ohne Scrollen erreichbar */
+@media (max-height: 380px) and (orientation: landscape) {
+  .menue-bildschirm { gap: 6px; }
+  .menue-spalte { gap: 4px; }
+  .menue-liste { gap: 5px; }
 }
 
 /* Auswahl-Bildschirme */

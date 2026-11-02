@@ -103,6 +103,7 @@ Zusätzlich: Produktionstest aus einem frischen Klon des Repositories (`npm ci`,
 ## Nach dem Abschluss
 
 - **Scrollen auf Touch-Geräten (Rückmeldung vom ersten Test):** Menüs mit langem Inhalt und die Reiterleisten ließen sich nicht wischen, der Gestenhandler blockierte alles außer einer Klasse, die es nirgends gab. Behoben (T17). Außerdem bleiben Suche und Filter im Shop nicht mehr stehen, die Liste hatte neben dem Detail auf kleinen Handys nur 47 px Höhe. `scripts/scrollAblauf.js` prüft das mit echten Berührungen auf 6 Ansichten (alter Code 50 Fehler, neuer Code 0), dazu Regler, Aufkleber ziehen und Touch-Tasten. **Grenze:** Getestet ist Chromium, nicht Safari auf dem iPhone.
+- **Geschenk-Code:** Geschenk-Symbol unter dem Logo öffnet ein Feld „CODE EINGEBEN“, der Code „Release“ bringt einmalig 7.500 Driftmünzen (E9). Spielstand-Version 2, alte Stände werden migriert. Geprüft mit `tests/oekonomie.test.js`, `tests/speicher.test.js` und `scripts/codeAblauf.js` auf 7 Ansichten.
 
 ## Offen / bekannte Probleme
 

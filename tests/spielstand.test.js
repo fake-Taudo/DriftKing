@@ -50,7 +50,9 @@ test('Ungültige Werte werden trotz korrekter Prüfsumme abgelehnt', () => {
     (d) => { d.besitzGlobal.push('finish:gold'); },
     (d) => { d.autos[0].looks[0].look.lack.farbe1 = 'rot'; },
     (d) => { d.autos[0].looks[0].look.aufkleber = new Array(31).fill({}); },
-    (d) => { d.statistik.siege = NaN; }
+    (d) => { d.statistik.siege = NaN; },
+    (d) => { delete d.eingeloesteCodes; },
+    (d) => { d.eingeloesteCodes = [5]; }
   ];
   for (const [i, aendern] of faelle.entries()) {
     const d = neuerSpielstand(ID);
@@ -84,6 +86,18 @@ test('Migration von Version 0 auf aktuelle Version', () => {
   assert.equal(r.daten.version, SPIELSTAND_VERSION);
   assert.equal(r.daten.waehrung, 7777);
   assert.ok(r.daten.besitzGlobal.includes('finish:glanz'));
+});
+
+test('Spielstand der Version 1 bekommt die Liste der eingelösten Codes', () => {
+  const alt = neuerSpielstand(ID);
+  alt.version = 1;
+  alt.waehrung = 4321;
+  delete alt.eingeloesteCodes;
+  const r = entpacke(verpacke(alt));
+  assert.equal(r.ok, true, JSON.stringify(r));
+  assert.equal(r.migriert, true);
+  assert.equal(r.daten.waehrung, 4321);
+  assert.deepEqual(r.daten.eingeloesteCodes, []);
 });
 
 test('Spielstand aus der Zukunft wird abgelehnt', () => {

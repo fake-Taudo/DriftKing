@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { neuerSpielstand, pruefeSpielstand } from '../shared/spielstand.js';
-import { kaufen, verkaufen, verkaufswert, autoKaufen, autoVerkaufen, autoVerkaufswert, besitzt, lookBedarf, tuningEinbauen, battleAbschliessen, anprobeAnwenden, lookKaufIds, buchen, onlineErgebnisBuchen, BATTLE_BELOHNUNG, ZEITANGRIFF_BELOHNUNG } from '../shared/oekonomie.js';
+import { kaufen, verkaufen, verkaufswert, autoKaufen, autoVerkaufen, autoVerkaufswert, besitzt, lookBedarf, tuningEinbauen, battleAbschliessen, anprobeAnwenden, lookKaufIds, buchen, onlineErgebnisBuchen, codeEinloesen, MAX_BUCHUNGEN, BATTLE_BELOHNUNG, ZEITANGRIFF_BELOHNUNG } from '../shared/oekonomie.js';
 import { teilInfo, alleGlobalenIds, alleAutoIds, FINISHS, MUSTER, FELGEN, AUFKLEBER_PAKETE, QUALM, EXTRAS, SLOTS, TUNING, STUFEN_NAMEN } from '../shared/teile.js';
 import { AUTOS, AUTO_IDS, autoDaten } from '../shared/autos.js';
 import { standardLook, kopiereLook, pruefeLook } from '../shared/look.js';
@@ -360,4 +360,45 @@ test('Die Look-Hilfen verändern den Serien-Look nicht', () => {
   const k = kopiereLook(l);
   lookKaufIds('kestrel_s', l);
   assert.deepEqual(l, k);
+});
+
+test('Geschenk-Code: Release bringt 7.500 Münzen, aber nur einmal', () => {
+  const d = neuerSpielstand('testclient1234567890');
+  const start = d.waehrung;
+  const r = codeEinloesen(d, 'Release');
+  assert.equal(r.ok, true);
+  assert.equal(r.betrag, 7500);
+  assert.equal(d.waehrung, start + 7500);
+  assert.equal(d.statistik.muenzenVerdient, 7500);
+  assert.deepEqual(pruefeSpielstand(d), { ok: true });
+  for (const nochmal of ['Release', 'RELEASE', ' release ']) {
+    assert.deepEqual(codeEinloesen(d, nochmal), { ok: false, grund: 'eingeloest' });
+  }
+  assert.equal(d.waehrung, start + 7500);
+});
+
+test('Geschenk-Code: Schreibweise und Leerzeichen am Rand sind egal', () => {
+  for (const eingabe of ['release', 'RELEASE', '  ReLeAsE\n']) {
+    const d = neuerSpielstand('testclient1234567890');
+    assert.equal(codeEinloesen(d, eingabe).ok, true, eingabe);
+  }
+});
+
+test('Geschenk-Code: Falsche Eingaben ändern nichts', () => {
+  const d = neuerSpielstand('testclient1234567890');
+  const vorher = JSON.stringify(d);
+  assert.equal(codeEinloesen(d, '').grund, 'leer');
+  assert.equal(codeEinloesen(d, '   ').grund, 'leer');
+  assert.equal(codeEinloesen(d, null).grund, 'leer');
+  for (const falsch of ['Releas', 'Release2', 'Re lease', 'constructor', '__proto__', 'toString']) {
+    assert.equal(codeEinloesen(d, falsch).grund, 'unbekannt', falsch);
+  }
+  assert.equal(JSON.stringify(d), vorher);
+});
+
+test('Geschenk-Code: Die Sperre überlebt das Kürzen der Buchungsliste', () => {
+  const d = neuerSpielstand('testclient1234567890');
+  codeEinloesen(d, 'Release');
+  for (let i = 0; i < MAX_BUCHUNGEN + 50; i++) buchen(d, { betrag: 1, id: 'test:' + i });
+  assert.equal(codeEinloesen(d, 'Release').grund, 'eingeloest');
 });

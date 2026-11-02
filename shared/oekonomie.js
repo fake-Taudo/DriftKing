@@ -21,6 +21,9 @@ export const PERFEKT_SCHWELLE = 90;
 export const STRECKEN_FREISCHALTUNG = { kuestenpass: { nach: 'industriehof', siege: 3 }, neonhafen: { nach: 'kuestenpass', siege: 3 } };
 export const MAX_BUCHUNGEN = 200;
 export const VERKAUF_ANTEIL = 0.5;
+/** Geschenk-Codes in Großbuchstaben → Münzen. Jeder Code gilt je Spielstand einmal. */
+export const GESCHENK_CODES = { RELEASE: 7500 };
+export const MAX_CODE_LAENGE = 24;
 
 /**
  * Bucht einen Betrag (positiv = Gutschrift, negativ = Ausgabe) atomar und höchstens einmal je ID.
@@ -40,6 +43,22 @@ export function buchen(daten, { betrag, id, art = 'sonstiges' }) {
   }
   void art;
   return { ok: true, guthaben: daten.waehrung };
+}
+
+/**
+ * Löst einen Geschenk-Code ein. Groß- und Kleinschreibung und Leerzeichen am Rand zählen nicht.
+ * Die Liste `eingeloesteCodes` ist die Sperre, nicht `buchungen`: Dort fallen alte IDs nach 200 Einträgen heraus.
+ * @returns {{ok: true, code: string, betrag: number, guthaben: number} | {ok: false, grund: 'leer'|'unbekannt'|'eingeloest'}}
+ */
+export function codeEinloesen(daten, eingabe) {
+  const code = String(eingabe ?? '').trim().toUpperCase();
+  if (!code) return { ok: false, grund: 'leer' };
+  if (!Object.hasOwn(GESCHENK_CODES, code)) return { ok: false, grund: 'unbekannt' };
+  if (daten.eingeloesteCodes.includes(code)) return { ok: false, grund: 'eingeloest' };
+  const betrag = GESCHENK_CODES[code];
+  const r = buchen(daten, { betrag, art: 'code' });
+  daten.eingeloesteCodes.push(code);
+  return { ok: true, code, betrag, guthaben: r.guthaben };
 }
 
 /**

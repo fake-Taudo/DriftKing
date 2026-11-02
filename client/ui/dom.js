@@ -100,10 +100,10 @@ export function toast(text, { art = 'info', dauer = 3500, aktion = null } = {}) 
 
 /**
  * Zeigt einen modalen Dialog.
- * @param {{titel: string, text?: string, inhalt?: Node, knoepfe?: Array<{text, art?, wert?, aktion?}>, schliessbar?: boolean}} o
+ * @param {{titel: string, text?: string, inhalt?: Node, knoepfe?: Array<{text, art?, wert?, aktion?}>, schliessbar?: boolean, fokus?: HTMLElement}} o
  * @returns {Promise<any>} Wert des gedrückten Knopfes (bzw. null bei Schließen)
  */
-export function dialog({ titel, text, inhalt, knoepfe, schliessbar = true }) {
+export function dialog({ titel, text, inhalt, knoepfe, schliessbar = true, fokus = null }) {
   return new Promise((aufloesen) => {
     const vorherFokus = document.activeElement;
     const reihe = h('div.knopf-reihe');
@@ -143,7 +143,7 @@ export function dialog({ titel, text, inhalt, knoepfe, schliessbar = true }) {
     document.addEventListener('keydown', tasten, true);
     if (schliessbar) hintergrund.addEventListener('pointerdown', (e) => { if (e.target === hintergrund) ende(null); });
     document.getElementById('overlay').appendChild(hintergrund);
-    const ersterKnopf = reihe.querySelector('.knopf.haupt') || reihe.querySelector('.knopf');
+    const ersterKnopf = fokus || reihe.querySelector('.knopf.haupt') || reihe.querySelector('.knopf');
     if (ersterKnopf) setTimeout(() => ersterKnopf.focus(), 30);
   });
 }

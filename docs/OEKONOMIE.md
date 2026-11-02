@@ -16,6 +16,7 @@ von `tests/oekonomie.test.js`. Es gibt genau eine Währung, kein Echtgeld, keine
 | Freies Fahren | 50–150 DM bei neuem Bestwert | nur mit mindestens 5 Punkten Vorsprung auf den letzten belohnten Wert |
 | Tagesaufgaben | 3 je Tag, je 100–400 DM (Ø 223 DM) | Neustart um Mitternacht |
 | Online-Duell (Phase 7) | Sieg 400, Niederlage 100 | 10 je Tag, 3 je Gegner |
+| Geschenk-Code „Release“ | 7.500 DM | einmal je Spielstand |
 
 ## Katalog
 
@@ -105,6 +106,7 @@ Alle Regeln liegen in einer Stelle (`shared/oekonomie.js`) und sind getestet (`t
 - **Atomar:** Guthaben und Besitz ändern sich gemeinsam; bei mehreren Teilen alles oder nichts.
 - **Kein Doppelkauf:** Was schon gehört, kostet nichts (Doppelklick). Kein negatives Guthaben, nur ganze Beträge.
 - **Keine Doppelbuchung von Belohnungen:** eindeutige Buchungs-IDs (`battle:`, `za:`, `tr:`, `ta:`).
+- **Geschenk-Codes nur einmal:** eigene Liste `eingeloesteCodes`, die anders als die Buchungen nie gekürzt wird.
 - **Verkauf entfernt das Teil aus allen Looks**, und eine verkaufte Tuningstufe wird ausgebaut: Ein Rennen startet nie
   mit Ungekauftem. Das letzte Auto lässt sich nicht verkaufen.
 - **Autopilot-Fahrten** (nur für Messungen) werden nie belohnt.

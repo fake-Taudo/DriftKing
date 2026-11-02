@@ -104,6 +104,7 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | E6 | **Teile und Tuning deutlich günstiger als zuerst angesetzt** (Gesamtkosten 268.720 statt ca. 380.000 DM). | Autopreise und Belohnungen sind vorgegeben; nur so sind 25–40 Stunden erreichbar. Rechnung in docs/OEKONOMIE.md, per Test begrenzt. |
 | E7 | **Verkauf entfernt das Teil aus allen betroffenen Looks** (zurück auf Serie), eine verkaufte Tuningstufe wird ausgebaut. Beim Verkauf eines Autos gehen dessen Looks und Setups verloren. | Ein gespeicherter Look besteht immer nur aus Gekauftem. Der Dialog sagt das vorher deutlich. |
 | E8 | **Globale Teile gehören zum Spieler, nicht zum Auto**: Sie bleiben beim Autoverkauf erhalten und werden nicht mit erstattet. | So beschreibt es die Spezifikation („pro Auto, wo nötig“), und es gibt keinen Weg, sie mehrfach anzurechnen. |
+| E9 | **Geschenk-Codes gelten je Spielstand einmal**, Schreibweise und Leerzeichen am Rand zählen nicht. Die Sperre ist eine eigene Liste `eingeloesteCodes` (Spielstand-Version 2), nicht `buchungen`. | Ohne Sperre wäre der Code eine Gelddruckmaschine. `buchungen` wird nach 200 Einträgen gekürzt, der Code wäre danach wieder gültig. Handy-Tastaturen schreiben den ersten Buchstaben oft groß, die Eingabe darf daran nicht scheitern. Der Code steht im Browser-Code und wird nicht vom Server geprüft, wie alles am lokalen Spielstand (siehe `docs/OEKONOMIE.md`). „Fortschritt zurücksetzen“ gibt ihn wieder frei. |
 
 ## Tutorial
 

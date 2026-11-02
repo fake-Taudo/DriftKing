@@ -9,6 +9,7 @@ import { aktivesAuto, aktivesAutoKonfig } from '../spielerDaten.js';
 import { glowTextur } from '../render/texturen.js';
 import { vollbildVerfuegbar, vollbildUmschalten } from '../core/geraet.js';
 import { MENUE_EINTRAEGE } from './menueEintraege.js';
+import { geschenkKnopf } from '../ui/geschenkCode.js';
 
 export class Hauptmenue {
   constructor(start = 'haupt') {
@@ -135,7 +136,7 @@ export class Hauptmenue {
     const d = this.spiel.daten;
     this.muenzAnzeige = h('div.muenzen.menue-muenzen', zahl(d.waehrung));
     return h('div.menue-kopf',
-      h('div.logo.menue-logo', t('allgemein.spielname')),
+      h('div.menue-kopf-links', h('div.logo.menue-logo', t('allgemein.spielname')), geschenkKnopf(this.spiel)),
       h('div.menue-kopf-rechts',
         this.muenzAnzeige,
         vollbildVerfuegbar() ? h('button.knopf.rund.geist', { 'aria-label': t('menue.vollbild'), onClick: () => vollbildUmschalten() }, '⛶') : null

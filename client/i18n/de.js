@@ -666,6 +666,17 @@ export const TEXTE = {
     aufgebenText: 'Dein Gegner gewinnt das Duell. Wirklich aufgeben?'
   },
 
+  geschenk: {
+    knopf: 'Geschenk-Code eingeben',
+    titel: 'Geschenk-Code',
+    feld: 'CODE EINGEBEN',
+    einloesen: 'Einlösen',
+    erfolg: '+{n} Driftmünzen!',
+    leer: 'Bitte gib einen Code ein.',
+    unbekannt: 'Diesen Code gibt es nicht.',
+    eingeloest: 'Diesen Code hast du schon eingelöst.'
+  },
+
   menue: {
     hauptTitel: 'Hauptmenü',
     spielenTitel: 'Spielen',
