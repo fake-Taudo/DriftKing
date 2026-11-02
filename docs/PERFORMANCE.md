@@ -65,9 +65,17 @@ Kein Anstieg der Texturen, und nur der aktuelle Modus bleibt im Speicher ✅.
 Gefundene und behobene Lecks:
 
 - Die Environment-Maps (PMREM) wurden nur über ihre Textur freigegeben, nicht über das Render-Target. Pro Streckenwechsel blieb eine Textur im Speicher.
-- Die Schattenkarte des Hauptmenüs wurde nie freigegeben. Pro Moduswechsel blieben 2 Texturen mit 1024×1024 Pixeln auf der Grafikkarte, im langen Lauf stürzte das Software-Rendering dadurch ab.
+- Die Schattenkarte des Hauptmenüs wurde nie freigegeben. Pro Moduswechsel blieben 2 Texturen mit 1024×1024 Pixeln auf der Grafikkarte.
 
 **Messfalle:** `waitForSelector` von Playwright hält die zurückgegebenen Elemente fest und damit über deren Ereignis-Handler den alten Modus samt Szene. Das sieht aus wie ein großes Leck, ist aber keins. Die Speichermessung nutzt deshalb nur `locator()`.
+
+**Nicht abschließend geklärt:** Im Gesamtlauf von `scripts/uiAblauf.js` mit Software-Rendering (SwiftShader) stürzte der Browser bei 1920×1080 mehrfach ab, auch nach Behebung des Lecks, jeweils nach dem Besuch der Garage. Dagegen spricht ein Fehler im Spiel:
+
+- Mit echter GPU liefen alle 7 Bildschirmgrößen und drei weitere Desktop-Läufe ohne Absturz.
+- Einzeln lief die Desktop-Ansicht auch im Software-Rendering durch.
+- Über vier Garagen-Runden bei 1080p blieb der Speicher von Edge im Software-Rendering stabil (rund 900 MB).
+
+Auf dem Testrechner waren nur etwa 3,5 GB Arbeitsspeicher frei, möglich ist also Speicherdruck. Bewiesen ist das nicht. Für diesen Test deshalb `GPU=1` verwenden, und bei Abstürzen auf schwachen Geräten hier zuerst nachsehen.
 
 ## Online-Duell
 

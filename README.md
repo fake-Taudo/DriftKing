@@ -70,12 +70,14 @@ Dazu kommen Abläufe im echten Browser. Sie brauchen `npm run build` und ein ins
 | Skript | Prüft |
 |---|---|
 | `node scripts/gesamtAblauf.js` | Neuer Spieler: Tutorial, Battle gewinnen, kaufen, Garage, fahren, Online-Duell gegen ein zweites Fenster |
-| `node scripts/onlineAblauf.js` | Online-Duell mit 200 ms Latenz und 5 % Paketverlust, Look-Sync, Wiederverbindung, Abbruch |
-| `node scripts/uiAblauf.js` | Alle Bildschirme in 7 Bildschirmgrößen, Überlappungen, Barrierefreiheit |
+| `GPU=1 node scripts/onlineAblauf.js` | Online-Duell mit 200 ms Latenz und 5 % Paketverlust, Look-Sync, Wiederverbindung, Abbruch |
+| `GPU=1 node scripts/uiAblauf.js` | Alle Bildschirme in 7 Bildschirmgrößen, Überlappungen, Barrierefreiheit |
 | `node scripts/klangCheck.js` | Motor, Reifen, Klangunterschiede, Übersteuern, Regler |
 | `node scripts/garageAblauf.js`, `node scripts/shopAblauf.js` | Garage und Shop im Detail |
 | `node scripts/performance.js` | FPS, Draw Calls und Speicher |
 | `node scripts/effektBilder.js` | Fotos der Effekte im Drift |
+
+`GPU=1` nutzt die echte Grafikkarte. Ohne diese Angabe laufen beide Skripte im Software-Rendering: langsam, ohne verlässliche Zeitmessung und im Gesamtlauf bei 1080p nicht immer stabil.
 
 Was nur mit echten Geräten geht, steht in [docs/TESTPLAN_MANUELL.md](docs/TESTPLAN_MANUELL.md).
 

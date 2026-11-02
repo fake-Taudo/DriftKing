@@ -2,7 +2,8 @@
 // Prüft automatisch, dass nichts über den Bildschirm hinausragt und sich die Elemente im Rennen nicht überlappen,
 // und legt von jedem Bildschirm ein Foto ab.
 // Aufruf: node scripts/uiAblauf.js [ausgabeordner] [ansicht]   Vorher: npm run build
-// Standard ist Software-Rendering (läuft überall). Mit GPU=1 läuft der Test auf der echten Grafikkarte.
+// Standard ist Software-Rendering (läuft auch ohne Grafikkarte, stürzte im Gesamtlauf bei 1080p aber mehrfach ab,
+// siehe docs/PERFORMANCE.md). Mit GPU=1 läuft der Test auf der echten Grafikkarte, das ist die verlässliche Variante.
 import { chromium } from 'playwright-core';
 import { readdirSync, mkdirSync } from 'node:fs';
 import http from 'node:http';
@@ -34,7 +35,7 @@ await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const basis = `http://127.0.0.1:${server.address().port}`;
 
 const edge = 'C:/Program Files (x86)/Microsoft/EdgeCore';
-// Je Ansicht ein neuer Browser: Das Software-Rendering verträgt sonst den langen Gesamtlauf nicht
+// Je Ansicht ein neuer Browser: Eine Ansicht soll die nächste nicht beeinflussen
 const browserStarten = () => chromium.launch({
   executablePath: `${edge}/${readdirSync(edge).sort().pop()}/msedge.exe`,
   headless: true,

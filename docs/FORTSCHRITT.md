@@ -84,7 +84,7 @@ Nachtrag aus Phase 8: Der Lauf mit echter GPU (165 FPS statt 7 FPS im Software-R
 
 - [x] Effekte skalieren mit der Qualitätsstufe, Performance-Ziele bleiben erreicht (`tests/vfx.test.js`; `docs/PERFORMANCE.md`: mindestens 125 FPS bei 4× Drosselung, höchstens 94 Draw Calls)
 - [x] Audio reagiert auf Drehzahl, Last und Schlupf, jedes Auto klingt anders (`tests/audio.test.js`; `scripts/klangCheck.js` misst im Browser: Leerlauf bis Vollgas fünffacher Pegel, Klangschwerpunkt der Autos 1.606–2.531 Hz, kein Übersteuern). Ob es **glaubhaft** klingt, kann nur ein Ohr entscheiden: Das steht im manuellen Testplan
-- [x] Alle Bildschirme sind in allen Seitenverhältnissen sauber (`scripts/uiAblauf.js`: 7 Größen von 360×640 bis 1920×1080, prüft Überstand, abgeschnittene Knöpfe und HUD-Überlappungen, plus Sichtprüfung der Fotos)
+- [x] Alle Bildschirme sind in allen Seitenverhältnissen sauber (`GPU=1 node scripts/uiAblauf.js`: 7 Größen von 360×640 bis 1920×1080, prüft Überstand, abgeschnittene Knöpfe und HUD-Überlappungen, plus Stichproben der Fotos von Auge)
 - [x] Farbenblind-Modus und reduzierte Effekte funktionieren (`scripts/uiAblauf.js`, `tests/vfx.test.js`: keine Tempolinien, Vignette, Zeitlupe, Kamerafahrt oder Wackeln; Abstand auch als Symbol)
 
 Gebaut: Partikel mit Instancing (`client/render/vfx/partikel.js`), Reifenspuren als Ringpuffer (`reifenspuren.js`), Tempolinien und Leuchtfaden (`bildEffekte.js`), Qualm in Garagenfarbe samt Regenbogen, Funken, Backfire, Staub, Gischt, Regen mit Lichtkegeln (`rennVfx.js`), Zeitlupe und Kamerafahrt am Laufende, prozeduraler Klang (`client/audio/`, `shared/klang.js`), Menümusik, HUD für große Bildschirme, kompaktes HUD im Hochformat.
@@ -106,6 +106,7 @@ Zusätzlich: Produktionstest aus einem frischen Klon des Repositories (`npm ci`,
 - Bot-Punkte streuen stark von Durchgang zu Durchgang; Küstenpass/Meister liegt unter dem Ziel und beendet nicht jede Runde. Das sind die zwei als `todo` markierten Tests (siehe `docs/WERTUNG.md`, Entscheidung B5).
 - Nicht auf echten Geräten geprüft: Touch, GPU-Last eines Handys, Klang mit echtem Ohr, Gamepad, Duell über echte Netze. Dafür gibt es `docs/TESTPLAN_MANUELL.md`.
 - Der Render-Dienst muss einmalig angelegt werden, das braucht das Konto des Besitzers (`docs/DEPLOY_RENDER.md`).
+- Im Software-Rendering stürzte der Gesamtlauf von `scripts/uiAblauf.js` bei 1920×1080 mehrfach ab, mit echter GPU nie. Die Ursache ist nicht abschließend geklärt (`docs/PERFORMANCE.md`).
 
 ## Wichtige Entscheidungen
 
