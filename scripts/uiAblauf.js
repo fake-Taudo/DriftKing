@@ -94,6 +94,25 @@ function ueberstand() {
   return [...new Set(fehler)].slice(0, 8);
 }
 
+/** Shop: Das „NEU“-Abzeichen darf keinen Text verdecken. Gemessen wird der Text selbst, nicht sein Kasten. */
+function abzeichenUeberText() {
+  const fehler = [];
+  for (const b of document.querySelectorAll('.shop-neu')) {
+    const r = b.getBoundingClientRect();
+    if (r.width < 1) continue;
+    for (const t of b.parentElement.querySelectorAll('.teil-name, .shop-unter, .teil-preis')) {
+      const bereich = document.createRange();
+      bereich.selectNodeContents(t);
+      for (const z of bereich.getClientRects()) {
+        const x = Math.min(r.right, z.right) - Math.max(r.left, z.left);
+        const y = Math.min(r.bottom, z.bottom) - Math.max(r.top, z.top);
+        if (x > 1 && y > 1) fehler.push(`„NEU“ verdeckt „${t.textContent.slice(0, 28)}“ (${Math.round(x)}×${Math.round(y)} px)`);
+      }
+    }
+  }
+  return [...new Set(fehler)];
+}
+
 /** Im Rennen: Die festen Elemente dürfen sich nicht überlappen. */
 function hudUeberlappung() {
   const gruppen = ['.hud-minimap', '.hud-oben', '.hud-pause', '.hud-tacho', '.touch-knopf'];
@@ -189,6 +208,11 @@ for (const a of ANSICHTEN) {
   await s.getByText('Shop', { exact: true }).click();
   await s.waitForSelector('.shop-liste', { timeout: 60000 });
   await fertig('shop');
+  for (const r of await s.locator('.garage-reiter-knopf').evaluateAll((l) => l.map((x) => x.dataset.reiter))) {
+    await s.click(`.garage-reiter-knopf[data-reiter="${r}"]`);
+    await s.waitForTimeout(120);
+    for (const f of await s.evaluate(abzeichenUeberText)) merken(`${a.name}/shop-${r}: ${f}`);
+  }
   await zurueck();
   await s.waitForSelector('.menue-knopf', { timeout: 30000 });
 
@@ -236,6 +260,16 @@ for (const a of ANSICHTEN) {
   });
   await s.waitForSelector('.menue-knopf', { timeout: 15000 });
   await fertig('gross-menue');
+  await s.getByText('Shop', { exact: true }).click();
+  await s.waitForSelector('.shop-liste', { timeout: 60000 });
+  for (const r of await s.locator('.garage-reiter-knopf').evaluateAll((l) => l.map((x) => x.dataset.reiter))) {
+    await s.click(`.garage-reiter-knopf[data-reiter="${r}"]`);
+    await s.waitForTimeout(120);
+    for (const f of await s.evaluate(abzeichenUeberText)) merken(`${a.name}/gross-shop-${r}: ${f}`);
+  }
+  await fertig('gross-shop');
+  await zurueck();
+  await s.waitForSelector('.menue-knopf', { timeout: 30000 });
   await klick('Spielen');
   await s.waitForTimeout(200);
   await klick('Tandem-Battle');

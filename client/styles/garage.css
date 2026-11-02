@@ -393,7 +393,8 @@
 .shop-leer { padding: 18px 8px; text-align: center; color: var(--farbe-text-2); }
 .shop-raster { position: relative; }
 .shop-raster .teil-karte { position: relative; }
-.shop-neu { position: absolute; top: 5px; right: 5px; padding: 1px 6px; border-radius: 99px; background: var(--farbe-haupt); color: #fff; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; }
+/* Auf der Kartenkante: So verdeckt es bei keiner Wortlänge und Schriftgröße den Namen */
+.shop-neu { position: absolute; top: -2px; right: 6px; transform: translateY(-50%); padding: 1px 6px; border-radius: 99px; background: var(--farbe-haupt); color: #fff; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.05em; }
 .shop-unter { font-size: 0.72rem; color: var(--farbe-text-3); }
 .teil-preis.zu-teuer { color: var(--farbe-text-3); }
 .shop-detail { display: none; flex: none; flex-direction: column; gap: 6px; max-height: 48%; overflow-y: auto; padding: 10px 12px; border-top: 1px solid var(--farbe-linie); background: rgba(255, 255, 255, 0.03); }
@@ -515,4 +516,16 @@
   .tutorial-karte { top: calc(6px + var(--sicher-oben)); padding: 6px 10px; width: min(420px, calc(100% - 340px)); gap: 3px; }
   .tutorial-titel { font-size: 1rem; }
   .tutorial-text { font-size: 0.8rem; }
+}
+
+/* Schmale Handys im Hochformat: Zurück nur als Pfeil (mit aria-label), damit Autoname und Klasse Platz haben */
+@media (max-width: 480px) and (orientation: portrait) {
+  .garage-zurueck-text { display: none; }
+  .garage-auto { flex: 1; min-width: 0; justify-content: center; }
+  .garage-auto-text { min-width: 0; overflow: hidden; }
+  .garage-auto-name { font-size: 1rem; }
+  .garage-pi { font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .knopf.rund.garage-rund { width: 34px; height: 34px; min-width: 34px; min-height: 34px; flex: none; }
+  .garage .menue-muenzen { padding: 4px 8px; font-size: 0.86rem; flex: none; }
+  .garage-kopf { gap: 4px; flex-wrap: nowrap; }
 }
