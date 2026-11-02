@@ -216,3 +216,25 @@
 html.farbenblind .tacho-winkel.gut { stroke: #2ee6ff; stroke-dasharray: 2 4; }
 html.farbenblind .hud-abstand[data-bewertung='gut'] { color: #2ee6ff; }
 html.farbenblind .hud-abstand[data-bewertung='schlecht'] { color: #ffd166; }
+
+/* Rolle im Battle: Führer = Hauptfarbe, Verfolger = Akzent */
+.hud-rolle[data-art='verfolger'] { background: var(--farbe-akzent); color: #04202a; }
+.hud-rolle[data-art='einzel'] { background: rgba(11, 14, 28, 0.6); }
+
+/* Namensschild über dem Gegner */
+.hud-namensschild {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(11, 14, 28, 0.72);
+  border: 1px solid var(--farbe-haupt);
+  color: var(--farbe-text);
+  font-family: var(--schrift-titel);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+.hud-popup.muenzen { color: var(--farbe-gold); }

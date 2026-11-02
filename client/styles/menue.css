@@ -239,3 +239,70 @@ html.farbenblind .schalter.an span::after { content: '✓'; color: #062614; font
 .touch-steuerung.bearbeiten > *, .touch-steuerung.bearbeiten .touch-lenkgruppe > * { opacity: 0.9; outline: 2px dashed rgba(255, 255, 255, 0.4); cursor: move; }
 .touch-steuerung.bearbeiten .ausgewaehlt { outline: 3px solid var(--farbe-akzent); }
 .touch-steuerung.bearbeiten { z-index: 31; }
+
+/* Ergebnis: Zeilen ab mittlerer Breite zweispaltig */
+@media (min-width: 620px) {
+  .ergebnis-zeilen { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
+}
+.ergebnis-tabelle td { white-space: nowrap; }
+.ergebnis-panel { overflow-x: auto; }
+
+/* Battle-Auswahl: links die Wahl, rechts sichtbar die Drehscheibe mit dem Gegnerauto */
+.battle-wahl { background: linear-gradient(90deg, rgba(11, 14, 28, 0.94) 0%, rgba(11, 14, 28, 0.82) 42%, rgba(11, 14, 28, 0) 68%); }
+.battle-wahl-inhalt { flex: 1; min-height: 0; display: flex; gap: 16px; justify-content: space-between; }
+.battle-wahl-panel { width: min(560px, 100%); overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 2px 6px 12px 2px; }
+.battle-abschnitt { display: flex; flex-direction: column; gap: 6px; }
+.battle-abschnitt h3 { margin: 0; font-family: var(--schrift-titel); font-size: 1.02rem; color: var(--farbe-text-2); letter-spacing: 0.08em; text-transform: uppercase; }
+.battle-abschnitt .auswahl-gruppe { border-radius: var(--radius-klein); }
+.battle-abschnitt .auswahl-knopf { border-radius: 7px; }
+.battle-abschnitt .auswahl-knopf:disabled { opacity: 0.45; cursor: not-allowed; }
+.battle-hinweis { font-size: 0.86rem; color: var(--farbe-text-2); }
+.battle-hinweis.gesperrt { color: var(--farbe-warnung); }
+.gegner-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.gegner-karte {
+  appearance: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 30px 9px 11px;
+  border: 2px solid var(--farbe-linie);
+  border-radius: var(--radius-klein);
+  background: var(--farbe-flaeche);
+  color: var(--farbe-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--uebergang), box-shadow var(--uebergang), transform var(--uebergang);
+}
+.gegner-karte:hover { transform: translateY(-2px); }
+.gegner-karte.aktiv { border-color: var(--farbe-haupt); box-shadow: var(--glow-haupt); }
+.gegner-karte:focus-visible { outline: 3px solid var(--farbe-akzent); outline-offset: 2px; }
+.gegner-farbe { position: absolute; right: 9px; top: 10px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.7); }
+.gegner-name { font-family: var(--schrift-titel); font-size: 1.05rem; }
+.gegner-spitz { font-size: 0.85rem; color: var(--farbe-akzent); }
+.gegner-auto { font-size: 0.8rem; color: var(--farbe-text-3); }
+.battle-belohnung { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border-radius: var(--radius-klein); background: rgba(255, 209, 102, 0.1); }
+.battle-belohnung-zeile { display: flex; justify-content: space-between; gap: 10px; }
+.battle-belohnung-zeile.bonus { color: var(--farbe-gold); }
+.battle-belohnung-zeile.klein { font-size: 0.86rem; color: var(--farbe-text-2); }
+.battle-start { justify-content: flex-start !important; margin-top: 2px; }
+.battle-start .knopf { min-width: 220px; }
+.battle-vorschau-info { align-self: flex-end; text-align: right; margin: 0 4vw 5vh 0; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.75); pointer-events: none; }
+.battle-vorschau-rang { display: inline-block; padding: 2px 12px; border-radius: 999px; background: var(--farbe-haupt); font-family: var(--schrift-titel); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9rem; }
+.battle-vorschau-name { font-family: var(--schrift-titel); font-size: clamp(1.6rem, 3.4vw, 2.4rem); margin-top: 6px; }
+.battle-vorschau-auto { color: var(--farbe-text-2); }
+.wahl-muenzen { margin-left: auto; }
+
+@media (orientation: portrait) {
+  .battle-wahl { background: linear-gradient(180deg, rgba(11, 14, 28, 0.35) 0%, rgba(11, 14, 28, 0) 12%, rgba(11, 14, 28, 0) 30%, rgba(11, 14, 28, 0.94) 44%); }
+  .battle-wahl-inhalt { flex-direction: column-reverse; justify-content: flex-start; gap: 8px; }
+  .battle-wahl-panel { width: 100%; flex: 1; min-height: 0; }
+  .battle-vorschau-info { align-self: center; text-align: center; margin: 0; min-height: 31vh; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .battle-vorschau-name { font-size: 1.5rem; margin-top: 2px; }
+  .battle-vorschau-auto { font-size: 0.85rem; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .battle-wahl-panel { gap: 8px; }
+  .battle-vorschau-info { margin-bottom: 2vh; }
+}

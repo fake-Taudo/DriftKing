@@ -66,7 +66,10 @@ export class Hud {
     this.popups = h('div.hud-popups');
     this.resetKnopf = h('button.knopf.haupt.hud-reset', { onClick: () => onZuruecksetzen && onZuruecksetzen() }, t('hud.zuruecksetzen'));
     this.resetKnopf.style.display = 'none';
-    this.el.append(this.minimapBox, this.oben, h('div.hud-rechts', this.pauseKnopf, this.ping, this.fps), this.tacho, this.countdown, this.meldung, this.popups, this.resetKnopf);
+    // Namensschild über dem Gegner (Battle)
+    this.schild = h('div.hud-namensschild');
+    this.schild.style.display = 'none';
+    this.el.append(this.schild, this.minimapBox, this.oben, h('div.hud-rechts', this.pauseKnopf, this.ping, this.fps), this.tacho, this.countdown, this.meldung, this.popups, this.resetKnopf);
     wurzel.appendChild(this.el);
     this._meldungZeit = 0;
     this._letzte = {};
@@ -98,9 +101,13 @@ export class Hud {
   }
 
   /** Status-Zeile: rolle (Text oder ''), status (z. B. „Runde 1/3“), restzeit (s oder null). */
-  stand({ rolle = '', status = '', zeit = null, zeitWarnung = false }) {
+  stand({ rolle = '', rolleArt = '', status = '', zeit = null, zeitWarnung = false }) {
     this._setze(this.rolle, 'rolle', rolle);
     this.rolle.style.display = rolle ? '' : 'none';
+    if (this._letzte.rolleArt !== rolleArt) {
+      this._letzte.rolleArt = rolleArt;
+      this.rolle.dataset.art = rolleArt;
+    }
     this._setze(this.status, 'status', status);
     this._setze(this.zeit, 'zeit', zeit === null ? '' : formatZeit(zeit));
     this.zeit.classList.toggle('warnung', zeitWarnung);
@@ -139,6 +146,18 @@ export class Hud {
       this.abstand.dataset.bewertung = bewertung;
       this.abstandSymbol.textContent = bewertung === 'gut' ? '●' : bewertung === 'mittel' ? '▲' : '■';
     }
+  }
+
+  /** Namensschild an Bildschirmposition (px) oder ausblenden (sichtbar = false). */
+  namensschild(text, x, y, sichtbar, abstand = 0) {
+    if (!sichtbar) {
+      if (this._letzte.schild !== false) { this._letzte.schild = false; this.schild.style.display = 'none'; }
+      return;
+    }
+    if (this._letzte.schild !== true) { this._letzte.schild = true; this.schild.style.display = ''; }
+    this._setze(this.schild, 'schildText', text);
+    const skala = Math.max(0.6, Math.min(1, 14 / Math.max(1, abstand)));
+    this.schild.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translate(-50%, -100%) scale(${skala.toFixed(2)})`;
   }
 
   countdownZeigen(text) {

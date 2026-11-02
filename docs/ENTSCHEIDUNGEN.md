@@ -52,9 +52,43 @@ Alle Stellen, an denen die Spezifikation (`SPEC.md`) offen war oder bewusst ande
 | D7 | **Performance-Messung mit `playwright-core` und dem installierten Edge** statt eines heruntergeladenen Test-Browsers. | Kein großer Browser-Download, echte GPU. Handy-Profil emuliert CPU und Bildschirm, nicht die Handy-GPU (siehe docs/PERFORMANCE.md). |
 | D8 | **Autopilot-Startparameter** `?perf=1&strecke=…` (Freies Fahren, ein Legende-Bot fährt das Spielerauto). | Reproduzierbare Messungen ohne Eingaben. Hat keinen Einfluss aufs normale Spiel. |
 | D9 | **Messgröße „max. stationärer Driftwinkel“** mit einem PI-Halteregler, nicht mit konstanten Eingaben. | Ein Drift ist (auch real) kein stabiles Gleichgewicht bei konstanter Eingabe; gemessen wird, was ein geübter Fahrer halten kann. |
+| D10 | **Küstenpass verbreitert:** Fahrbahn 13 m (Kehren 14 m), Kehrenradius 20 m statt 17–18 m. | Mit den engeren Kehren beendeten selbst die Bots in den schweren Autos die Runde nicht zuverlässig; für Menschen waren die Kehren mit Drift kaum fahrbar. Der Küstenpass bleibt die technischste Strecke (Schwierigkeit 2). |
 
 ## Wortfilter
 
 | # | Entscheidung | Begründung |
 |---|---|---|
 | W1 | Normalisierung (Kleinschreibung, Umlaute, Leetspeak, Sonderzeichen entfernen) plus Liste von Wortstämmen; einige kurze Kürzel nur als ganzes Wort. | Fängt die üblichen Verschleierungen ab, ohne bei normalen Namen zu viele Fehlalarme zu erzeugen. Lieber einmal zu viel ablehnen. |
+
+## Wertung und Bots
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| B1 | **Ein Durchgang beginnt, wenn der Führer die Startlinie überfährt**, und endet, wenn der Führer die Runde beendet oder das Zeitlimit (150 % der Referenzzeit) abläuft. Die Verfolger-Wertung endet mit dem Führer. Überfährt der Führer die Linie nach 12 s nicht, beginnt die Wertung trotzdem. | Fliegender Start wie in der Spezifikation; nach der Ziellinie des Führers gibt es nichts mehr zu verfolgen. Der Notfall-Start verhindert, dass ein Durchgang ewig hängt. |
+| B2 | **Punkte nur auf neuem Boden:** Ein Tick zählt nur, wenn der stetige Streckenfortschritt das bisherige Maximum übertrifft. | Sonst ließen sich mit Donuts oder Hin- und Herfahren in einer Zone beliebig viele Punkte sammeln. |
+| B3 | **Flüssigkeits-Bonus nur nach einem gehaltenen Drift** (mind. 1 s und 25°) und höchstens alle 2 s. | Ohne diese Bedingungen brachte schnelles Zickzack-Lenken mehr Punkte als sauberes Driften. |
+| B4 | **Hauptstellhebel der Bot-Stufen ist der Anteil ausgelassener Zonen**, je Strecke kalibriert; ausgelassen wird nach einem **Plan je Runde**, gewichtet nach der Fahrzeit der Zonen. | Laut Formel kostet langsameres Driften kaum Punkte (mehr Ticks gleichen das kleinere f_tempo aus), Winkel und Linie wirken schwach. Der Plan je Runde verhindert, dass die Punkte allein von der Auswahl großer oder kleiner Zonen abhängen. |
+| B5 | **Kalibrierung und Bot-Tests mit den Autos der Pool-Gegner der jeweiligen Stufe**; Kenji Aoba (Legende) fährt deshalb Vireo Turbo statt Hornet Wagon. | Der Bot-Regler fährt je Auto sehr unterschiedlich gut (auf dem Küstenpass z. B. Hornet Wagon ≈ 7, Onyx RS ≈ 95 Punkte als Legende). Entscheidend ist, wie stark die Gegner im Spiel sind, also mit ihren Autos. Bekannte Restschwäche: Die Punkte der Bots streuen von Durchgang zu Durchgang stark (siehe docs/WERTUNG.md); ein robusterer Drift-Regler wäre die nächste Verbesserung. |
+| B6 | **Referenz Führer** per Bisektion so, dass das Mittel der auf 0–100 begrenzten Legende-Punkte 91 ist; **Referenz Verfolger** = mittlere Rohpunkte (Legende hinter Legende) · 100 / 91. | Beim Führer ist genau dieses Mittel die geprüfte Größe (Zielbereich 85–97). Beim Verfolger gibt es keinen Zielbereich; eine Bisektion würde die Referenz wegen der breiten Verteilung so weit senken, dass Menschen als Verfolger zu leicht 100 erreichen. |
+| B7 | **Auffahrschutz des Verfolger-Bots:** unter 5 m Luftlinie hinter dem Führer Gas weg und bremsen, auch im Drift. | Ein langsamer Spieler (z. B. nach einem Dreher) soll vom Bot nicht angeschoben werden. |
+| B8 | **Bots fahren ihr Auto in Serie (ohne Leistungstuning) mit ihrem Look.** Optikteile wirken wie beim Spieler minimal auf die Physik. | Gleiche Regeln für alle; die Kalibrierung gilt für die Autos, wie sie im Spiel antreten. |
+| B9 | **Zwischen zwei Durchgängen rollen beide Autos ohne Eingabe aus**; der Zwischenstand wartet auf „Weiter“; die Pause ist währenddessen gesperrt. | Der Spieler bestimmt das Tempo; die Szene bleibt lebendig statt einzufrieren. |
+| B10 | **Abbruch eines Bot-Battles** (Pause → Beenden, mit Rückfrage) zählt nicht: keine Belohnung, keine Niederlage in der Statistik. | Einfach und nicht ausnutzbar (ein Abbruch bringt nie etwas). |
+| B11 | **Gegner-Vorschlag:** höchste freigeschaltete Stufe ohne Erstsieg auf der gewählten Strecke, sonst die höchste; innerhalb der Stufe wechselt der Gegner mit der Zahl gespielter Battles. | „Nach Fortschritt vorgeschlagen“ (Spezifikation 7.3); der Erstsieg-Bonus lenkt zur nächsten Herausforderung. |
+| B12 | **Autopilot** (nur per URL-Parameter für Messungen und Tests) fährt im Battle die Rolle des jeweiligen Durchgangs. Autopilot-Fahrten werden **nie belohnt** und nicht in die Statistik gebucht. | Reproduzierbare Ablauftests ohne Eingaben; kein Weg, mit dem Parameter Münzen zu farmen. |
+
+## Ökonomie
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| E1 | **Zeitangriff:** Jede Medaille zahlt je Strecke einmal den vollen Betrag. Wer direkt eine höhere Medaille holt, bekommt die übersprungenen niedrigeren mit. Ist keine Medaille neu, zahlt die erreichte Medaille 25 %. | Die Gesamtsumme je Strecke (2.050) hängt nicht davon ab, ob man sich schrittweise steigert oder direkt Gold holt. |
+| E2 | **Abgebrochene Zeitangriff-Runde** (Zeitlimit) zählt mit den bis dahin erreichten Punkten. | Durchschnitt über genau 3 Runden, wie in der Spezifikation; die Punkte wurden fair erfahren. |
+| E3 | **Trainings-Bonus** = 50 + Rundenpunkte (max. 150), nur ab 20 Punkten und nur, wenn der zuletzt **belohnte** Bestwert um mindestens 5 Punkte übertroffen wird. | „Kleiner Bonus bei Bestwert“ ohne Farmen in 0,1-Punkte-Schritten: höchstens ca. 17 Boni je Strecke. |
+| E4 | **Jede Belohnung hat eine eindeutige Buchungs-ID** (`battle:…`, `za:…`, `tr:…`); doppelte IDs werden abgelehnt. Gespeichert werden die letzten 200 IDs. | Keine Doppelbuchung durch doppelte Auswertung, Doppelklick oder erneutes Anzeigen des Ergebnisses. |
+
+## Betrieb
+
+| # | Entscheidung | Begründung |
+|---|---|---|
+| R1 | **Render: Region Frankfurt, Build mit `npm ci`**, Free-Plan, Health-Check `/healthz`. | Kurze Latenz für Spieler in Deutschland; `npm ci` installiert exakt die Versionen aus `package-lock.json` (reproduzierbar). Anleitung: docs/DEPLOY_RENDER.md. |
+| R2 | **Eingabe- und Verbindungstest unter `?test=eingabe`** (Würfel, Eingabewerte, Server-Echo). | Schnelle Prüfung auf echten Geräten und nach einem Deploy, ohne das Spiel zu verändern. |

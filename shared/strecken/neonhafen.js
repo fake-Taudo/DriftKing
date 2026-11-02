@@ -38,8 +38,9 @@ export default {
   idealMischung: 0.7,
   idealHaftung: 0.88,
   idealMaxKmh: 125,
-  referenzZeit: null,
-  referenzPunkte: null,
+  referenzZeit: 67.7,
+  referenzPunkte: { fuehrer: 106.9, verfolger: 66.8 },
+  botAuslassen: { anfaenger: 0.98, fahrer: 0.56, profi: 0.66, meister: 0.28, legende: 0.05 },
   boden: 'nass',
   wetter: 'regen',
   licht: {

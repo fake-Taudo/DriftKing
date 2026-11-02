@@ -57,6 +57,7 @@ export class Rennen {
     this.autos = []; // {fahrzeug, modell, rolle, bot?, name, farbe, runden, darstellung}
     this._hoerer = [];
     this._aktionen = { hoch: false, runter: false };
+    this.fahrzeit = 0; // reine Fahrzeit (für die Statistik)
   }
 
   async betreten(spiel) {
@@ -165,8 +166,13 @@ export class Rennen {
       online: false,
       fortsetzen: () => this.fortsetzen(),
       neustart: () => { this.fortsetzen(); this.neustart(); },
-      beenden: () => this.beenden()
+      beenden: () => this.beendenAusPause()
     });
+  }
+
+  /** „Beenden“ im Pause-Menü (Battle fragt vorher nach). */
+  beendenAusPause() {
+    this.beenden();
   }
 
   fortsetzen() {
@@ -215,6 +221,7 @@ export class Rennen {
     const r = zuruecksetzPosition(this.S, f.z.x, f.z.y, a.runden.index);
     f.setzen(r.x, r.y, r.theta, 6);
     a.haenger.zuruecksetzen();
+    a.zurueckgesetzt = true; // für die Wertung (Abzug beim nächsten Tick)
     this.hud.resetAnzeigen(false);
     this.rennKamera.erstesBild = true;
     this.nachZuruecksetzen?.(a, manuell);
@@ -232,6 +239,7 @@ export class Rennen {
       return;
     }
     this.zeit += dt;
+    if (this.zustand === 'laeuft') this.fahrzeit += dt;
     // Spieler
     const sp = this.spieler;
     if (sp && !sp.netzGesteuert) {
@@ -271,10 +279,12 @@ export class Rennen {
         const r = zuruecksetzPosition(this.S, a.fahrzeug.z.x, a.fahrzeug.z.y, a.runden?.index);
         a.fahrzeug.setzen(r.x, r.y, r.theta, 6);
         a.haenger.zuruecksetzen();
+        a.zurueckgesetzt = true;
         this.nachZuruecksetzen?.(a, false);
       }
       for (const ev of a.fahrzeug.ereignisse) this.fahrzeugEreignis(a, ev);
     }
+    this.wertungSchritt?.(dt);
     this.regelSchritt?.(dt);
   }
 
@@ -389,6 +399,11 @@ export class Rennen {
 
   verlassen() {
     displayWachHalten(false);
+    if (!this.konfig.autopilot && this.fahrzeit > 0) {
+      const st = this.spiel.daten.statistik;
+      st.fahrzeit = Math.min(1e12, st.fahrzeit + Math.round(this.fahrzeit));
+      this.spiel.speicher.speichern();
+    }
     for (const aus of this._hoerer) aus();
     this.spiel.qualitaet.messungAktiv(false);
     this.spiel.eingabe.touch.zeigen(false);

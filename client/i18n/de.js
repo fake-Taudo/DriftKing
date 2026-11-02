@@ -120,8 +120,8 @@ export const TEXTE = {
   },
 
   test: {
-    titel: 'Testfläche',
-    hinweis: 'Phase-1-Testszene: Steuere den Würfel. Alle Eingaben werden unten angezeigt.',
+    titel: 'Eingabe- und Verbindungstest',
+    hinweis: 'Steuere den Würfel. Alle Eingaben werden unten angezeigt; „Server-Echo“ prüft die Verbindung zum Spielserver.',
     echo: 'Server-Echo',
     echoOk: 'WebSocket-Echo erfolgreich ({ms} ms)',
     echoFehler: 'WebSocket-Echo fehlgeschlagen'
@@ -185,6 +185,110 @@ export const TEXTE = {
     menue: 'Menü',
     garage: 'Garage',
     revanche: 'Revanche'
+  },
+
+  wertung: {
+    wand: 'Wand −{n}',
+    kontakt: 'Kontakt −{n}',
+    zurueckgesetzt: 'Zurückgesetzt −{n}',
+    fluessig: 'Flüssig +{n}',
+    dreher: 'Dreher!',
+    rundenPunkte: '{n} Punkte',
+    neuerBestwert: 'Neuer Bestwert!',
+    bonus: '+{n} DM',
+    punkteKurz: '{n} P.',
+    mittel: 'Ø Punkte je Runde',
+    anteilWinkel: 'Driftwinkel',
+    anteilTempo: 'Tempo',
+    anteilLinie: 'Linie',
+    anteilAbstand: 'Abstand zum Führer',
+    anteilGleichwinkel: 'Gleicher Winkel',
+    combo: 'Combo (Ø / max.)',
+    comboWert: '×{mittel} / ×{max}',
+    abzuege: 'Abzüge',
+    boni: 'Flüssigkeits-Boni',
+    fehler: 'Wand · Kontakt · Reset · Dreher',
+    fehlerWert: '{wand} · {kontakte} · {resets} · {spins}',
+    besterWinkel: 'Größter Driftwinkel',
+    laengsterDrift: 'Längster Drift',
+    neuerBestwertZeitangriff: 'Neuer Bestwert: {n} Punkte im Schnitt!',
+    keineMedaille: 'Für Bronze brauchst du im Schnitt {n} Punkte je Runde.',
+    posten: {
+      medailleNeu: 'Neue Medaille: {medaille}',
+      medailleWieder: 'Medaille wiederholt: {medaille} (25 %)'
+    }
+  },
+
+  battle: {
+    duFuehrst: 'Du führst – {name} verfolgt dich',
+    duVerfolgst: 'Du verfolgst {name} – halte 6–10 m Abstand!',
+    perfekt: 'Perfekter Durchgang!',
+    durchgangEnde: 'Durchgang beendet',
+    duAls: 'Du ({rolle})',
+    gegnerAls: '{name} ({rolle})',
+    durchgangTitel: 'Durchgang {n} beendet',
+    naechsterTausch: 'Rollentausch: Im nächsten Durchgang fährst du die andere Rolle.',
+    summeDu: 'Lauf-Summe: Du',
+    summeGegner: 'Lauf-Summe: {name}',
+    gleichstandTitel: 'Gleichstand!',
+    gleichstandText: 'Weniger als 3 Punkte Unterschied – der Lauf wird wiederholt (Startrolle neu ausgelost).',
+    laufGewonnen: 'Lauf {n} gewonnen!',
+    laufVerloren: 'Lauf {n} verloren',
+    stand: 'Stand {a} : {b}',
+    weiter: 'Weiter',
+    abbrechen: 'Battle abbrechen',
+    abbrechenTitel: 'Battle abbrechen?',
+    abbrechenText: 'Ein abgebrochenes Battle zählt nicht und bringt keine Belohnung.',
+    lauf: 'Lauf',
+    sieger: 'Sieger',
+    wiederholungKurz: '(W)',
+    gleichstand: 'Gleichstand',
+    mittelFuehrer: 'Ø Führer-Punkte',
+    mittelVerfolger: 'Ø Verfolger-Punkte',
+    entscheidungFuehrer: 'Nach zwei Wiederholungen entschied die höhere Führer-Punktzahl.',
+    entscheidungMuenze: 'Nach zwei Wiederholungen entschied der Münzwurf.',
+    neueStrecke: 'Neue Strecke freigeschaltet: {name}',
+    neueStufe: 'Neue Bot-Stufe freigeschaltet: {name}',
+    sieg: 'Sieg!',
+    niederlage: 'Niederlage',
+    ergebnisUnter: '{strecke} · {name} ({stufe}) · {format} · {a} : {b}',
+    andereWahl: 'Andere Wahl',
+    status: 'Lauf {lauf} · Durchgang {durchgang}/2 · {a} : {b}',
+    wiederholung: 'Wiederholung',
+    zurLinie: 'Fliegender Start – ab der Startlinie wird gewertet',
+    format: {
+      schnell: 'Schnell',
+      bo3: 'Best of 3'
+    },
+    posten: {
+      sieg: 'Sieg',
+      niederlage: 'Teilnahme',
+      erstsieg: 'Erstsieg-Bonus',
+      perfekt: 'Perfekte Durchgänge (×{n})'
+    }
+  },
+
+  battleWahl: {
+    titel: 'Tandem-Battle',
+    strecke: 'Strecke',
+    stufe: 'Schwierigkeit',
+    gegner: 'Gegner',
+    format: 'Format',
+    belohnung: 'Belohnung',
+    fortschrittStrecke: 'Noch {n} Siege auf dieser Strecke bis zur Freischaltung von {name}.',
+    fortschrittStreckeEins: 'Noch 1 Sieg auf dieser Strecke bis zur Freischaltung von {name}.',
+    besiegt: 'Auf dieser Strecke bereits besiegt',
+    sperreStufe: '🔒 {name}: Gewinne ein Battle gegen die Stufe {vorher}.',
+    spitzname: '„{name}“',
+    formatInfo: {
+      schnell: '1 Lauf (2 Durchgänge), ca. 3 Minuten – halbe Belohnung',
+      bo3: 'Wer zuerst 2 Läufe gewinnt, ca. 6–10 Minuten – volle Belohnung'
+    },
+    beiSieg: 'Bei Sieg',
+    erstsieg: 'Erstsieg-Bonus (einmalig je Stufe und Strecke)',
+    beiNiederlage: 'Bei Niederlage',
+    perfekt: 'Je perfektem Durchgang (Führer über 90, keine Wand)',
+    starten: 'Battle starten'
   },
 
   pause: {

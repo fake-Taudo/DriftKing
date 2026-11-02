@@ -1,5 +1,6 @@
-// Phase-1-Testszene: Würfel auf einer Fläche, gesteuert über die Eingabe-Schicht.
-// Prüft Game-Loop, Eingaben (Tastatur, Touch, Gamepad), Canvas-Größe und WebSocket-Echo.
+// Eingabe- und Verbindungstest (Aufruf mit ?test=eingabe): Würfel auf einer Fläche, gesteuert über die
+// Eingabe-Schicht. Prüft Game-Loop, Eingaben (Tastatur, Touch, Gamepad), Canvas-Größe und WebSocket-Echo
+// – nützlich auf echten Geräten und nach einem Deploy.
 import * as THREE from 'three';
 import { h } from '../ui/dom.js';
 import { t } from '../i18n/de.js';

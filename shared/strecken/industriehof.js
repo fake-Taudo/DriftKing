@@ -57,8 +57,9 @@ export default {
   idealMischung: 0.65,
   idealHaftung: 0.9,
   idealMaxKmh: 115,
-  referenzZeit: null,
-  referenzPunkte: null,
+  referenzZeit: 53.1,
+  referenzPunkte: { fuehrer: 98.8, verfolger: 41.1 },
+  botAuslassen: { anfaenger: 0.81, fahrer: 0.66, profi: 0.59, meister: 0.3, legende: 0.05 },
   boden: 'beton',
   wetter: 'staub',
   licht: {

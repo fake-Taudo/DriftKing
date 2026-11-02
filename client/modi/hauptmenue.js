@@ -28,6 +28,17 @@ export class Hauptmenue {
     ];
     this.ansicht(this.startAnsicht);
     spiel.audio?.menueMusik?.(true);
+    this.nachBetreten?.();
+  }
+
+  /**
+   * Vorschau eines anderen Autos auf der Drehscheibe (z. B. Gegner in der Battle-Auswahl);
+   * ohne Angabe wieder das aktive Auto des Spielers.
+   */
+  vorschau(autoId = null, look = null) {
+    this._vorschau = autoId ? { autoId, look } : null;
+    this._kameraSetzen();
+    this._autoNeu();
   }
 
   _szeneBauen() {
@@ -93,16 +104,19 @@ export class Hauptmenue {
   _kameraSetzen() {
     const hoch = this.spiel.renderer.hoehe > this.spiel.renderer.breite;
     // Im Querformat steht das Menü links → Auto etwas nach rechts
-    if (hoch) this.kamera.position.set(0, 2.6, 11.5);
+    // Bei einer Vorschau (Battle-Auswahl) im Hochformat: weiter weg, Auto im oberen Drittel
+    const vorschauHoch = hoch && this._vorschau;
+    if (vorschauHoch) this.kamera.position.set(0, 3.5, 20);
+    else if (hoch) this.kamera.position.set(0, 2.6, 11.5);
     else this.kamera.position.set(-2.2, 2.1, 8.6);
-    this.kamera.lookAt(hoch ? 0 : -2.2, 0.6, 0);
+    this.kamera.lookAt(hoch ? 0 : -2.2, vorschauHoch ? -4.2 : 0.6, 0);
     if (!hoch) this.kamera.position.x += 0;
     this.kameraVersatz = hoch ? 0 : 2.2;
     if (this.drehteller) this.drehteller.position.x = hoch ? 0 : 0.2;
   }
 
   _autoNeu() {
-    const k = aktivesAutoKonfig(this.spiel.daten);
+    const k = this._vorschau || aktivesAutoKonfig(this.spiel.daten);
     const sig = k.autoId + JSON.stringify(k.look);
     if (this._autoSig === sig) return;
     this._autoSig = sig;
@@ -167,7 +181,9 @@ export class Hauptmenue {
     // Menüsteuerung per Gamepad/Tastatur
     for (const a of aktionen) {
       if (a === 'menueHoch' || a === 'menueRunter') {
-        const knoepfe = [...this.ui.querySelectorAll('.menue-knopf')];
+        // Offene Auswahl-Bildschirme/Dialoge haben Vorrang vor dem Menü
+        const bereich = [...this.spiel.overlay.querySelectorAll('.wahl-bildschirm, .dialog-hintergrund')].pop();
+        const knoepfe = bereich ? [...bereich.querySelectorAll('button:not([disabled])')] : [...this.ui.querySelectorAll('.menue-knopf')];
         const i = knoepfe.indexOf(document.activeElement);
         const n = (i + (a === 'menueRunter' ? 1 : -1) + knoepfe.length) % knoepfe.length;
         knoepfe[n]?.focus();

@@ -1,12 +1,14 @@
 # Render-Blueprint für DRIFTKÖNIG (Web Service mit HTTP + WebSocket auf einem Port).
-# Hinweis: Kostenlose Instanzen schlafen nach Inaktivität ein. Der Client zeigt dann beim
-# Verbinden „Server wird gestartet …“ und versucht es bis zu 90 Sekunden lang erneut.
+# Anleitung: docs/DEPLOY_RENDER.md
+# Hinweis: Kostenlose Instanzen schlafen nach ca. 15 Minuten ohne Anfragen ein; der erste Aufruf
+# danach dauert bis zu etwa einer Minute (Kaltstart).
 services:
   - type: web
     name: driftkoenig
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    region: frankfurt
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /healthz
     autoDeploy: true

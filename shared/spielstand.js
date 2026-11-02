@@ -254,7 +254,7 @@ function pruefeStreng(d, { aufkleberIds } = {}) {
   for (const [k, v] of Object.entries(f.bestwerte)) {
     if (!STRECKEN_IDS.includes(k) || !istObj(v)) throw new SpeicherFehler('fortschritt.bestwerte');
     for (const [bk, bv] of Object.entries(v)) {
-      if (!['training', 'zeitangriff', 'runde'].includes(bk)) throw new SpeicherFehler('fortschritt.bestwerte.art');
+      if (!['training', 'trainingBelohnt', 'zeitangriff', 'runde'].includes(bk)) throw new SpeicherFehler('fortschritt.bestwerte.art');
       if (bv !== null) zahlImBereich(bv, 0, 1e7, 'fortschritt.bestwerte.wert');
     }
   }
